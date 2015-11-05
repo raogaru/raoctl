@@ -1,90 +1,127 @@
 # ############################################################
-# SQL PRFILE FUNCTIONS (DBMS_PROFILER)
+# SQL PROFILE FUNCTIONS
 # ############################################################
 # ------------------------------------------------------------
 # SQL PROFILE actions
-action_L1="report report2 report3 "
+action_L1="list accept alter drop import count "
+action_L2="stgcre stgdrp stgtru stgcnt pack unpack stgexp stgimp "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-report,NONE,ASH_Default_Report_30mins  \
-report2,offset,ASH_Report_30mins  \
-report3,start_time:duration,ASH_Report_StartTime_and_Duration \
+list,NONE,List \
+accept,task_name,Accept  \
+alter,name:attribute_name:attribute_value,Alter  \
+drop,sql_profile_name,Drop  \
+import,NONE,Import  \
+count,NONE,Count \
+stgcre,NONE,Create_staging_table \
+stgdrp,NONE,Drop_staging_table \
+stgtru,NONE,Truncate_staging_table \
+stgcnt,NONE,Select_staging_table \
+pack,sqlset_name,Pack_SQL_Profiles_into_Staging_Table \
+unpack,sqlset_name,Unpack_SQL_Profiles_from_Staging_Table \
+stgexp,NONE,export_staging_table \
+stgimp,export_dump_file_absolute_path,export_staging_table \
 "
 # ------------------------------------------------------------
 # local variables
-
+v_debug=0
+STGTAB_OWNER="SYSTEM"
+STGTAB_SQLPROF="STGTAB_SQLPROF"
 # ------------------------------------------------------------
-ASH_p () {
+SQLPROF_p () {
 vLine="$*"
 SQLNEWF
-SQLLINE "exec dbms_workload_repository.${vLine};"
+SQLLINE "exec dbms_spm.${vLine};"
 SQLEXEC
 }
 # ------------------------------------------------------------
-ASH_f () {
+SQLPROF_f () {
 vLine="$*"
 SQLNEWF
 SQLLINE "declare"
 SQLLINE "x varchar2(1000);"
 SQLLINE "begin"
-SQLLINE "x:=dbms_workload_repository.${vLine};"
+SQLLINE "x:=dbms_spm.${vLine};"
 SQLLINE "dbms_output.put_line('Return value:'||x);"
-SQLLINE "end;"
+SQLLINE "end; "
 SQLLINE "/"
 SQLEXEC
 }
 # ------------------------------------------------------------
-ASH_common () {
-vLine="$*"
-SQLLINE "set echo off head off feedback off termout off"
-SQLLINE "col dbid new_value v_dbid"
-SQLLINE "col instance_number new_value v_inst_num"
-SQLLINE "col db_name new_value v_db_name"
-SQLLINE "col instance_name new_value v_inst_name"
-SQLLINE "select d.dbid, d.name db_name, i.instance_number, i.instance_name"
-SQLLINE "from v\$database d, v\$instance i;"
-SQLLINE "define dbid         = &v_dbid;"
-SQLLINE "define db_name      = '&v_db_name';"
-SQLLINE "define inst_num     = &v_inst_num;"
-SQLLINE "define report_type  = 'html';"
-SQLLINE "define num_days     = 0;"
-SQLLINE "define slot_width  = '';"
-SQLLINE "define target_session_id   = '';"
-SQLLINE "define target_sql_id       = '';"
-SQLLINE "define target_wait_class   = '';"
-SQLLINE "define target_service_hash = '';"
-SQLLINE "define target_module_name  = '';"
-SQLLINE "define target_action_name  = '';"
-SQLLINE "define target_client_id    = '';"
-SQLLINE "define target_plsql_entry  = '';"
-SQLLINE "@@${ORACLE_HOME}/rdbms/admin/${vLine}"
-SQLEXEC
+f_sqlprof_list () { 
+SQLQRY "select name, category, created, type, status, task_exec_name from dba_sql_profiles order by created;"
 }
 # ------------------------------------------------------------
-f_ash_report () { 
-SQLNEWF
-SQLLINE "define begin_time  = '-30';"
-SQLLINE "define duration    = '';"   # NULL defaults to till current-time
-SQLLINE "define report_name  = '${RPT_DIR}/ASH_REPORT_${ORACLE_SID}_$(date +%Y%m%d-%H%M%S).html';"
-ASH_common "ashrpti"
-}
-# ------------------------------------------------------------
-f_ash_report2 () { 
+f_sqlprof_accept () { 
 INPUT
-SQLNEWF
-SQLLINE "define begin_time  = '-${input1}';"
-SQLLINE "define duration    = '';"   # NULL defaults to till current-time
-SQLLINE "define report_name  = '${RPT_DIR}/ASH_REPORT_${ORACLE_SID}_$(date +%Y%m%d-%H%M%S).html';"
-ASH_common "ashrpti"
+SQLPROF_f "accept_sql_profile(task_name=>'${input1}',force_match=>true)"
 }
 # ------------------------------------------------------------
-f_ash_report3 () { 
-INPUT 2
-SQLNEWF
-SQLLINE "define begin_time  = '-${input1}';"
-SQLLINE "define duration    = '${input2}';"
-SQLLINE "define report_name  = '${RPT_DIR}/ASH_REPORT_${ORACLE_SID}_$(date +%Y%m%d-%H%M%S).html';"
-ASH_common "ashrpti"
+f_sqlprof_alter () { 
+INPUT 3
+[[ ! ${input2} = @(ENABLED ACCEPTED|FIXED) ]] && 
+
+SQLPROF_p "alter_sql_sqlprof(name=>'${input1}',attribute_name=>'${input2}',value=>'${input3}')"
 }
+# ------------------------------------------------------------
+f_sqlprof_drop () { 
+INPUT
+SQLPROF_p "drop_sql_sqlprof(name=>'${input1}')"
+}
+# ------------------------------------------------------------
+f_sqlprof_import () { 
+ERROR "not coded yet"
+}
+# ------------------------------------------------------------
+f_sqlprof_count () { 
+SQLQRY "select category, type, status, count(1) from dba_sql_profiles group by category, type, status order by 1,2,3;"
+}
+# ------------------------------------------------------------
+f_sqlprof_create () {
+INPUT 2
+SQLPROF_f "LOAD_PLANS_FROM_CURSOR_CACHE(SQL_ID=>'${input1}',PLAN_HASH_VALUE=>${input2})"
+}
+# ------------------------------------------------------------
+f_sqlprof_load_from_sqlset () {
+INPUT
+SQLPROF_f "LOAD_PLANS_FROM_SQLSET(SQLSET_NAME=>'${input}')"
+}
+# ------------------------------------------------------------
+f_sqlprof_stgcre () {
+SQLPROF_p "CREATE_STGTAB_SQLPROF(TABLE_NAME=>'${STGTAB_SQLPROF}',TABLE_OWNER=>'${STGTAB_OWNER}')"
+}
+# ------------------------------------------------------------
+f_sqlprof_stgdrp () {
+SQLQRY "drop table ${STGTAB_OWNER}.${STGTAB_SQLPROF} purge;"
+}
+# ------------------------------------------------------------
+f_sqlprof_stgtru () {
+SQLQRY "truncate table ${STGTAB_OWNER}.${STGTAB_SQLPROF};"
+}
+# ------------------------------------------------------------
+f_sqlprof_stgcnt () {
+SQLQRY "select count(1) from ${STGTAB_OWNER}.${STGTAB_SQLPROF};"
+}
+# ------------------------------------------------------------
+f_sqlprof_pack () {
+SQLPROF_f "PACK_STGTAB_SQLPROF(TABLE_NAME=>'${STGTAB_SQLPROF}',TABLE_OWNER=>'${STGTAB_OWNER}')"
+}
+# ------------------------------------------------------------
+f_sqlprof_unpack () {
+SQLPROF_f "UNPACK_STGTAB_SQLPROF(TABLE_NAME=>'${STGTAB_SQLPROF}',TABLE_OWNER=>'${STGTAB_OWNER}')"
+}
+# ------------------------------------------------------------
+f_sqlprof_stgexp () {
+INPUT
+x=/tmp/baseline_stgtab_$(date '+%Y%m%d_%H%M%S')
+${ORACLE_HOME}/bin/exp userid='/' file=${x}.dmp log=${x}.log tables=${STGTAB_OWNER}.${STGTAB_SQLPROF} statistics=none
+}
+# ------------------------------------------------------------
+f_sqlprof_stgimp () {
+INPUT
+x=/tmp/baseline_stgtab_$(date '+%Y%m%d_%H%M%S')
+${ORACLE_HOME}/bin/imp userid='/' file=${input} log=${x}_imp.log fromuser=${STGTAB_OWNER} touser=${STGTAB_OWNER} ignore=y
+}
+# ------------------------------------------------------------
