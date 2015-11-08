@@ -1,0 +1,11 @@
+-- TITLE1: Synchronous Capture Queues and Rulesets
+-- TITLE2:Displaying the Queue and Rule Set of Each Synchronous Capture
+-- DESC:
+
+COLUMN CAPTURE_NAME HEADING 'Synchronous|Capture Name' FORMAT A20
+COLUMN QUEUE_NAME HEADING 'Synchronous|Capture Queue' FORMAT A20
+COLUMN RULE_SET_NAME HEADING 'Positive Rule Set' FORMAT A20
+COLUMN CAPTURE_USER HEADING 'Capture User' FORMAT A15
+
+SELECT CAPTURE_NAME, QUEUE_NAME, RULE_SET_NAME, CAPTURE_USER
+   FROM DBA_SYNC_CAPTURE;

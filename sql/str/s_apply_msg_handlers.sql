@@ -1,0 +1,9 @@
+-- TITLE1: Apply Message Handlers
+-- TITLE2: Displaying the Message Handler for Each Apply Process
+-- DESC:
+
+COLUMN APPLY_NAME HEADING 'Apply Process Name' FORMAT A20
+COLUMN MESSAGE_HANDLER HEADING 'Message Handler' FORMAT A20
+
+SELECT APPLY_NAME, MESSAGE_HANDLER FROM DBA_APPLY
+  WHERE MESSAGE_HANDLER IS NOT NULL;
