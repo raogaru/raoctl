@@ -1,0 +1,15 @@
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# read raoctl.cfg and create aliases
+cat ${RC_DIR}/cfg/raoctl.cfg | \
+	grep "^raoctl.module.desc" | \
+	grep -v "^#" | \
+	cut -d":" -f2,3,4,8 | \
+	sed -e 's/:/ /g' | \
+	while read x_product x_class x_module x_alias
+do
+	echo "alias ${x_alias}=\"${RC_DIR}/raoctl -p ${x_product} -c ${x_class} -m ${x_module} -a \""
+	#alias ${x_alias}="${RC_DIR}/raoctl -p ${x_product} -c ${x_class} -m ${x_module} -a "
+done 
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+alias @="sqlplus -s '/ as sysdba' @"
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
