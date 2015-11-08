@@ -1,0 +1,1 @@
+select * from DBA_SCHEDULER_RUNNING_CHAINS;
