@@ -2,10 +2,10 @@
 # STAT column - DBMS_STATS Column Statistics FUNCTIONS
 # ############################################################
 # ------------------------------------------------------------
-# STAT table actions
+# STAT column actions
 action_L1="list list_stattab "
 action_L2="export export_as_statid import import_statid "
-action_L3="delete delete_from_stattab delete_from_stattab_with_statid "
+action_L3="delete_from_dict delete_from_stattab delete_from_stattab_with_statid "
 action_L4="get set "
 action_L="$action_L1 $action_L2 $action_L3 $action_L4 "
 # ------------------------------------------------------------
@@ -39,7 +39,7 @@ SQLQRY "@o_tabcolstat ${input1} ${input2}"
 }
 # ------------------------------------------------------------
 f_column_list_stattab () {
-SQLQRY ""
+ERROR "not coded yet"
 }
 # ------------------------------------------------------------
 f_column_gather_2_stattab_as_statid () {
