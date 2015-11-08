@@ -26,14 +26,13 @@ stgimp,export_dump_file_absolute_path,export_staging_table \
 "
 # ------------------------------------------------------------
 # local variables
-v_debug=0
-STGTAB_OWNER="SYSTEM"
-STGTAB_SQLPROF="STGTAB_SQLPROF"
+STGTAB_OWNER=${rc_STGTAB_OWNER:="SYSTEM"}
+STGTAB_SQLPROF=${rc_STGTAB_SQLPROF:="STGTAB_SQLPROF"}
 # ------------------------------------------------------------
 SQLPROF_p () {
 vLine="$*"
 SQLNEWF
-SQLLINE "exec dbms_spm.${vLine};"
+SQLLINE "exec dbms_sqltune.${vLine};"
 SQLEXEC
 }
 # ------------------------------------------------------------
@@ -43,83 +42,83 @@ SQLNEWF
 SQLLINE "declare"
 SQLLINE "x varchar2(1000);"
 SQLLINE "begin"
-SQLLINE "x:=dbms_spm.${vLine};"
+SQLLINE "x:=dbms_sqltune.${vLine};"
 SQLLINE "dbms_output.put_line('Return value:'||x);"
 SQLLINE "end; "
 SQLLINE "/"
 SQLEXEC
 }
 # ------------------------------------------------------------
-f_sqlprof_list () { 
+f_profile_list () { 
 SQLQRY "select name, category, created, type, status, task_exec_name from dba_sql_profiles order by created;"
 }
 # ------------------------------------------------------------
-f_sqlprof_accept () { 
+f_profile_accept () { 
 INPUT
 SQLPROF_f "accept_sql_profile(task_name=>'${input1}',force_match=>true)"
 }
 # ------------------------------------------------------------
-f_sqlprof_alter () { 
+f_profile_alter () { 
 INPUT 3
 [[ ! ${input2} = @(ENABLED ACCEPTED|FIXED) ]] && 
 
 SQLPROF_p "alter_sql_sqlprof(name=>'${input1}',attribute_name=>'${input2}',value=>'${input3}')"
 }
 # ------------------------------------------------------------
-f_sqlprof_drop () { 
+f_profile_drop () { 
 INPUT
 SQLPROF_p "drop_sql_sqlprof(name=>'${input1}')"
 }
 # ------------------------------------------------------------
-f_sqlprof_import () { 
+f_profile_import () { 
 ERROR "not coded yet"
 }
 # ------------------------------------------------------------
-f_sqlprof_count () { 
+f_profile_count () { 
 SQLQRY "select category, type, status, count(1) from dba_sql_profiles group by category, type, status order by 1,2,3;"
 }
 # ------------------------------------------------------------
-f_sqlprof_create () {
+f_profile_create () {
 INPUT 2
 SQLPROF_f "LOAD_PLANS_FROM_CURSOR_CACHE(SQL_ID=>'${input1}',PLAN_HASH_VALUE=>${input2})"
 }
 # ------------------------------------------------------------
-f_sqlprof_load_from_sqlset () {
+f_profile_load_from_sqlset () {
 INPUT
 SQLPROF_f "LOAD_PLANS_FROM_SQLSET(SQLSET_NAME=>'${input}')"
 }
 # ------------------------------------------------------------
-f_sqlprof_stgcre () {
+f_profile_stgcre () {
 SQLPROF_p "CREATE_STGTAB_SQLPROF(TABLE_NAME=>'${STGTAB_SQLPROF}',TABLE_OWNER=>'${STGTAB_OWNER}')"
 }
 # ------------------------------------------------------------
-f_sqlprof_stgdrp () {
+f_profile_stgdrp () {
 SQLQRY "drop table ${STGTAB_OWNER}.${STGTAB_SQLPROF} purge;"
 }
 # ------------------------------------------------------------
-f_sqlprof_stgtru () {
+f_profile_stgtru () {
 SQLQRY "truncate table ${STGTAB_OWNER}.${STGTAB_SQLPROF};"
 }
 # ------------------------------------------------------------
-f_sqlprof_stgcnt () {
+f_profile_stgcnt () {
 SQLQRY "select count(1) from ${STGTAB_OWNER}.${STGTAB_SQLPROF};"
 }
 # ------------------------------------------------------------
-f_sqlprof_pack () {
+f_profile_pack () {
 SQLPROF_f "PACK_STGTAB_SQLPROF(TABLE_NAME=>'${STGTAB_SQLPROF}',TABLE_OWNER=>'${STGTAB_OWNER}')"
 }
 # ------------------------------------------------------------
-f_sqlprof_unpack () {
+f_profile_unpack () {
 SQLPROF_f "UNPACK_STGTAB_SQLPROF(TABLE_NAME=>'${STGTAB_SQLPROF}',TABLE_OWNER=>'${STGTAB_OWNER}')"
 }
 # ------------------------------------------------------------
-f_sqlprof_stgexp () {
+f_profile_stgexp () {
 INPUT
 x=/tmp/baseline_stgtab_$(date '+%Y%m%d_%H%M%S')
 ${ORACLE_HOME}/bin/exp userid='/' file=${x}.dmp log=${x}.log tables=${STGTAB_OWNER}.${STGTAB_SQLPROF} statistics=none
 }
 # ------------------------------------------------------------
-f_sqlprof_stgimp () {
+f_profile_stgimp () {
 INPUT
 x=/tmp/baseline_stgtab_$(date '+%Y%m%d_%H%M%S')
 ${ORACLE_HOME}/bin/imp userid='/' file=${input} log=${x}_imp.log fromuser=${STGTAB_OWNER} touser=${STGTAB_OWNER} ignore=y
