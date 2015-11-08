@@ -98,12 +98,12 @@ STATS_p "delete_table_stats(ownname=>'${input1}',tabname=>'${input2}',partname=>
 # ------------------------------------------------------------
 f_parttab_lock () {
 INPUT 3
-STATS_p "lock_table_stats(ownname=>'${input1}',tabname=>'${input2}',partname=>'${input3}')"
+STATS_p "lock_partition_stats(ownname=>'${input1}',tabname=>'${input2}',partname=>'${input3}')"
 }
 # ------------------------------------------------------------
 f_parttab_unlock () {
 INPUT 3
-STATS_p "unlock_table_stats(ownname=>'${input1}',tabname=>'${input2}',partname=>'${input3}')"
+STATS_p "unlock_partition_stats(ownname=>'${input1}',tabname=>'${input2}',partname=>'${input3}')"
 }
 # ------------------------------------------------------------
 f_parttab_get () {
