@@ -4,7 +4,7 @@
 # ------------------------------------------------------------
 # ASH Stream actions
 action_L1="all "
-action_L2="prepare_sql start stop"
+action_L2="prepare_sql start perl"
 action_L3="s_show s_default s_clear s_edit s_add "
 action_L4="f_show f_default f_clear f_edit f_add sid sqlid phv uid "
 action_L="$action_L1 $action_L2 $action_L3 $action_L4"
@@ -115,9 +115,13 @@ f_ashstream_prepare_sql
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 f_ashstream_start () {
 f_ashstream_prepare_sql
-while (1)
+while [ 1 ]
 do
 SQLEXEC 
+sleep 1
 done
 }
 # ------------------------------------------------------------
+f_ashstream_perl () {
+
+}
