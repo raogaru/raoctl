@@ -4,7 +4,7 @@
 # ------------------------------------------------------------
 # XPLAN actions
 action_L1="plan cursor awr sqlset baseline "
-action_L1="diff_awr diff_cursor diff_baseline  "
+action_L2="diff_awr diff_cursor diff_baseline  "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
