@@ -1,8 +1,8 @@
 # ############################################################
-# ASH FUNCTIONS (DBMS_WORKLOAD_REPOSITORY)
+# ASH REPORT FUNCTIONS (DBMS_WORKLOAD_REPOSITORY)
 # ############################################################
 # ------------------------------------------------------------
-# AWR actions
+# ASH REPORT actions
 action_L1="report report2 report3 "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
@@ -16,14 +16,14 @@ report3,start_time:duration,ASH_Report_StartTime_and_Duration  \
 # local variables
 
 # ------------------------------------------------------------
-ASH_p () {
+ASHRPT_p () {
 vLine="$*"
 SQLNEWF
 SQLLINE "exec dbms_workload_repository.${vLine};"
 SQLEXEC
 }
 # ------------------------------------------------------------
-ASH_f () {
+ASHRPT_f () {
 vLine="$*"
 SQLNEWF
 SQLLINE "declare"
@@ -36,7 +36,7 @@ SQLLINE "/"
 SQLEXEC
 }
 # ------------------------------------------------------------
-ASH_common () {
+ASHRPT_common () {
 vLine="$*"
 SQLLINE "set echo off head off feedback off termout off"
 SQLLINE "col dbid new_value v_dbid"
@@ -63,28 +63,28 @@ SQLLINE "@@${ORACLE_HOME}/rdbms/admin/${vLine}"
 SQLEXEC
 }
 # ------------------------------------------------------------
-f_ash_report () { 
+f_report_report () { 
 SQLNEWF
 SQLLINE "define begin_time  = '-30';"
 SQLLINE "define duration    = '';"   # NULL defaults to till current-time
 SQLLINE "define report_name  = '${RPT_DIR}/ASH_REPORT_${ORACLE_SID}_$(date +%Y%m%d-%H%M%S).html';"
-ASH_common "ashrpti"
+ASHRPT_common "ashrpti"
 }
 # ------------------------------------------------------------
-f_ash_report2 () { 
+f_report_report2 () { 
 INPUT
 SQLNEWF
 SQLLINE "define begin_time  = '-${input1}';"
 SQLLINE "define duration    = '';"   # NULL defaults to till current-time
 SQLLINE "define report_name  = '${RPT_DIR}/ASH_REPORT_${ORACLE_SID}_$(date +%Y%m%d-%H%M%S).html';"
-ASH_common "ashrpti"
+ASHRPT_common "ashrpti"
 }
 # ------------------------------------------------------------
-f_ash_report3 () { 
+f_report_report3 () { 
 INPUT 2
 SQLNEWF
 SQLLINE "define begin_time  = '-${input1}';"
 SQLLINE "define duration    = '${input2}';"
 SQLLINE "define report_name  = '${RPT_DIR}/ASH_REPORT_${ORACLE_SID}_$(date +%Y%m%d-%H%M%S).html';"
-ASH_common "ashrpti"
+ASHRPT_common "ashrpti"
 }
