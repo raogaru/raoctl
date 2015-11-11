@@ -5,7 +5,6 @@
 # AWR actions
 action_L1="list_baseline create_baseline rename_baseline drop_baseline "
 action_L2="list_baseline_template create_baseline_template drop_baseline_template "
-action_L3="x y z"
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 usage_L=" \
