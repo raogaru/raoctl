@@ -3,13 +3,14 @@
 # ############################################################
 # ------------------------------------------------------------
 # SQL PROFILE actions
-action_L1="list accept alter drop import count "
+action_L1="list show accept alter drop import count "
 action_L2="stgcre stgdrp stgtru stgcnt pack unpack stgexp stgimp "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
 list,NONE,List \
+show,profile_name,List \
 accept,task_name,Accept  \
 alter,name:attribute_name:attribute_value,Alter  \
 drop,sql_profile_name,Drop  \
@@ -51,6 +52,11 @@ SQLEXEC
 # ------------------------------------------------------------
 f_profile_list () { 
 SQLQRY "select name, category, created, type, status, task_exec_name from dba_sql_profiles order by created;"
+}
+# ------------------------------------------------------------
+f_profile_show () { 
+INPUT
+SQLQRY "select attr5 rationale from sys.wri$_adv_rationale a, dba_sql_profiles b wherea a.exec_name=b.task_exec_name and b.name=${input1};"
 }
 # ------------------------------------------------------------
 f_profile_accept () { 
