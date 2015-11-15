@@ -28,7 +28,7 @@ SQLQRY "select sql_id, sql_exec_id, status, sql_exec_start from v\$sql_monitor o
 # ------------------------------------------------------------
 f_monitor_report () {
 INPUT
-[[ ! "${v_rpt_type}" = @(TEXT HTML ACTIVE XML) ]] && ERROR "Invalid report type $v_rpt_type"
+[[ ! "${v_rpt_type}" = @(TEXT|HTML|ACTIVE|XML) ]] && ERROR "Invalid report type $v_rpt_type"
 v_file_name=${RPT_DIR}/SQL_MONITOR_REPORT_${input1}.html
 SQLNEWF
 SQLLINE "set long 1000000 longchunksize 1000000 linesize 1000 pagesize 0 trim on trimspool on echo off feedback off"
