@@ -3,10 +3,10 @@
 # ############################################################
 # ------------------------------------------------------------
 # DB DUMP actions
-action_L1="ctl_cc ctl_trc 	# controlfile "
-action_L2="redo_full redo_header redo_by_scn redo_by_time redo_by_dba redo_by_rba # redo OR standby redo OR archive "
-action_L3="df_headers df_full df_range	# datafile "
-action_L4="fb_header fb_full	#flashback logfile "
+action_L1="ctl_cc ctl_trc " #controlfile
+action_L2="redo_full redo_header redo_by_scn redo_by_time redo_by_dba redo_by_rba "# redo OR standby redo OR archive 
+action_L3="df_headers df_full df_range "	# datafile 
+action_L4="fb_header fb_full "	#flashback logfile 
 action_L5="system_state process_state process_stats lib_cache buf_cache "
 action_L6="shared_pool large_pool sga pga heap ipc "
 action_L="$action_L1 $action_L2 $action_L3 $action_L4 $action_L5 $action_L6"
