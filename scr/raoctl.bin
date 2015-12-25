@@ -1,0 +1,439 @@
+#!/bin/bash
+# ======================================================================
+# raoctl: Rao Control
+# ======================================================================
+rc_NAME="raoctl"
+if [ "$USERNAME" = "root" ]; then
+	RC_DIR=${HOME}/rc
+else
+	RC_DIR=$(dirname $0)
+fi
+[[ -z "${RC_DIR}" ]] && echo "RC_DIR not defined!" && exit 1
+[[ ! -f ${RC_DIR}/cfg/${rc_NAME}.env ]] && echo "File not found: ${RC_DIR}/cfg/${rc_NAME}.env" && exit 1
+[[ ! -f ${RC_DIR}/cfg/${rc_NAME}.cfg ]] && echo "File not found: ${RC_DIR}/cfg/${rc_NAME}.cfg" && exit 1
+
+. ${RC_DIR}/cfg/${rc_NAME}.env
+[[ $? -ne 0 ]] && echo "ERROR: sourcing ${rc_NAME}.env" && exit 1
+
+[[ "$USERNAME" = "root" ]] && LOG_DIR=/var/log
+
+# ------------------------------------------------------------
+DEBUG () {
+[[ ${v_debug} -gt 0 ]] && echo "$*"
+}
+# ------------------------------------------------------------
+ECHO () {
+echo "$*"
+}
+# ------------------------------------------------------------
+ECHODO () {
+echo "$*"
+"$*"
+}
+# ------------------------------------------------------------
+ERROR () {
+echo "ERROR:$*"; exit 1
+}
+# ------------------------------------------------------------
+USAGE () {
+ECHO "Usage: ${rc_NAME} -p <product> -c <class> -m <module> -a <action> -i <input> [-r <repeat>] [-s <sleep>] [-h]"
+exit 1
+}
+# ------------------------------------------------------------
+CHKFILE () {
+[[ ! -f ${1} ]] && ERROR "File ${1} not found !"
+}
+# ------------------------------------------------------------
+INCLUDE () {
+x=$1
+if [ -f ${x} ]; then
+	DEBUG "Sourcing ${x}"
+	. ${x}
+else
+	ERROR "File Not Found ${x}"
+fi
+}
+# ------------------------------------------------------------
+GETCFG () { 
+# 1=filed_number 2=grep_string
+ECHO $(grep "${2}:" ${RC_DIR}/cfg/${rc_NAME}.cfg|grep -v "^#"|head -1 | cut -d":" -f${1})
+}
+# ------------------------------------------------------------
+SQLNEWF () {
+> ${TMPSQL}
+}
+# ------------------------------------------------------------
+SQLLINE () {
+echo $* >> ${TMPSQL}
+}
+# -----------------------------------------------------------
+EXECME () {
+	ECHO "Executing $*"
+	$*
+	[[ $? -ne 0 ]] && ECHO "Failed to \"$*\""
+}
+# ------------------------------------------------------------
+VALID_LOV () {
+# 1=u|l|m 2=value 3=arg_name 4=list_of_values
+case $1 in
+u) typeset -u x=$2 ;;
+l) typeset -l x=$2 ;;
+m) typeset x=$2 ;;
+esac
+ECHO x=$x
+[[ ! "${x}" = @($3) ]] && ERROR "Invalid value $x"
+}
+# ------------------------------------------------------------
+HELP () {
+typeset v_manfile=${MAN_DIR}/man1/${v_class}.${v_module}.1
+ECHO "HELP SCREEN ${cLINE1} BEGIN"
+[[ ! -f ${v_manfile} ]] && [[ ! -f ${v_manfile}.gz ]] && ECHO "Man page Not found ${v_manfile}"
+( [[ -f ${v_manfile} ]] || [[ -f ${v_manfile}.gz ]] ) && man ${v_class}.${v_module}
+ECHO "HELP SCREEN ${cLINE1} END"
+USAGE
+}
+# ------------------------------------------------------------
+SQLEXEC () {
+#constr="dgadm/dgadm@${1} as sysdba"
+constr="/ as sysdba"
+[[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
+[[ "${rc_SHOW_SQL}" != "NO" ]] && cat ${TMPSQL}
+#cat $TMPSQL >> ${rc_EXEC_LOG}
+[[ ! -f ${ORACLE_HOME}/bin/sqlplus ]] && ERROR "sqlplus executable not found !"
+${ORACLE_HOME}/bin/sqlplus -s /nolog <<-EOFsql
+connect $constr
+set echo off feedback on pause off pagesize 0 heading off verify off linesize 500 term on trimspool on serveroutput on size 10000
+${SQLPLUS_LINE_1}
+${SQLPLUS_LINE_2}
+${SQLPLUS_LINE_3}
+@${TMPSQL}
+EOFsql
+}
+# ------------------------------------------------------------
+SQLQRY () { 
+SQLNEWF
+SQLLINE "set echo off feedback on pause off pagesize 1000 heading on "
+SQLLINE "set verify off linesize 500 term on trimspool on"
+SQLLINE "$*"
+SQLEXEC
+}
+# ------------------------------------------------------------
+SQLRET () { 
+constr="/ as sysdba"
+SQLNEWF
+SQLLINE "set feedback off pause off pagesize 0 heading off verify off linesize 500 term on trimspool on"
+SQLLINE "$*"
+${ORACLE_HOME}/bin/sqlplus -s /nolog <<-EOFsql
+connect $constr
+@${TMPSQL}
+EOFsql
+}
+# ------------------------------------------------------------
+SQLRUN () { 
+SQLNEWF
+SQLLINE "whenever sqlerror exit sql.sqlcode"
+SQLLINE "$*"
+SQLEXEC
+}
+# ------------------------------------------------------------
+SQL2LST () {
+SQL2LST_LST=${TMP}/tmp.${v_class}.${v_module}.${v_action}.$$.lst
+SQLNEWF
+SQLLINE "set pagesi 0 head off feedback off verify off"
+SQLLINE "$*"
+SQLEXEC > ${SQL2LST_LST}
+}
+# ------------------------------------------------------------
+PRINTTAB () {
+vLine="$*"
+SQLNEWF
+SQLLINE "set serveroutput on size 100000 feedback off"
+SQLLINE "exec print_table('${vLine}');"
+SQLEXEC
+ECHO "${cLINE3}"
+}
+# ------------------------------------------------------------
+ALERTLOG () { 
+DEBUG Writing to Alert log "$*"
+SQLNEWF
+SQLLINE "whenever sqlerror exit sql.sqlcode"
+SQLLINE "set feedback off"
+SQLLINE "exec dbms_system.ksdddt;"
+SQLLINE "exec dbms_system.ksdind(5);"
+SQLLINE "exec dbms_system.ksdwrt(3, 'RAOCTL:${v_class}:${v_module}:${v_action}:$*');"
+SQLLINE "exec dbms_system.ksdfls;"
+SQLEXEC
+}
+# ------------------------------------------------------------
+RMANRUN () {
+ECHO ${cLINE3}
+${ORACLE_HOME}/bin/rman target=/ nocatalog cmdfile=${1} log=${2}
+}
+# ------------------------------------------------------------
+RMANEXEC () {
+ECHO ${cLINE3}
+cat ${TMPSQL}
+#cat $TMPSQL >> ${rc_EXEC_LOG}
+${ORACLE_HOME}/bin/rman nocatalog log=${TMPLOG}<<-EOFsql
+connect target /;
+@${TMPSQL}
+EOFsql
+}
+# ------------------------------------------------------------
+RMANLINE () {
+ECHO ${cLINE3}
+echo "$*"
+#echo "$*" >> ${rc_EXEC_LOG}
+${ORACLE_HOME}/bin/rman nocatalog ${RMAN_STR_LOG}<<-EOFsql
+connect target /;
+${*}
+EOFsql
+}
+# ------------------------------------------------------------
+RMANFILE () {
+ECHO ${cLINE3}
+#echo "$*" >> ${rc_EXEC_LOG}
+${ORACLE_HOME}/bin/rman nocatalog log=${TMPLOG}<<-EOFsql
+connect target /;
+@${1}
+EOFsql
+}
+# ------------------------------------------------------------
+USAGE2 () {
+ECHO "Usage: ${rc_NAME} -m <module> -a <action> -i <input> -r repeat -s <sleep>"
+ECHO "class=${class} module=${v_module} action=${v_action}"
+ECHO "ERROR:\"input\" argument validation"
+ECHO "${cLINE3}"
+ECHO "ACTION\tARGUMENTS\tDESCRIPTION"
+ECHO "${cLINE3}"
+for u in ${usage_L}
+do
+ECHO "$(echo ${u} | cut -f1 -d',')\t-i $(echo ${u} | cut -f2 -d',')\t $(echo ${u} | cut -f3 -d','|sed -e 's/[_]/ /g')"
+#ECHO "${cLINE3}"
+done
+ECHO "${cLINE4}"
+exit 1
+}
+# ------------------------------------------------------------
+# Validate and split input argument
+INPUT () {
+i=$1
+[[ -z ${input} ]] && ECHO "\"input\" argument missing"
+[[ -z $i ]] && i=1
+[[ $i -gt 0 ]] && input1=$(echo ${input} |cut -f1 -d":") && [[ -z ${input1} ]] && USAGE2
+[[ $i -gt 1 ]] && input2=$(echo ${input} |cut -f2 -d":") && [[ -z ${input2} ]] && USAGE2
+[[ $i -gt 2 ]] && input3=$(echo ${input} |cut -f3 -d":") && [[ -z ${input3} ]] && USAGE2
+[[ $i -gt 3 ]] && input4=$(echo ${input} |cut -f4 -d":") && [[ -z ${input4} ]] && USAGE2
+[[ $i -gt 4 ]] && input5=$(echo ${input} |cut -f5 -d":") && [[ -z ${input5} ]] && USAGE2
+[[ $i -gt 5 ]] && input6=$(echo ${input} |cut -f6 -d":") && [[ -z ${input6} ]] && USAGE2
+[[ $i -gt 6 ]] && input7=$(echo ${input} |cut -f7 -d":") && [[ -z ${input7} ]] && USAGE2
+[[ $i -gt 7 ]] && input8=$(echo ${input} |cut -f8 -d":") && [[ -z ${input8} ]] && USAGE2
+[[ $i -gt 8 ]] && input9=$(echo ${input} |cut -f9 -d":") && [[ -z ${input9} ]] && USAGE2
+}
+# ============================================================
+assign_products () {
+DEBUG "Assign products"
+product_L=$(GETCFG 2 ${rc_NAME}.product.list)
+DEBUG "product_L = ${product_L}"
+}
+
+# ------------------------------------------------------------
+validate_product () {
+for p in ${product_L}
+do
+	if [ "${v_product}" = "${p}" ]; then
+		DEBUG "product \"${v_product}\" validated"
+		product_desc=$(GETCFG 6 ${rc_NAME}.product.desc:${v_product})
+		product_f3=$(GETCFG 3 ${rc_NAME}.product.desc:${v_product})
+		product_f4=$(GETCFG 4 ${rc_NAME}.product.desc:${v_product})
+		product_f5=$(GETCFG 5 ${rc_NAME}.product.desc:${v_product})
+		[[ "${product_f3}" != "Y" ]] && ERROR "product \"${v_product}\" not licensed !"
+		[[ "${product_f4}" != "Y" ]] && ERROR "product \"${v_product}\" not enabled !"
+		[[ "${product_f5}" != "Y" ]] && ERROR "product \"${v_product}\" not decrypted !"
+		DEBUG "product description is \"${product_desc}\""
+		return 0
+	fi
+done
+[[ "${v_help}" = "Y" ]] && HELP ${rc_NAME}
+ECHO "Valid products : ${product_L}"
+ERROR "Invalid product \"${v_product}\""
+}
+# ------------------------------------------------------------
+assign_classes () {
+DEBUG "Assign classes"
+DEBUG "product = ${v_product}"
+class_L=$(GETCFG 3 ${rc_NAME}.class.list:${v_product})
+DEBUG "class_L = ${class_L}"
+}
+# ------------------------------------------------------------
+validate_class () {
+for c in ${class_L}
+do
+	if [ "${v_class}" = "${c}" ]; then
+		DEBUG "class \"${v_class}\" validated"
+		class_desc=$(GETCFG 7 ${rc_NAME}.class.desc:${v_product}:${v_class})
+		class_f4=$(GETCFG 4 ${rc_NAME}.class.desc:${v_product}:${v_class})
+		class_f5=$(GETCFG 5 ${rc_NAME}.class.desc:${v_product}:${v_class})
+		class_f6=$(GETCFG 6 ${rc_NAME}.class.desc:${v_product}:${v_class})
+		[[ "${class_f4}" != "Y" ]] && ERROR "class \"${v_class}\" not licensed !"
+		[[ "${class_f5}" != "Y" ]] && ERROR "class \"${v_class}\" not enabled !"
+		[[ "${class_f6}" != "Y" ]] && ERROR "class \"${v_class}\" not decrypted !"
+		DEBUG "class description is \"${class_desc}\""
+		return 0
+	fi
+done
+[[ "${v_help}" = "Y" ]] && HELP ${v_product}
+ECHO "Valid classes : ${class_L}"
+ERROR "Invalid class \"${v_class}\""
+}
+# ------------------------------------------------------------
+assign_modules () {
+DEBUG "Assign modules"
+DEBUG "class = ${v_class}"
+module_L=$(GETCFG 4 ${rc_NAME}.module.list:${v_product}:${v_class})
+DEBUG module_L is ${module_L}
+}
+# ------------------------------------------------------------
+validate_module () {
+for m in ${module_L}
+do
+	if [ "${v_module}" = "${m}" ]; then
+		DEBUG "module \"${v_module}\" validated"
+		module_f5=$(GETCFG 5 ${rc_NAME}.module.desc:${v_product}:${v_class}:${v_module})
+		module_f6=$(GETCFG 6 ${rc_NAME}.module.desc:${v_product}:${v_class}:${v_module})
+		module_f7=$(GETCFG 7 ${rc_NAME}.module.desc:${v_product}:${v_class}:${v_module})
+		module_desc=$(GETCFG 9 ${rc_NAME}.module.desc:${v_product}:${v_class}:${v_module})
+		DEBUG "module description is \"${module_desc}\""
+		[[ "${module_f5}" != "Y" ]] && ERROR "module \"${v_module}\" not licensed !"
+		[[ "${module_f6}" != "Y" ]] && ERROR "module \"${v_module}\" not enabled !"
+		[[ "${module_f7}" != "Y" ]] && ERROR "module \"${v_module}\" not decrypted !"
+		return 0
+	fi
+done
+[[ "${v_help}" = "Y" ]] && HELP ${v_product}.${v_class}
+ECHO "product=${v_product}" "class=${v_class}" 
+ECHO "Valid modules : ${module_L}"
+ERROR "Invalid module \"${v_module}\""
+}
+# ------------------------------------------------------------
+INCLIB_c () {
+if [ ! -z $1 ]; then
+	INCLUDE ${SCR_DIR}/${1}.lib.sh
+else
+	INCLUDE ${SCR_DIR}/${v_class}.lib.sh
+fi
+}
+# ------------------------------------------------------------
+include_module_script () {
+INCLUDE ${SCR_DIR}/${v_class}.${v_module}.sh
+}
+# ------------------------------------------------------------
+assign_actions () {
+DEBUG "Assign actions"
+DEBUG "module = ${v_module}"
+DEBUG "action_L = ${action_L}"
+}
+# ------------------------------------------------------------
+validate_action () {
+#DEBUG "action_L: ${action_L}"
+for a in ${action_L}
+do
+	if [ "${v_action}" = "${a}" ]; then
+		DEBUG "action \"${v_action}\" validated"
+		return 0
+	fi
+done
+[[ "${v_help}" = "Y" ]] && HELP ${v_product}.${v_class}.${v_module}
+ECHO "product=${v_product}" "class=${v_class}" "module=${v_module}"
+ECHO "Valid actions : ${action_L}"
+ERROR "Invalid action \"${v_action}\""
+}
+# ------------------------------------------------------------
+validate_function () {
+export v_function=f_${v_module}_${v_action}
+typeset -f ${v_function} > /dev/null
+[[ $? -ne 0 ]] && ERROR "function ${v_function} not defined.!"
+}
+# ------------------------------------------------------------
+log_rc_options () {
+echo "$TIMESTAMP h=${HOSTNAME} p=${v_product} c=${v_class} m=${v_module} a=${v_action} i=${input} r=${v_repeat_count} s=${v_sleep_seconds}" >>${rc_MAST_LOG}
+}
+# ------------------------------------------------------------
+execute_action () {
+[[ "${v_help}" = "Y" ]] && HELP ${v_product}.${v_class}.${v_module}.${v_action}
+DEBUG "Calling ${v_function}"
+while (( $v_repeat_index < $v_repeat_count ))
+do
+	if [[ $v_repeat_index -lt ${v_threads} && $v_repeat_count -gt 1 ]]; then
+		ECHO "THREAD=$v_repeat_index of ${v_function}"
+		${v_function} &
+	else
+		${v_function}
+	fi
+	(( v_repeat_index = v_repeat_index+1 ))
+	sleep ${v_sleep_seconds}
+done
+ret=$?
+ECHO ${cLINE3}
+if [ ${ret} -eq 0 ] ; then
+	ECHO "${rc_NAME} completed successfully"
+	return 0
+else
+	ERROR "${rc_NAME} completed with Errors"
+fi
+}
+# ------------------------------------------------------------
+clean_temp_files () {
+[[ "${rc_CLEAN_TMP}" = "YES" ]] && rm -f ${TMPSQL} ${TMPLOG} ${SQL2LST_LST}
+}
+# ------------------------------------------------------------
+# ############################################################
+# MAIN
+# ############################################################
+typeset -u v_product=${rc_PRODUCT}
+typeset -u v_class=${rc_CLASS}
+typeset -l v_module=${rc_MODULE}
+typeset -l v_action=${rc_ACTION}
+typeset -i v_repeat_index=0
+typeset -i v_repeat_count=1
+typeset -i v_threads=1
+typeset -i v_sleep_seconds=0
+typeset -u v_help=N
+typeset -i v_debug=${rc_DEBUG:=0}
+
+while getopts "p:c:m:a:i:r:s:t:h" opt
+do
+	case $opt in
+	p)v_product=$OPTARG ;;
+	c)v_class=$OPTARG ;;
+	m)v_module=$OPTARG ;;
+	a)v_action=$OPTARG ;;
+	i)input=$OPTARG ;;
+	r)v_repeat_count=$OPTARG ;;
+	s)v_sleep_seconds=$OPTARG ;;
+	t)v_threads=$OPTARG ;;
+	h)v_help=Y ;;
+	*)USAGE ;;
+	esac
+done
+
+DEBUG "p=${v_product} c=${v_class} m=${v_module} a=${v_action} i=${input} r=${v_repeat_count} s=${v_sleep_seconds}"
+
+assign_products
+validate_product
+assign_classes
+validate_class
+assign_modules
+validate_module
+include_module_script
+assign_actions
+validate_action
+validate_function 
+log_rc_options 
+execute_action
+clean_temp_files
+exit $?
+#
+# ############################################################
+# end of script
+# ############################################################
