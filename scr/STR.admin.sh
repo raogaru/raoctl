@@ -14,11 +14,7 @@ needed_archives,,List_purgeable_archive_logs \
 purge,,Purge_Archives \
 "
 # ------------------------------------------------------------
-# Module specific environment variables
-STREAMS_CONF=${CFG_DIR}/streams.cfg
-STRLOG=${LOG_DIR}/streams_config.log
-STRADM=ADM
-v_debug=0
+INCLIB_c
 # ------------------------------------------------------------
 f_admin_needed_archives () {
 SQLQRY "SELECT r.CONSUMER_NAME, max(r.sequence#) purge_until_seq FROM DBA_REGISTERED_ARCHIVED_LOG r, DBA_CAPTURE c WHERE r.CONSUMER_NAME = c.CAPTURE_NAME and r.next_scn < c.required_checkpoint_scn group by r.consumer_name;"

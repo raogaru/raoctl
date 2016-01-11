@@ -11,6 +11,8 @@ STRDBA_PWD=${rc_STREAMS_DBA_PWD:="DBAPassword"}
 #
 STRDBO=${rc_STREAMS_DBO_USR:="RAO"}
 STRDBO_PWD=${rc_STREAMS_DBO_PWD:="SchemaPassword"}
+rc_SHOW_LINE="NO"
+rc_SHOW_SQL="NO"
 # ------------------------------------------------------------
 # Connect to SQLPLUS and execute script
 STREXEC () {  #1-user 2=password 3=SID 4=sqlfile
@@ -26,6 +28,8 @@ else
 fi
 #echo Executing SQL $SQLFILE as $constr
 cat $SQLFILE >> $STRLOG
+[[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
+[[ "${rc_SHOW_SQL}" != "NO" ]] && cat ${TMPSQL}
 ECHO "-- ${cLINE5}" >> $STRLOG
 export ORACLE_SID=$3
 ${ORACLE_HOME}/bin/sqlplus -s /nolog <<-EOFsql
@@ -44,6 +48,6 @@ SQLNEWF
 SQLLINE "set echo off feedback off pause off pagesize 0 heading on "
 SQLLINE "set verify off linesize 500 term on trimspool on"
 SQLLINE "$*"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------

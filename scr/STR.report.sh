@@ -15,43 +15,13 @@ all,None,Report_all \
 diag,None,Report_Diagnostic Info \
 "
 # ------------------------------------------------------------
-# Module specific environment variables
-STREAMS_CONF=${CFG_DIR}/streams.cfg
-STRLOG=${LOG_DIR}/streams_setup.log
-STRADM=ADM
-v_debug=0
+INCLIB_c
 # ------------------------------------------------------------
 # REPLICATION SITES CONFIGURATION INFO in MultiMaster.cfg
 #STREAM_SITES=US,EU,AP
 #SITE_INFO_US=DBO:DB50:DB50
 #SITE_INFO_EU=DBO:DB51:DB51
 #SITE_INFO_AP=DBO:DB52:DB52
-# ------------------------------------------------------------
-# Connect to SQLPLUS and execute script
-STREXEC () {  #1-user 2=password 3=SID 4=sqlfile
-if [[ $1 = "as" && $2 = "sysdba" ]] ; then
-	constr="/ as sysdba"
-else
-	constr="${1}/${2}@${3}"
-fi
-if [[ -z $4 ]]; then
-	SQLFILE=${TMPSQL}
-else
-	SQLFILE=$4
-fi
-#echo Executing SQL $SQLFILE as $constr
-cat $SQLFILE >> $STRLOG
-export ORACLE_SID=$3
-${ORACLE_HOME}/bin/sqlplus -s /nolog <<-EOFsql
-connect $constr
---show user	
-set echo off feedback off pagesi 0 termout on linesi 1000 trimspool on
-set serveroutput on size 10000
-spool ${TMPLOG} append
-@${SQLFILE}
-spool off
-EOFsql
-}
 # ------------------------------------------------------------
 TestConnection () {
 DEBUG TestConnection to ${ON_SID}
@@ -61,25 +31,24 @@ STREXEC as sysdba ${ON_SID}
 }
 # ------------------------------------------------------------
 ReadConfigInfo () {
-set -A SITEA $(grep "^STREAM_SITES=" ${STREAMS_CONF} | cut -f2 -d"=" | sed -e 's/,/ /g')
-
+[[ ! -f ${STREAMS_CONF} ]] && ERROR "${STREAMS_CONF} config file not found !!!"
+site_A=$(grep "^STREAM_SITES=" ${STREAMS_CONF} | cut -f2 -d"=" | sed -e 's/,/ /g')
+SITEA=(${site_A})		#bash shell
+#set -A SITEA ${site_A}		#ksh shell
+#set -A SIDA
+#set -A DBOA
 i=0
-set -A SIDA
-set -A DBOA
-set -A TNSA
 for SITE in ${SITEA[*]}
 do
 	#DEBUG ========== SITE:${SITE}:
 	X=$(grep "^SITE_INFO_${SITE}" ${STREAMS_CONF} |cut -f2 -d"=")
 	DBOA[$i]=$(echo $X|cut -f1 -d":")
 	SIDA[$i]=$(echo $X|cut -f2 -d":")
-	TNSA[$i]=$(echo $X|cut -f3 -d":")
 	#echo X=${X}
-	DEBUG SITE=${SITEA[$i]}:SID=${SIDA[$i]}:DBO=${DBOA[$i]}:TNS=${TNSA[$i]}
+	DEBUG SITE=${SITEA[$i]}:SID=${SIDA[$i]}:DBO=${DBOA[$i]}
 	(( i = i+1 ))
 done
 }
-
 # ------------------------------------------------------------
 ReportStreams () {
 ACTION=${1}

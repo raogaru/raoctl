@@ -13,11 +13,7 @@ usage_L=" \
 capture,,Monitor_Capture \
 "
 # ------------------------------------------------------------
-# Module specific environment variables
-STREAMS_CONF=${CFG_DIR}/streams.cfg
-STRLOG=${LOG_DIR}/streams_config.log
-STRADM=ADM
-v_debug=0
+INCLIB_c
 # ------------------------------------------------------------
 f_diag_capture () {
 SQLQRY "select 'On '||source_database||' capture '||capture_name||' in '||status||' status with '||error_number||error_message from dba_capture where status in ('ABORTED','DISABLED');"

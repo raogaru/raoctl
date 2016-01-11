@@ -23,38 +23,7 @@ add,rule_name:rule_set_name,Add_Rule_to_RuleSet \
 remove,rule_name:rule_set_name,Remove_Rule_from_RuleSet \
 "
 # ------------------------------------------------------------
-# Module specific environment variables
-STREAMS_CONF=${CFG_DIR}/streams.cfg
-STRLOG=${LOG_DIR}/streams_config.log
-STRADM=ADM
-v_debug=0
-# ------------------------------------------------------------
-# Connect to SQLPLUS and execute script
-STREXEC () {  #1-user 2=password 3=SID 4=sqlfile
-if [[ $1 = "as" && $2 = "sysdba" ]] ; then
-	constr="/ as sysdba"
-else
-	constr="${1}/${2}@${3}"
-fi
-if [[ -z $4 ]]; then
-	SQLFILE=${TMPSQL}
-else
-	SQLFILE=$4
-fi
-#echo Executing SQL $SQLFILE as $constr
-cat $SQLFILE >> $STRLOG
-ECHO "-- ${cLINE5}" >> $STRLOG
-export ORACLE_SID=$3
-${ORACLE_HOME}/bin/sqlplus -s /nolog <<-EOFsql
-connect $constr
---show user	
-set echo off feedback off pagesi 0 termout on linesi 1000 trimspool on
-set serveroutput on size 10000
-spool ${TMPLOG} append
-@${SQLFILE}
-spool off
-EOFsql
-}
+INCLIB_c
 # ------------------------------------------------------------
 DBMS_RULE_ADM (){
 vLine="$*"
