@@ -3,7 +3,7 @@
 # ############################################################
 # ------------------------------------------------------------
 # STREAMS CONFIG actions
-action_L1="all_phases phase1 phase2 phase3 phase4 phase5 phase6 phase7 rmdmlh  "
+action_L1="all_phases config phase1 phase2 phase3 phase4 phase5 phase6 phase7 rmdmlh  "
 action_L2="test1 test2 test3  "
 action_L3="start stop restart delete1 delete report "
 action_L="$action_L1 $action_L2 $action_L3"
@@ -11,6 +11,7 @@ action_L="$action_L1 $action_L2 $action_L3"
 # USAGE DATA
 usage_L=" \
 all_phases,None,Phase1_Setup_Streams_IDs \
+config,None,Phase0_Read_Config \
 phase1,None,Phase1_Setup_Streams_IDs \
 phase2,None,Phase2_Setup_DB_Links \
 phase3,None,Phase3_Setup_Rules \
@@ -30,10 +31,9 @@ diag,None,Diag_streams_config \
 "
 # ------------------------------------------------------------
 # Module specific environment variables
-STREAMS_CONF=${CFG_DIR}/streams.cfg
-STRLOG=${LOG_DIR}/streams_config.log
-STRADM=ADM
-v_debug=0
+v_debug=1
+# ------------------------------------------------------------
+INCLIB_c
 # ------------------------------------------------------------
 # REPLICATION SITES CONFIGURATION INFO in MultiMaster.cfg
 #STREAM_SITES:SMS1,SMS2,SMS3
@@ -42,60 +42,32 @@ v_debug=0
 #SITE_INFO_SMS2=SMS:SMS2
 #SITE_INFO_SMS3=SMS:SMS3
 # ------------------------------------------------------------
-# Connect to SQLPLUS and execute script
-STREXEC () {  #1-user 2=password 3=SID 4=sqlfile
-if [[ $1 = "as" && $2 = "sysdba" ]] ; then
-	constr="/ as sysdba"
-else
-	constr="${1}/${2}@${3}"
-fi
-if [[ -z $4 ]]; then
-	SQLFILE=${TMPSQL}
-else
-	SQLFILE=$4
-fi
-#echo Executing SQL $SQLFILE as $constr
-cat $SQLFILE >> $STRLOG
-ECHO "-- ${cLINE5}" >> $STRLOG
-export ORACLE_SID=$3
-${ORACLE_HOME}/bin/sqlplus -s /nolog <<-EOFsql
-connect $constr
---show user	
-set echo off feedback off pagesi 0 termout on linesi 1000 trimspool on
-set serveroutput on size 10000
-spool ${TMPLOG} append
-@${SQLFILE}
-spool off
-EOFsql
-}
-# ------------------------------------------------------------
-STRQRY () { 
-SQLNEWF
-SQLLINE "set echo off feedback off pause off pagesize 0 heading on "
-SQLLINE "set verify off linesize 500 term on trimspool on"
-SQLLINE "$*"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
-}
-# ------------------------------------------------------------
 TestSysConnection () {
 DEBUG Test SYS Connection on ${ON_SID}
 SQLNEWF
-SQLLINE "select user from dual;"
+SQLLINE "select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')||user from dual;"
 STREXEC as sysdba ${ON_SID} 
 }
 # ------------------------------------------------------------
-TestDboConnection () {
-DEBUG Test DBO Connection on ${ON_SID}
+TestDbaConnection () {
+DEBUG Test DBA Connection on ${ON_SID}
 SQLNEWF
-SQLLINE "select user from dual;"
-STREXEC ${ON_DBO} ${ON_DBO} ${ON_SID}
+SQLLINE "select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')||user from dual;"
+STREXEC ${STRDBA} ${STRDBA_PWD} ${ON_SID} 
 }
 # ------------------------------------------------------------
 TestAdmConnection () {
 DEBUG Test Stream Admin Connection on ${ON_SID}
 SQLNEWF
-SQLLINE "select user from dual;"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+SQLLINE "select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')||user from dual;"
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
+}
+# ------------------------------------------------------------
+TestDboConnection () {
+DEBUG Test DBO Connection on ${ON_SID}
+SQLNEWF
+SQLLINE "select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')||user from dual;"
+STREXEC ${ON_DBO} ${STRDBO_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 TestDblinkConnection () {
@@ -103,30 +75,30 @@ DEBUG Test DB Link Connection on ${ON_SID} TO ${TO_SID}
 SQLNEWF
 SQLLINE "select 'Connection From:'||user||'@'||global_name from global_name;"
 SQLLINE "select 'Connection To:'||user||'@'||global_name from global_name@${TO_SID};"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 CreateSchemaUser () {
 DEBUG CreateSchemaUser ${ON_DBO} on ${ON_SID}
 SQLNEWF
-SQLLINE "create user ${ON_DBO} identified by ${ON_DBO} "
-SQLLINE "default tablespace itusa temporary tablespace temp quota unlimited on itusa;"
+SQLLINE "create user ${ON_DBO} identified by ${STRDBO_PWD} "
+SQLLINE "default tablespace raogaru temporary tablespace temp quota unlimited on raogaru;"
 SQLLINE "grant create session, dba to ${ON_DBO};"
 SQLLINE "grant execute on dbms_flashback to ${ON_DBO};"
 #SQLLINE "grant select on v\$database to ${ON_DBO};"
-STREXEC as sysdba ${ON_SID}
+STREXEC ${STRDBA} ${STRDBA_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 CreateAdminUser () { 
 DEBUG CreateAdminUser ${STRADM} on ${ON_SID}
 SQLNEWF
-SQLLINE "create user ${STRADM} identified by ${STRADM} "
-SQLLINE "default tablespace itusa temporary tablespace temp quota unlimited on itusa;"
+SQLLINE "create user ${STRADM} identified by ${STRADM_PWD} "
+SQLLINE "default tablespace raogaru temporary tablespace temp quota unlimited on raogaru;"
 SQLLINE "grant create session,dba,select_catalog_role to ${STRADM};"
 SQLLINE "exec dbms_streams_auth.grant_admin_privilege(grantee => '${STRADM}');"
 SQLLINE "grant execute on dbms_pipe to ${STRADM};" # needed for debugging
 SQLLINE "grant execute on dbms_lock to ${STRADM};" # needed for utl_spadv (stream pool advisor)
-STREXEC as sysdba ${ON_SID}
+STREXEC ${STRDBA} ${STRDBA_PWD} ${ON_SID}
 }
 
 # ------------------------------------------------------------
@@ -135,14 +107,14 @@ DEBUG EnableSupplementalLogging on ${ON_SID}
 SQLNEWF
 SQLLINE "alter database add supplemental log data;"
 #SQLLINE "select supplemental_log_data_min FROM v$\database;"
-STREXEC as sysdba ${ON_SID}
+STREXEC ${STRDBA} ${STRDBA_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 GetFlashbackSCN () {
 ON_SID=${1}
 SQLNEWF
 SQLLINE "select dbms_flashback.get_system_change_number from dual;"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 SetSchemaInstantiationSCN () {
@@ -156,7 +128,7 @@ SQLLINE "   instantiation_scn => ${START_SCN},"
 SQLLINE "   recursive => true);"
 SQLLINE "END;"
 SQLLINE "/"
-STREXEC ${STRADM} ${STRADM} ${TO_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${TO_SID}
 }
 # ------------------------------------------------------------
 CreateSchemaObjects () {
@@ -167,7 +139,7 @@ SQLLINE "create table ${ON_DBO}.hb ("
 SQLLINE "source_db varchar2(8), target_db varchar2(8),"
 SQLLINE "source_scn number, target_scn number,"
 SQLLINE "source_time timestamp, target_time timestamp, id number(8)) "
-SQLLINE "tablespace itusa;"
+SQLLINE "tablespace raogaru;"
 SQLLINE "alter table ${ON_DBO}.hb modify (source_db default '${ON_SID}');"
 SQLLINE "alter table ${ON_DBO}.hb add constraint hb_pk primary key (source_db, target_db);"
 #SQLLINE "alter table ${ON_DBO}.hb add supplemental log data (all) columns;"
@@ -177,18 +149,19 @@ SQLLINE "alter table ${ON_DBO}.hb add supplemental log data (primary key) column
 #SQLLINE "alter table ${ON_DBO}.xxx add supplemental log group (first unique index columns) always;"
 #SQLLINE "alter table ${ON_DBO}.xxx add supplemental log data (primary key, foreign key, unique) columns;"
 SQLLINE "grant all on ${ON_DBO}.hb to ${STRADM};"
+SQLLINE "create public synonym hb for ${ON_DBO}.hb;"
 
 #SQLLINE "create table ${ON_DBO}.log (db varchar2(8), usr varchar2(30), obj varchar2(30), operation varchar2(30), scn1 number, txt varchar2(60));"
 
-STREXEC ${ON_DBO} ${ON_DBO} ${ON_SID}
+STREXEC ${ON_DBO} ${STRDBO_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 HeartBeatInsert () {
 DEBUG HeartBeatInsert source_db ${ON_SID} target_db ${TO_SID}
 SQLNEWF
-SQLLINE "select user from dual;"
+SQLLINE "select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')||user from dual;"
 SQLLINE "insert into ${ON_DBO}.hb values ('${ON_SID}','${TO_SID}', dbms_flashback.get_system_change_number, null, sysdate, null, ${ON_DBO}.seq.nextval);"
-STREXEC ${ON_DBO} ${ON_DBO} ${ON_SID}
+STREXEC ${ON_DBO} ${STRDBO_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 HeartBeatMerge () {
@@ -199,25 +172,25 @@ SQLLINE "on (l.source_db=r.source_db and l.target_db=r.target_db)"
 SQLLINE "when not matched then"
 SQLLINE "    INSERT (source_db, target_db, source_scn, source_time, target_scn, target_time,id)"
 SQLLINE "    VALUES (r.source_db, r.target_db, r.source_scn, r.source_time, r.target_scn, r.target_time, r.id);"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
-StreadmAdminObjects() {
-DEBUG StreadmAdminObjects on ${ON_SID}
+StreamAdminObjects() {
+DEBUG StreamAdminObjects on ${ON_SID}
 SQLNEWF
 SQLLINE "@hb_upd.sql"
 SQLLINE "@stradmin.pks"
 SQLLINE "@stradmin.pkb"
 SQLLINE "@strdebug.pks"
 SQLLINE "@strdebug.pkb"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 HeartBeatUpdateJob () {
 DEBUG HeartBeatUpdateJob on ${ON_SID}
 SQLNEWF
 SQLLINE "@hb_job.sql"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 HeartBeatDmlHandProc () {
@@ -225,7 +198,7 @@ DEBUG HeartBeatDmlHandProc on ${TO_SID}
 SQLNEWF
 SQLLINE "@hb_dml_h.sql"
 #SQLLINE "@txn_dml_h.sql"
-STREXEC ${TO_DBO} ${TO_DBO} ${TO_SID}
+STREXEC ${TO_DBO} ${STRDBO_PWD} ${TO_SID}
 }
 # ------------------------------------------------------------
 HeartBeatDmlHandSet () {
@@ -233,42 +206,42 @@ DEBUG HeartBeatDmlHandSet on ${TO_SID}
 SQLNEWF
 #SQLLINE "@hb_dml_h.sql"
 DBMS_APPLY_ADM "set_dml_handler( object_name=> '${TO_DBO}.HB', object_type=> 'TABLE', operation_name=> 'UPDATE', error_handler=> FALSE, user_procedure=> '${TO_DBO}.HB_DML_H', apply_database_link=> NULL, apply_name=> '${APPLY_NAME}')"
-STREXEC ${STRADM} ${STRADM} ${TO_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${TO_SID}
 }
 # ------------------------------------------------------------
 HeartBeatDmlHandUnSet () {
 DEBUG HeartBeatDmlHandUnSet on ${TO_SID}
 SQLNEWF
 DBMS_APPLY_ADM "set_dml_handler( object_name=> '${TO_DBO}.HB', object_type=> 'TABLE', operation_name=> 'UPDATE', error_handler=> FALSE, user_procedure=> NULL, apply_database_link=> NULL, apply_name=> '${APPLY_NAME}')"
-STREXEC ${STRADM} ${STRADM} ${TO_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${TO_SID}
 }
 # ------------------------------------------------------------
 CreateDatabaseLink () { 
 DEBUG CreateDatabaseLink ${TO_SITE} on ${ON_SID} to ${TO_SID}
 SQLNEWF
-SQLLINE "create database link ${TO_SITE} connect to ${STRADM} identified by ${STRADM} using '${TO_SID}';"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+SQLLINE "create database link ${TO_SITE} connect to ${STRADM} identified by ${STRADM_PWD} using '${TO_SID}';"
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 DBMS_CAPTURE_ADM (){
 vLine="$*"
 SQLNEWF
 SQLLINE "exec dbms_capture_adm.${vLine};"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 DBMS_APPLY_ADM (){
 vLine="$*"
 SQLNEWF
 SQLLINE "exec dbms_apply_adm.${vLine};"
-STREXEC ${STRADM} ${STRADM} ${TO_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${TO_SID}
 }
 # ------------------------------------------------------------
 DBMS_PROPAGATION_ADM (){
 vLine="$*"
 SQLNEWF
 SQLLINE "exec dbms_propagation_adm.${vLine};"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 DBMS_STREAMS_ADM (){
@@ -276,7 +249,7 @@ vSID="$1"
 vLine="$2"
 SQLNEWF
 SQLLINE "exec dbms_streams_adm.${vLine};"
-STREXEC ${STRADM} ${STRADM} ${vSID}
+STREXEC ${STRADM} ${STRADM_PWD} ${vSID}
 }
 # ------------------------------------------------------------
 DBMS_RULE_ADM (){
@@ -284,7 +257,7 @@ vSID="$1"
 vLine="$2"
 SQLNEWF
 SQLLINE "exec dbms_rule_adm.${vLine};"
-STREXEC ${STRADM} ${STRADM} ${vSID}
+STREXEC ${STRADM} ${STRADM_PWD} ${vSID}
 }
 # ============================================================
 # RULE FUNCTIONS
@@ -356,7 +329,7 @@ SQLLINE "   queue_name   => '${CAPTURE_QUEUE_NAME}',"
 SQLLINE "   queue_user   => '${STRADM}');"
 SQLLINE "END;"
 SQLLINE "/"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 CreateCapture () {
@@ -414,7 +387,7 @@ SQLLINE "   include_ddl    =>TRUE,"
 SQLLINE "   source_database=>'${ON_SID}');"
 SQLLINE "END;"
 SQLLINE "/"
-STREXEC ${STRADM} ${STRADM} ${SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${SID}
 }
 # ============================================================
 # APPLY FUNCTIONS
@@ -430,7 +403,7 @@ SQLLINE "   queue_name   => '${APPLY_QUEUE_NAME}',"
 SQLLINE "   queue_user   => '${STRADM}');"
 SQLLINE "END;"
 SQLLINE "/"
-STREXEC ${STRADM} ${STRADM} ${TO_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${TO_SID}
 }
 # ------------------------------------------------------------
 CreateApply () {
@@ -510,29 +483,31 @@ RemoveStreams () {
 DEBUG RemoveStreams from ${ON_SID}
 SQLNEWF
 SQLLINE "exec dbms_streams_adm.remove_streams_configuration;"
-STREXEC ${STRADM} ${STRADM} ${ON_SID}
+STREXEC ${STRADM} ${STRADM_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 DropSchemaUser () {
 DEBUG DropSchemaUser ${ON_DBO}
 SQLNEWF
 SQLLINE "drop user ${ON_DBO} cascade;"
-STREXEC as sysdba ${ON_SID}
+STREXEC ${STRDBA} ${STRDBA_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 DropStreamAdminUser () {
 DEBUG DropStreamAdminUser on ${ON_SID}
 SQLNEWF
 SQLLINE "drop user ${STRADM} cascade;"
-STREXEC as sysdba ${ON_SID}
+STREXEC ${STRDBA} ${STRDBA_PWD} ${ON_SID}
 }
 # ------------------------------------------------------------
 ReadConfigInfo () {
 [[ ! -f ${STREAMS_CONF} ]] && ERROR "${STREAMS_CONF} config file not found !!!"
-set -A SITEA $(grep "^STREAM_SITES=" ${STREAMS_CONF} | cut -f2 -d"=" | sed -e 's/,/ /g')
+site_A=$(grep "^STREAM_SITES=" ${STREAMS_CONF} | cut -f2 -d"=" | sed -e 's/,/ /g')
+SITEA=(${site_A})		#bash shell
+#set -A SITEA ${site_A}		#ksh shell
+#set -A SIDA
+#set -A DBOA
 i=0
-set -A SIDA
-set -A DBOA
 for SITE in ${SITEA[*]}
 do
 	#DEBUG ========== SITE:${SITE}:
@@ -544,7 +519,18 @@ do
 	(( i = i+1 ))
 done
 }
-
+# ------------------------------------------------------------
+ShowConfigInfo () {
+i=0
+for SITE in ${SITEA[*]}
+do
+	ECHO "SITE=${SITEA[$i]}    :    SID=${SIDA[$i]}    :    DBO=${DBOA[$i]}"
+	(( i = i+1 ))
+done
+ECHO "DBA User is ${STRDBA} ${STRDBA_PWD}"
+ECHO "ADM User is ${STRADM} ${STRADM_PWD}"
+ECHO "DBO User is ${STRDBO} ${STRDBO_PWD}"
+}
 # ------------------------------------------------------------
 SetupStreams () {
 ACTION=${1}
@@ -560,10 +546,11 @@ do
 	ECHO ${cLINE1}
 	if [ "${ACTION}" = "test1" ]; then
 		TestSysConnection
+		TestDbaConnection
 		TestDboConnection
 		TestAdmConnection
 	fi
-	if [ "${ACTION}" = "test2" ]; then
+	if [ "${ACTION}" = "test3" ]; then
 		DEBUG "Captures in disabled state"
 		STRQRY "select 'On '||source_database||' capture '||capture_name||' in '||status||' status' from dba_capture where status='DISABLED';"
 		DEBUG "Captures in aborted state"
@@ -574,7 +561,7 @@ do
 		STRQRY "select 'On '||source_database||' capture '||capture_name||' in '||status||' status' from dba_capture where status='DISABLED';"
 	fi
 	if [ "${ACTION}" = "phase1" ]; then
-		TestSysConnection
+		TestDbaConnection
 		CreateSchemaUser
 		CreateAdminUser
 		EnableSupplementalLogging
@@ -614,13 +601,13 @@ do
 			ECHO "On site ${ON_SITE} to site ${TO_SITE}"
 			ECHO ${cLINE2}
 		#RAO2
-			if [ "${ACTION}" = "test1" ]; then
+			if [ "${ACTION}" = "test2" ]; then
 				TestDblinkConnection
 			fi
 			if [ "${ACTION}" = "phase2" ]; then
 				CreateDatabaseLink 
 				TestDblinkConnection
-				StreadmAdminObjects
+				StreamAdminObjects
 				HeartBeatUpdateJob
 			fi
 			if [ "${ACTION}" = "phase3" ]; then
@@ -760,7 +747,7 @@ do
 		(( j = j+1 ))
 	done
 	if [ "${ACTION}" = "delete" ]; then
-		TestSysConnection
+		TestDbaConnection
 		RemoveStreams
 		DropSchemaUser
 		DropStreamAdminUser
@@ -784,6 +771,11 @@ f_config_common phase4
 #f_config_common phase5
 f_config_common phase6
 #f_config_common phase7
+}
+# ------------------------------------------------------------
+f_config_config () {
+ReadConfigInfo
+ShowConfigInfo
 }
 # ------------------------------------------------------------
 f_config_phase1 () {
