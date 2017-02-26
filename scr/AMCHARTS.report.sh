@@ -4,7 +4,7 @@
 # ------------------------------------------------------------
 # AMCHARTS CONFIG actions
 action_L1="sql csv json cmd "
-action_L2=" "
+action_L2="default "
 action_L3=" "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
@@ -36,10 +36,9 @@ rc_CHART_HTML=${RPT_DIR}/r.html
 CollectDataFromDB () {
 DEBUG "Collect Graph Data from DB - started"
 v_sql_file=${1}
-ECHO v_sqlfile=$v_sqlfile
+ECHO "SQL File is ${v_sql_file}"
 SQLNEWF 
 SQLLINE "set pagesi 0 linesi 2000 trims on echo off heading off feedback off verify off termout on serveroutput on size 10000"
-#SQLLINE "@chart_${rc_CHART_TYPE}.sql"
 SQLLINE "@${v_sql_file}"
 SQLEXEC > ${TMPDAT}
 DEBUG "Collect Graph Data from DB - completed"
@@ -48,10 +47,11 @@ DEBUG "Graph data CSV file ${TMPDAT}"
 # ------------------------------------------------------------
 ConvertToJsonFormat () {
 DEBUG "Convert CSV data to Json format - started"
-v_dat_file=${1}
+v_csv_file=${1}
+ECHO "CSV File is ${v_csv_file}"
 r_num=0
 r_comma=" "
-cat ${v_dat_file}| while read x_input_data
+cat ${v_csv_file}| while read x_input_data
 do
 	[[ $r_num -gt 0 ]] && r_comma=","
 	echo -n "${r_comma}{"
@@ -75,13 +75,15 @@ DEBUG "chartData file is ${TMPJSON}"
 PrepareAmChartsHtml () {
 DEBUG "Use template and insert core data - started"
 v_json_file=${1}
-cat ${rc_CHART_TEMPLATE_DIR}/${rc_CHART_TYPE}.html.tem | \
-	sed -e "/RAOGARU_DEVOPS_AMCHARTS_DATA_BEGIN/r ${v_json_file}" \
+ECHO "JSON File is ${v_json_file}"
+cat ${rc_CHART_TEMPLATE_DIR}/${rc_CHART_TYPE}.html.tem             | \
+	sed -e "/RAOGARU_DEVOPS_AMCHARTS_DATA_BEGIN/r ${v_json_file}"  | \
+	sed -e "s/RAOGARU_DEVOPS_AMCHARTS_X_TITLE/${rc_CHART_X_AXIS}/" | \
+	sed -e "s/RAOGARU_DEVOPS_AMCHARTS_Y_TITLE/${rc_CHART_Y_AXIS}/" | \
+	sed -e "s/RAOGARU_DEVOPS_AMCHARTS_TITLE/${rc_CHART_TITLE}/"      \
 	> ${rc_CHART_HTML}
-	#sed -e "s/RAOGARU_DEVOPS_AMCHARTS_X_TITLE/${rc_CHART_X_AXIS}/" | \
-	#sed -e "s/RAOGARU_DEVOPS_AMCHARTS_Y_TITLE/${rc_CHART_Y_AXIS}/" | \
-	#sed -e "s/RAOGARU_DEVOPS_AMCHARTS_TITLE/${rc_CHART_TITLE}/" | \
 DEBUG "Use template and insert core data - completed"
+DEBUG ""
 }
 # ------------------------------------------------------------
 f_report_common () {
@@ -100,6 +102,18 @@ DEBUG "chartData should contain ${x_input_count} inputs"
 x_input_names=$(echo $x_line|cut -f3 -d":")
 DEBUG "chartData input names are ${x_input_names} "
 
+}
+# ------------------------------------------------------------
+#default processing - for testing graph templates - with test sqls
+f_report_default () {
+INPUT
+rc_CHART_TYPE=${input1}
+f_report_common
+v_sql_file_name=${SQL_DIR}/chart_${input1}.sql
+CollectDataFromDB ${v_sql_file_name}
+ConvertToJsonFormat ${TMPDAT}
+PrepareAmChartsHtml ${TMPJSON}
+ECHO "Report is ${rc_CHART_HTML}"
 }
 # ------------------------------------------------------------
 f_report_sql () {
