@@ -32,8 +32,8 @@ set_expr,Set_redaction_policy_conditional_expression \
 v_debug=0
 # ------------------------------------------------------------
 # Set Local variables
-raoctl_SET_CONTAINER=${raoctl_SET_CONTAINER:=pdb1}
-SQLPLUS_LINE_1="alter session set container=${raoctl_SET_CONTAINER};"
+rc_SET_CONTAINER=${rc_SET_CONTAINER:=pdb1}
+SQLPLUS_LINE_1="alter session set container=${rc_SET_CONTAINER};"
 # ------------------------------------------------------------
 REDACT_p () {
 vLine="$*"
@@ -42,7 +42,7 @@ SQLLINE "exec dbms_redact.${vLine};"
 SQLEXEC
 }
 # ------------------------------------------------------------
-R_SCHEMA=${raoctl_REDACT_SCHEMA:=DBSNMP} 
+R_SCHEMA=${rc_REDACT_SCHEMA:=DBSNMP} 
 # ------------------------------------------------------------
 REDACT_POLICY () {
 REDACT_p "${1}(object_schema=>upper('${R_SCHEMA}'),object_name=>upper('${2}'), policy_name=>upper('${R_SCHEMA}_${2}'))"
