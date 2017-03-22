@@ -7,8 +7,7 @@ action_L1="create delete list "
 action_L2="desc priv "
 action_L3="roles users"
 action_L="$action_L1 $action_L2 $action_L3 "
-
- ------------------------------------------------------------
+#------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
 create,role_name,Create_OEM_Role \

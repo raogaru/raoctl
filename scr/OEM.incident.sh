@@ -1,5 +1,5 @@
 # ############################################################
-# OEM INCIDENT FUNCTIONS - Oracle Enterprise Manager Configuration
+# OEM INCIDENT FUNCTIONS - Oracle Enterprise Manager Incident Management
 # ############################################################
 # ------------------------------------------------------------
 # OEM INCIDENT actions

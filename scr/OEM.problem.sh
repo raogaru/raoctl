@@ -1,5 +1,5 @@
 # ############################################################
-# OEM PROBLEM FUNCTIONS - Oracle Enterprise Manager Configuration
+# OEM PROBLEM FUNCTIONS - Oracle Enterprise Manager Problem Management
 # ############################################################
 # ------------------------------------------------------------
 # OEM PROBLEM actions

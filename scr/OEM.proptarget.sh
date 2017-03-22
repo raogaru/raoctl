@@ -1,21 +1,21 @@
 # ############################################################
-# OEM TENANT FUNCTIONS - Oracle Enterprise Manager Tenants Managment
+# OEM TARGET PROPERTY FUNCTIONS - Oracle Enterprise Manager Target Property Management
 # ############################################################
 # ------------------------------------------------------------
-# OEM TENANT actions
-action_L1="create delete owner active inactive "
-action_L2=""
+# OEM TARGET PROPERTY actions
+action_L1="target_types prop_names "
+action_L2="list add remove set_value "
 action_L3=""
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-create,tenant_name,Create_OEM_Tenant \
-delete,tenant_name,Delete_OEM_Tenant \
-list,none,List_OEM_Tenant \
-owner,tenant_name:new_owner_name,Change_Owner_of_OEM_Tenant \
-active,tenant_name,Activate_OEM_Tenant \
-inactive,tenant_name,Deactivate_OEM_Tenant \
+target_types,none,List_Target_Types \
+prop_names,property_name,List_of_Master_List_of_Property_Names \
+list,target_type,List_Properties_for_Target_Type \
+add,target_type:property_name,Add_Property_to_Target_Type \
+remove,target_type:property_name,Remove_Property_from_Target_Type \
+set_value,property_name,Disable_Target_Property_Master_List_of_Values \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
@@ -29,32 +29,31 @@ EMCLI=${EMCLI_HOME}/emcli
 # Module specific common functions
 
 # ------------------------------------------------------------
-f_tenant_create () {
-INPUT 3
-${EMCLI} create_tenant -name="${input1}" -description="${input2}" -owner_name="${input3}"
+f_proptarget_target_types () {
+${EMCLI} get_target_types
 }
 # ------------------------------------------------------------
-f_tenant_delete () {
+f_proptarget_prop_names () {
+${EMCLI} list_target_property_names
+}
+# ------------------------------------------------------------
+f_proptarget_list () {
 INPUT
-${EMCLI} delete_tenant -name="${input1}"
+${EMCLI} get_target_properties -target_type="${input1}"
 }
 # ------------------------------------------------------------
-f_tenant_list () {
-ECHO "Not coded yet"
-}
-# ------------------------------------------------------------
-f_tenant_owner () {
+f_proptarget_add () {
 INPUT 2
-${EMCLI} update_tenant_owner -name="${input1}" -new_owner="${input2}"
+${EMCLI} add_target_property -target_type="${input1}" -property="${input2}" 
 }
 # ------------------------------------------------------------
-f_tenant_active () {
-INPUT
-${EMCLI} update_tenant_state -name="${input1}" -active="true"
+f_proptarget_remove () {
+INPUT 2
+${EMCLI} remove_target_property -target_type="${input1}" -property="${input2}" 
 }
 # ------------------------------------------------------------
-f_tenant_inactive () {
-INPUT
-${EMCLI} update_tenant_state -name="${input1}" -active="false"
+f_proptarget_set_value () {
+INPUT 2
+${EMCLI} set_target_property_value -target_type="${input1}" -values="${input2}"  -property_records="${input3}"
 }
 # ------------------------------------------------------------

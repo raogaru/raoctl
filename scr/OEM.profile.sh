@@ -1,5 +1,5 @@
 # ############################################################
-# OEM PROFILE FUNCTIONS - Oracle Enterprise Manager Configuration
+# OEM PROFILE FUNCTIONS - Oracle Enterprise Manager Profiles Management
 # ############################################################
 # ------------------------------------------------------------
 # OEM PROFILE actions

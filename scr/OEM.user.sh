@@ -1,5 +1,5 @@
 # ############################################################
-# OEM USER FUNCTIONS - Oracle Enterprise Manager Roles Management
+# OEM USER FUNCTIONS - Oracle Enterprise Manager User Management
 # ############################################################
 # ------------------------------------------------------------
 # OEM USER actions
@@ -7,10 +7,9 @@ action_L1="create delete list "
 action_L2="user_pwd user_type user_roles user_emails user_priv user_profile user_desc user_expire user_unexpire "
 action_L3="user_prevent_pwd_change user_allow_pwd_change user_department user_cost_center user_line_of_business user_contact user_location "
 action_L4="grant_roles revoke_roles grant_privs revoke_privs allocate_quota revoke_quota lock unlock "
-action_L5="
+action_L5=" "
 action_L="$action_L1 $action_L2 $action_L3 $action_L4 $action_L5"
-
- ------------------------------------------------------------
+# ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
 create,user_name,Create_OEM_user \
