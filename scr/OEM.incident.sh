@@ -23,6 +23,7 @@ clear,incident_id_list,Clear_Incidents \
 # ------------------------------------------------------------
 # Global variable overwrites
 EMCLI_HOME=${HOME}/emcli
+EMCLI=${EMCLI_HOME}/emcli
 
 # ------------------------------------------------------------
 # Module specific environment variables
@@ -33,41 +34,41 @@ EMCLI_HOME=${HOME}/emcli
 # ------------------------------------------------------------
 f_incident_add_comment () {
 INPUT 2
-${EMCLI_HOME}/emcli add_comment_to_incident -incident_id="${input1}" -comment="${input2}"
+${EMCLI} add_comment_to_incident -incident_id="${input1}" -comment="${input2}"
 }
 # ------------------------------------------------------------
 f_incident_supress_manual () {
 INPUT
-${EMCLI_HOME}/emcli suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_MANUALLY_REMOVED"
+${EMCLI} suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_MANUALLY_REMOVED"
 }
 # ------------------------------------------------------------
 f_incident_supress_severity () {
 INPUT
-${EMCLI_HOME}/emcli suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_SEVERITY_CHANGE"
+${EMCLI} suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_SEVERITY_CHANGE"
 }
 # ------------------------------------------------------------
 f_incident_supress_yyyymmdd () {
 INPUT 2
-${EMCLI_HOME}/emcli suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_SPECIFIED_DATE" -date="${input2}"
+${EMCLI} suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_SPECIFIED_DATE" -date="${input2}"
 }
 # ------------------------------------------------------------
 f_incident_supress_forever () {
 INPUT
-${EMCLI_HOME}/emcli suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_CLEARED"
+${EMCLI} suppress_incident -incident_id="${input1}" -suppress_type="UNTIL_CLEARED"
 }
 # ------------------------------------------------------------
 f_incident_unsupress () {
 INPUT
-${EMCLI_HOME}/emcli unsuppress_incident -incident_id="${input1}"
+${EMCLI} unsuppress_incident -incident_id="${input1}"
 }
 # ------------------------------------------------------------
 f_incident_clearable () {
 INPUT
-${EMCLI_HOME}/emcli delete_incident_record -incident_number_list="${input1}" -review
+${EMCLI} delete_incident_record -incident_number_list="${input1}" -review
 }
 # ------------------------------------------------------------
 f_incident_clear () {
 INPUT
-${EMCLI_HOME}/emcli delete_incident_record -incident_number_list="${input1}" -force
+${EMCLI} delete_incident_record -incident_number_list="${input1}" -force
 }
 # ------------------------------------------------------------

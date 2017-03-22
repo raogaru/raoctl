@@ -22,6 +22,7 @@ users,users_list,Modify_OEM_Role_Member-Users (Semicolon seperated) \
 # ------------------------------------------------------------
 # Global variable overwrites
 EMCLI_HOME=${HOME}/emcli
+EMCLI=${EMCLI_HOME}/emcli
 
 # ------------------------------------------------------------
 # Module specific environment variables
@@ -32,12 +33,12 @@ EMCLI_HOME=${HOME}/emcli
 # ------------------------------------------------------------
 f_role_create () {
 INPUT
-${EMCLI_HOME}/emcli create_role -name="${input1}"
+${EMCLI} create_role -name="${input1}"
 }
 # ------------------------------------------------------------
 f_role_delete () {
 INPUT
-${EMCLI_HOME}/emcli delete_role -name="${input1}"
+${EMCLI} delete_role -name="${input1}"
 }
 # ------------------------------------------------------------
 f_role_list () {
@@ -46,22 +47,22 @@ ECHO "Not coded yet"
 # ------------------------------------------------------------
 f_role_desc () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_role -name="${input1}" -description="${input2}"
+${EMCLI} modify_role -name="${input1}" -description="${input2}"
 }
 # ------------------------------------------------------------
 f_role_priv () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_role -name="${input1}" -privilege="${input2}"
+${EMCLI} modify_role -name="${input1}" -privilege="${input2}"
 }
 # ------------------------------------------------------------
 f_role_member_roles () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_role -name="${input1}" -roles="${input2}"
+${EMCLI} modify_role -name="${input1}" -roles="${input2}"
 }
 # ------------------------------------------------------------
 f_role_member_users () {
 INPUT 2
 #[-users="user1;user2;..."]
-${EMCLI_HOME}/emcli modify_role -name="${input1}" -users="${input2}"
+${EMCLI} modify_role -name="${input1}" -users="${input2}"
 }
 # ------------------------------------------------------------

@@ -44,6 +44,7 @@ unlock,user_name,Unlock_OEM_User \
 # ------------------------------------------------------------
 # Global variable overwrites
 EMCLI_HOME=${HOME}/emcli
+EMCLI=${EMCLI_HOME}/emcli
 
 # ------------------------------------------------------------
 # Module specific environment variables
@@ -54,12 +55,12 @@ EMCLI_HOME=${HOME}/emcli
 # ------------------------------------------------------------
 f_user_create () {
 INPUT
-${EMCLI_HOME}/emcli create_user -name="${input1}"
+${EMCLI} create_user -name="${input1}"
 }
 # ------------------------------------------------------------
 f_user_delete () {
 INPUT
-${EMCLI_HOME}/emcli delete_user -name="${input1}"
+${EMCLI} delete_user -name="${input1}"
 }
 # ------------------------------------------------------------
 f_user_list () {
@@ -68,123 +69,123 @@ ECHO "Not coded yet"
 # ------------------------------------------------------------
 f_user_user_pwd () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -password="${input2}"
+${EMCLI} modify_user -name="${input1}" -password="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_type () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -type="${input2}"
+${EMCLI} modify_user -name="${input1}" -type="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_roles () {
 INPUT 2
 #[-roles="role1;role2;..."
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -roles="${input2}"
+${EMCLI} modify_user -name="${input1}" -roles="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_emails () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -email="${input2}"
+${EMCLI} modify_user -name="${input1}" -email="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_priv () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -privilege="${input2}"
+${EMCLI} modify_user -name="${input1}" -privilege="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_profile () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -profile="${input2}"
+${EMCLI} modify_user -name="${input1}" -profile="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_desc () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -desc="${input2}"
+${EMCLI} modify_user -name="${input1}" -desc="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_expire () {
 INPUT
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -expired="true"
+${EMCLI} modify_user -name="${input1}" -expired="true"
 }
 # ------------------------------------------------------------
 f_user_user_unexpire () {
 INPUT
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -expired="false"
+${EMCLI} modify_user -name="${input1}" -expired="false"
 }
 # ------------------------------------------------------------
 f_user_user_prevent_pwd_change () {
 INPUT
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -prevent_change_password="true"
+${EMCLI} modify_user -name="${input1}" -prevent_change_password="true"
 }
 # ------------------------------------------------------------
 f_user_user_allow_pwd_change () {
 INPUT
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -prevent_change_password="false"
+${EMCLI} modify_user -name="${input1}" -prevent_change_password="false"
 }
 # ------------------------------------------------------------
 f_user_user_department () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -department="${input2}"
+${EMCLI} modify_user -name="${input1}" -department="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_cost_center () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -cost_center="${input2}"
+${EMCLI} modify_user -name="${input1}" -cost_center="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_line_of_business () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -line_of_business="${input2}"
+${EMCLI} modify_user -name="${input1}" -line_of_business="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_contact () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -contact="${input2}"
+${EMCLI} modify_user -name="${input1}" -contact="${input2}"
 }
 # ------------------------------------------------------------
 f_user_user_location () {
 INPUT 2
-${EMCLI_HOME}/emcli modify_user -name="${input1}" -location="${input2}"
+${EMCLI} modify_user -name="${input1}" -location="${input2}"
 }
 # ------------------------------------------------------------
 f_user_grant_roles () {
 INPUT 2
-${EMCLI_HOME}/emcli grant_roles -name="${input1}" -roles="${input2}"
+${EMCLI} grant_roles -name="${input1}" -roles="${input2}"
 }
 # ------------------------------------------------------------
 f_user_revoke_roles () {
 INPUT 2
-${EMCLI_HOME}/emcli revoke_roles -name="${input1}" -roles="${input2}"
+${EMCLI} revoke_roles -name="${input1}" -roles="${input2}"
 }
 # ------------------------------------------------------------
 f_user_grant_privs () {
 INPUT 2
-${EMCLI_HOME}/emcli grant_privs -name="${input1}" -privilege="${input2}" -grant_all_targets_on_host="yes"
+${EMCLI} grant_privs -name="${input1}" -privilege="${input2}" -grant_all_targets_on_host="yes"
 }
 # ------------------------------------------------------------
 f_user_revoke_privs () {
 INPUT 2
-${EMCLI_HOME}/emcli revoke_privs -name="${input1}" -privilege="${input2}"
+${EMCLI} revoke_privs -name="${input1}" -privilege="${input2}"
 }
 # ------------------------------------------------------------
 f_user_allocate_quota () {
 INPUT 2
-${EMCLI_HOME}/emcli allocate_quota -assignee_name="${input1}" -assignee_type="user" -quota="${input2}"
+${EMCLI} allocate_quota -assignee_name="${input1}" -assignee_type="user" -quota="${input2}"
 }
 # ------------------------------------------------------------
 f_user_revoke_quota () {
 INPUT 2
-${EMCLI_HOME}/emcli revoke_quota -assignee_name="${input1}" -assignee_type="user" -quota="${input2}"
+${EMCLI} revoke_quota -assignee_name="${input1}" -assignee_type="user" -quota="${input2}"
 }
 # ------------------------------------------------------------
 f_user_lock () {
 INPUT
-${EMCLI_HOME}/emcli lock_user_account -name="${input1}"
+${EMCLI} lock_user_account -name="${input1}"
 }
 # ------------------------------------------------------------
 f_user_unlock () {
 INPUT
-${EMCLI_HOME}/emcli lock_user_account -name="${input1}" -unlock
+${EMCLI} lock_user_account -name="${input1}" -unlock
 }
 # ------------------------------------------------------------
 f_user_get_supported_privileges () {

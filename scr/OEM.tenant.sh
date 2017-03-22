@@ -20,6 +20,7 @@ inactive,tenant_name,Deactivate_OEM_Tenant \
 # ------------------------------------------------------------
 # Global variable overwrites
 EMCLI_HOME=${HOME}/emcli
+EMCLI=${EMCLI_HOME}/emcli
 
 # ------------------------------------------------------------
 # Module specific environment variables
@@ -30,12 +31,12 @@ EMCLI_HOME=${HOME}/emcli
 # ------------------------------------------------------------
 f_tenant_create () {
 INPUT 3
-${EMCLI_HOME}/emcli create_tenant -name="${input1}" -description="${input2}" -owner_name="${input3}"
+${EMCLI} create_tenant -name="${input1}" -description="${input2}" -owner_name="${input3}"
 }
 # ------------------------------------------------------------
 f_tenant_delete () {
 INPUT
-${EMCLI_HOME}/emcli delete_tenant -name="${input1}"
+${EMCLI} delete_tenant -name="${input1}"
 }
 # ------------------------------------------------------------
 f_tenant_list () {
@@ -44,16 +45,16 @@ ECHO "Not coded yet"
 # ------------------------------------------------------------
 f_tenant_owner () {
 INPUT 2
-${EMCLI_HOME}/emcli update_tenant_owner -name="${input1}" -new_owner="${input2}"
+${EMCLI} update_tenant_owner -name="${input1}" -new_owner="${input2}"
 }
 # ------------------------------------------------------------
 f_tenant_active () {
 INPUT
-${EMCLI_HOME}/emcli update_tenant_state -name="${input1}" -active="true"
+${EMCLI} update_tenant_state -name="${input1}" -active="true"
 }
 # ------------------------------------------------------------
 f_tenant_inactive () {
 INPUT
-${EMCLI_HOME}/emcli update_tenant_state -name="${input1}" -active="false"
+${EMCLI} update_tenant_state -name="${input1}" -active="false"
 }
 # ------------------------------------------------------------
