@@ -3,10 +3,11 @@
 # ############################################################
 # ------------------------------------------------------------
 # OEM PROBLEM actions
-action_L1="create delete owner active inactive "
-action_L2=""
-action_L3=""
-action_L="$action_L1 $action_L2 $action_L3"
+action_L1="add_comment supress_manual supress_severity supress_yyyymmdd supress_forever unsupress "
+action_L2="list_older notify_older clear_older "
+action_L3="list_for_target notify_for_target clear_for_target "
+action_L4="list_unacknowledged notify_unacknowledged clear_unacknowledged "
+action_L="$action_L1 $action_L2 $action_L3 $action_L4"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
