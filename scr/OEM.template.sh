@@ -3,9 +3,9 @@
 # ############################################################
 # ------------------------------------------------------------
 # OEM TEMPLATE actions
-action_L1="list_all list_for_target_type export export_archive import apply apply_udm"
+action_L1="list_all list_for_target_type export export_archive import "
 action_L2=" "
-action_L3=" "
+action_L3="apply apply_udm apply_replace_metrics apply_copy_flags "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -63,5 +63,15 @@ ${EMCLI} apply_template -name="${input1}"  -targets="${input2}:${input3}"
 f_template_apply_udm () {
 INPUT 4
 ${EMCLI} apply_template -name="${input1}"  -targets="${input2}:${input3}" -input_file= "${input4}"
+}
+# ------------------------------------------------------------
+f_template_apply_replace_metrics () {
+INPUT 4
+${EMCLI} apply_template -name="${input1}"  -targets="${input2}:${input3}" -replace_metrics="${input4}"
+}
+# ------------------------------------------------------------
+f_template_apply_copy_flags () {
+INPUT 4
+${EMCLI} apply_template -name="${input1}"  -targets="${input2}:${input3}" -copy_flags="${input4}"
 }
 # ------------------------------------------------------------
