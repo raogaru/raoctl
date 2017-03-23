@@ -3,7 +3,7 @@
 # ############################################################
 # ------------------------------------------------------------
 # OEM TEMPLATE actions
-action_L1="list_all list_for_target_type export export_archive import apply "
+action_L1="list_all list_for_target_type export export_archive import apply apply_udm"
 action_L2=" "
 action_L3=" "
 action_L="$action_L1 $action_L2 $action_L3"
@@ -15,7 +15,8 @@ list_for_target,target_type,List_OEM_Templates_for_a_Target_Type \
 export,template_name:target_type,Export_OEM_Templates \
 export_archive,template_name:target_type,Export_OEM_Templates_in_ZIP_format \
 import,XML_or_ZIP_file_name,Import_OEM_Templates_from_XML_or_ZIP_file \
-apply,template_name:targets_list,Apply_OEM_Template_to_given_list_of_Targets \
+apply,template_name:target_name:target_type,Apply_OEM_Template_to_given_list_of_Targets \
+apply_udm,template_name:target_name:target_type:file_with_UDM_credentials,Apply_OEM_Template_to_given_list_of_Targets_with_User_Defined_Metrics_Credentials \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
@@ -55,8 +56,12 @@ ${EMCLI} import_template -files="${input1}"
 # ------------------------------------------------------------
 f_template_apply () {
 INPUT
-${EMCLI} apply_template -name="template1"  
--targets="mydb1:oracle_database" 
+${EMCLI} apply_template -name="${input1}"  -targets="${input2}:${input3}" 
   -input_file= "FILE1:/usr/template/apply_udm_credentials.txt"
+}
+# ------------------------------------------------------------
+f_template_apply_udm () {
+INPUT 4
+${EMCLI} apply_template -name="${input1}"  -targets="${input2}:${input3}" -input_file= "${input4}"
 }
 # ------------------------------------------------------------
