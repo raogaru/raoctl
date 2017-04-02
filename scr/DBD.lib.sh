@@ -66,9 +66,14 @@ do
 	# replace underscore with space in search string
 	s=${s//_/ }
 	(( i=i+1 ))
-	#DEBUG "#$i Is it $s"
+	DEBUG "#$i Is it $s"
 	myStr2=${myStr#${s}}
-	[[ "${myStr}" != "${myStr2}" ]] && l_SqlType="${s}" && break
+	if [ "${myStr}" != "${myStr2}" ]; then
+		l_SqlTypeID=${i}
+		l_SqlType="${s}"
+		l_SqlTypeUnderscore=${l_SqlType// /_}
+		break
+	fi
 done
 [[ -z "${l_SqlType}" ]] && ERROR "SQL Type could not be determined ! Is this PLSQL code ?"
 DEBUG "END f_find_sql_type l_SqlType=${l_SqlType}"
@@ -90,30 +95,21 @@ l_SqlObjectName=${l_SqlObjectName%% *}  # remove trailing space and rest of SQL
 DEBUG "END l_SqlObjectName=${l_SqlObjectName}"
 }
 # ------------------------------------------------------------
-f_FindSqlSubType_CREATE_JAVA () {
-	l_SqlSubType="UNKNOWN"
-}
-# ------------------------------------------------------------
 f_FindSqlSubType_generic () {
 v_debug=0
+DEBUG "BEGIN f_FindSqlSubType_generic ${s1}"
+SqlSubtypeCfgFile=${rc_SQLRULE_SQLSUBTYPE_CFG_DIR}/${l_SqlTypeUnderscore}.cfg
+DEBUG "CFG#${sNum} ${SqlSubtypeCfgFile}"
+if [ -f ${SqlSubtypeCfgFile} ]; then
+	cat ${SqlSubtypeCfgFile} | grep -v "^#" | grep -v "^$" >  ${TMPCFG}.${sNum}
+else
+	return
+fi
+DEBUG "subsqltype config file is ${TMPCFG}.${sNum}"
+
 s1=${l_SqlType}
-l_SqlTypeUnderscore=${l_SqlType// /_}
 l_SqlSubType=""		
 l_SqlSubCfgLineNum=0
-rc_SQLRULE_SQLSUBTYPE_CFG_2=${CFG_DIR}/${v_class}.${v_module}.sqlsubtype.${l_SqlTypeUnderscore}.cfg
-DEBUG "BEGIN f_FindSqlSubType_generic ${s1}"
-
-#grep SQL-Type clauses only
-cat ${rc_SQLRULE_SQLSUBTYPE_CFG} | grep -v "^#" | grep -v "^$" | grep ":${l_SqlType}:" >  ${TMPCFG}.${sNum}
-
-# add sql sub type rules from its config file, if one exists
-DEBUG "CFG#${sNum} ${rc_SQLRULE_SQLSUBTYPE_CFG_2}"
-[[ -f ${rc_SQLRULE_SQLSUBTYPE_CFG_2} ]] && cat ${rc_SQLRULE_SQLSUBTYPE_CFG_2} | grep -v "^#" | grep -v "^$" >>  ${TMPCFG}.${sNum}
-
-#DEBUG "subsqltype config file is ${TMPCFG}.${sNum}"
-#ls -l ${TMPCFG}.${sNum}
-#cat ${TMPCFG}.${sNum}
-
 # read sub sql type config line
 while read -r l_SubTypeCfg
 do
@@ -194,7 +190,7 @@ do
 done < ${TMPCFG}.${sNum}
 
 [[ -z "${l_SqlSubType}" ]] && l_SqlSubType="UNKNOWN"
-#TODO Introduce l_SqlSubTypeID in subtype config file
+(( l_SqlSubTypeID = ${l_SqlTypeID}*100 + 100000 + ${l_SqlSubCfgLineNum} ))
 DEBUG "Sql Sub Type Line# ${l_SqlSubCfgLineNum} : ${l_SqlSubType}"
 DEBUG "ENDING f_FindSqlSubType_generic ${s1}"
 v_debug=0
@@ -216,7 +212,6 @@ fi
 DEBUG "ENDING f_find_sql_sub_type SQL Sub Type ${l_SqlSubType}"
 v_debug=0
 }
-
 # ------------------------------------------------------------
 # Split input sqlfile into multiple files
 f_split_sql_to_files () {
@@ -227,6 +222,7 @@ typeset sStr=""
 l_FileLineNum=0
 l_SqlLineNum=1
 sLineCnt=0
+l_SqlTypeID=""
 l_SqlType=""
 l_SqlTypeUnderscore=""
 l_SqlSubType=""
@@ -344,39 +340,55 @@ do
 		ECHO "#SQL ${sNum}"
 		ECHO "#SQL ${sStr}"
 
-		DEBUG "Find SQL Type for ${sStr}"
-		f_find_sql_type "${sStr}"
-		ECHO "#SQL Type ${l_SqlType}"
+		if [ "${rc_SPLITSQL_FIND_SQLTYPE}" != "NO" ]; then
+			DEBUG "Find SQL Type for ${sStr}"
+			f_find_sql_type "${sStr}"
+			ECHO "#SQL Type ID # ${l_SqlTypeID}"
+			ECHO "#SQL Type Name ${l_SqlType}"
 
-		DEBUG "Find SQL Object"
-		f_find_sql_object
-		ECHO "#SQL Object ${l_SqlObjectName}"
+			if [ "${rc_SPLITSQL_PROCESS_SQLTYPE_RULES}" != "NO" ]; then
+				DEBUG "Show rules for SQL Type (Rules-Category-2) ${l_SqlTypeUnderscore}"
+				vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:"
+				ShowRulesForPattern
+				#ExecRulesForPattern
+			fi
 
-		DEBUG "Find SQL Sub Type for ${l_SqlType}"
-		f_find_sql_sub_type 
-		ECHO "#SQL Sub Type ${l_SqlSubType}"
-		ECHO "#SQL Sub Name ${l_SqlSubTypeSearchName}"
+			if [ "${rc_SPLITSQL_FIND_SQLOBJECT}" != "NO" ]; then
+				DEBUG "Find SQL Object"
+				f_find_sql_object
+				ECHO "#SQL Obj Name  ${l_SqlObjectName}"
+			fi
 
-		DEBUG "Show rules for SQL Type (Rules-Category-2) ${l_SqlTypeUnderscore}"
-		#vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:"
-		#ShowRulesForPattern
+			if [ "${rc_SPLITSQL_FIND_SQLSUBTYPE}" != "NO" ]; then
+				DEBUG "Find SQL Sub Type for ${l_SqlType}"
+				f_find_sql_sub_type 
+				ECHO "#SQL Sub Type ID ${l_SqlSubTypeID}"
+				ECHO "#SQL Sub Type ${l_SqlSubType}"
+				ECHO "#SQL Sub Name ${l_SqlSubTypeSearchName}"
 
-		#DEBUG "Show rules for Rule-Name (Based on SQL Sub type)"
-		#vGrepPattern="^[0-9]*:${l_SqlSubTypeSearchName}:[Y]:.*:${l_SqlTypeUnderscore}:"
-		#ShowRulesForPattern
+				if [ "${rc_SPLITSQL_PROCESS_SQLSUBTYPE_RULES}" != "NO" ]; then
+					DEBUG "Show rules for Rule-Name (Based on SQL Sub type)"
+					#vGrepPattern="^[0-9]*:${l_SqlSubTypeSearchName}:[Y]:.*:${l_SqlTypeUnderscore}:"
+					#ShowRulesForPattern
 
-		DEBUG "Show rules for Rules-Category-3 (SQL Sub Type)"
-		#vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:${"
-		#ShowRulesForPattern
+					DEBUG "Show rules for Rules-Category-3 (SQL Sub Type)"
+					#vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:${"
+					#ShowRulesForPattern
+				fi
+			fi
+		fi
 
 		ECHO "${cLINE2}"
 		# start new sql string
 		sStr=""
 		l_SqlLineNum=0
+		l_SqlTypeID=0
 		l_SqlType=""
 		l_SqlTypeUnderscore=""
 		l_SqlSubType=""
+		l_SqlSubTypeID=0
 		l_SqlObjectName=""
+		l_SqlSubTypeSearchName=""
 	fi
 done < ${TMPSCR} 
 
@@ -387,8 +399,4 @@ ECHO "Number of lines : ${l_FileLineNum}"
 ECHO "Number of chars : ${cCnt}"
 ECHO "Number of SQLs : ${sNum}"
 }
-
 # ------------------------------------------------------------
-f_rule_CreateTableNotAllowed () {
-ECHO rule name is $rName 
-}
