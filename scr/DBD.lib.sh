@@ -215,6 +215,7 @@ sLineCnt=0
 l_SqlType=""
 l_SqlTypeUnderscore=""
 l_SqlSubType=""
+l_SqlObject=""
 lStr=""
 cCnt=0
 
@@ -354,6 +355,10 @@ do
 		# start new sql string
 		sStr=""
 		l_SqlLineNum=0
+		l_SqlType=""
+		l_SqlTypeUnderscore=""
+		l_SqlSubType=""
+		l_SqlObject=""
 	fi
 done < ${TMPSCR} 
 
