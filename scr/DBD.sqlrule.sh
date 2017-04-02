@@ -6,7 +6,7 @@
 action_L1="list_all list_id list_name list_cat1 list_cat2 list_cat3 "
 action_L2="show_all show_id show_name show_cat1 show_cat2 show_cat3 show_disabled show_enabled "
 action_L3="exec_all exec_id exec_name exec_cat1 exec_cat2 exec_cat3 exec_disabled exec_enabled "
-action_L4="splitsql "
+action_L4="splitsql test"
 action_L="$action_L1 $action_L2 $action_L3 $action_L4"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -17,18 +17,29 @@ zz,none,zz_description \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
-rc_SQLRULE_CFG=${rc_SQLRULE_CFG:=sqlrule.cfg}
+rc_SQLRULE_RULES_CFG=${rc_DBD_SQLRULE_RULES_CFG:=${CFG_DIR}/sqlrule.cfg}
+rc_SQLRULE_SQLSUBTYPE_CFG=${CFG_DIR}/sqlsubtype.cfg
+rc_SPLITSQL_REMOVE_CSTYLE_COMMENTS=YES
+rc_SPLITSQL_REMOVE_DOCUMENT_COMMENTS=YES
+rc_SPLITSQL_REMOVE_EMPTY_LINES=YES
+rc_SPLITSQL_REMOVE_PROMPT_LINES=YES
+rc_SPLITSQL_REMOVE_DOUBLE_HIPHEN_LINES=YES
+rc_SPLITSQL_REMOVE_MULTIPLE_WHITESPACES=YES
 # ------------------------------------------------------------
 # Module specific environment variables
 sStr=""				# sql string
 sType=""			# sql statement type
+sSubType=""			# sql statement sub type
 
 # ------------------------------------------------------------
 # Module specific common functions
 
 # ------------------------------------------------------------
+CHKFILE ${rc_SQLRULE_RULES_CFG}
+CHKFILE ${rc_SQLRULE_SQLSUBTYPE_CFG}
+# ------------------------------------------------------------
 ShowRulesForPattern () {
-cat ${rc_SQLRULE_CFG} |grep -v "^$" | grep -v "^#" | grep "${vGrepPattern}" > ${TMPFILE1} 
+cat ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" | grep "${vGrepPattern}" > ${TMPFILE1} 
 cat ${TMPFILE1} | awk 'BEGIN {FS=":"} {
 printf "\n------------------------------------------------------------";
 printf "\n#%d",NR;
@@ -45,7 +56,7 @@ printf "\n";
 # ------------------------------------------------------------
 ExecRulesForPattern () {
 INCLIB_c
-cat ${rc_SQLRULE_CFG} |grep -v "^$" | grep -v "^#" | grep "${vGrepPattern}" > ${TMPFILE1} 
+cat ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" | grep "${vGrepPattern}" > ${TMPFILE1} 
 cat ${TMPFILE1} | cut -f1,2 -d":" |sed -e 's/:/ /g' > ${TMPFILE2}
 rSeq=0
 cat ${TMPFILE2} | while read rID rName
@@ -64,17 +75,17 @@ done
 #RAO LIST
 # ------------------------------------------------------------
 f_sqlrule_list_all () {
-cat  ${rc_SQLRULE_CFG} |grep -v "^$" | grep -v "^#" 
+cat  ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" 
 }
 # ------------------------------------------------------------
 f_sqlrule_list_id () {
 INPUT
-cat ${rc_SQLRULE_CFG} |grep -v "^$" | grep -v "^#" | grep "^${input1}:" | head -1 
+cat ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" | grep "^${input1}:" | head -1 
 }
 # ------------------------------------------------------------
 f_sqlrule_list_name () {
 INPUT
-cat ${rc_SQLRULE_CFG} |grep -v "^$" | grep -v "^#" | grep -i ":${input1}:" | head -1 
+cat ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" | grep -i ":${input1}:" | head -1 
 }
 # ------------------------------------------------------------
 #RAO SHOW
@@ -178,4 +189,4 @@ INPUT
 INCLIB_c
 f_split_sql_to_files ${input1}
 }
-
+# ------------------------------------------------------------
