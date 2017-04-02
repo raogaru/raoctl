@@ -6,7 +6,7 @@
 action_L1="list_all list_id list_name list_cat1 list_cat2 list_cat3 "
 action_L2="show_all show_id show_name show_cat1 show_cat2 show_cat3 show_disabled show_enabled "
 action_L3="exec_all exec_id exec_name exec_cat1 exec_cat2 exec_cat3 exec_disabled exec_enabled "
-action_L4="splitsql test"
+action_L4="splitsql testcase"
 action_L="$action_L1 $action_L2 $action_L3 $action_L4"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -17,8 +17,15 @@ zz,none,zz_description \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
+rc_SQLRULE_SQLSUBTYPE_CFG_DIR=${rc_SQLRULE_SQLSUBTYPE_CFG_DIR:=${RC_DIR}/src/${v_class}/${v_module}/sqlsubtype}
 rc_SQLRULE_RULES_CFG=${rc_DBD_SQLRULE_RULES_CFG:=${CFG_DIR}/sqlrule.cfg}
-rc_SQLRULE_SQLSUBTYPE_CFG=${CFG_DIR}/sqlsubtype.cfg
+#
+rc_SPLITSQL_FIND_SQLTYPE=YES
+rc_SPLITSQL_FIND_SQLSUBTYPE=YES
+rc_SPLITSQL_FIND_SQLOBJECT=NO
+rc_SPLITSQL_PROCESS_SQLTYPE_RULES=NO
+rc_SPLITSQL_PROCESS_SQLSUBTYPE_RULES=NO
+#
 rc_SPLITSQL_REMOVE_CSTYLE_COMMENTS=YES
 rc_SPLITSQL_REMOVE_DOCUMENT_COMMENTS=YES
 rc_SPLITSQL_REMOVE_EMPTY_LINES=YES
@@ -28,15 +35,15 @@ rc_SPLITSQL_REMOVE_MULTIPLE_WHITESPACES=YES
 # ------------------------------------------------------------
 # Module specific environment variables
 sStr=""				# sql string
-sType=""			# sql statement type
-sSubType=""			# sql statement sub type
+l_SqlType=""			# sql statement type
+l_SqlSubType=""			# sql statement sub type
+vGrepPattern=""
 
 # ------------------------------------------------------------
 # Module specific common functions
 
 # ------------------------------------------------------------
 CHKFILE ${rc_SQLRULE_RULES_CFG}
-CHKFILE ${rc_SQLRULE_SQLSUBTYPE_CFG}
 # ------------------------------------------------------------
 ShowRulesForPattern () {
 cat ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" | grep "${vGrepPattern}" > ${TMPFILE1} 
@@ -188,5 +195,11 @@ f_sqlrule_splitsql () {
 INPUT
 INCLIB_c
 f_split_sql_to_files ${input1}
+}
+# ------------------------------------------------------------
+f_sqlrule_testcase () {
+INPUT
+INCLIB_c
+f_split_sql_to_files ${RC_DIR}/src/DBD/sqlrule/testcase/${input}.sql
 }
 # ------------------------------------------------------------
