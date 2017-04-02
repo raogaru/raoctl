@@ -81,9 +81,10 @@ f_FindSqlSubType_CREATE_JAVA () {
 # ------------------------------------------------------------
 f_FindSqlSubType_generic () {
 v_debug=0
-l_SqlSubType=""		
-l_SqlTypeUnderscore=${l_SqlType// /_}
 s1=${l_SqlType}
+l_SqlTypeUnderscore=${l_SqlType// /_}
+l_SqlSubType=""		
+l_SqlSubCfgLineNum=0
 rc_SQLRULE_SQLSUBTYPE_CFG_2=${CFG_DIR}/${v_class}.${v_module}.sqlsubtype.${l_SqlTypeUnderscore}.cfg
 DEBUG "BEGIN f_FindSqlSubType_generic ${s1}"
 
@@ -98,7 +99,6 @@ DEBUG "CFG#${sNum} ${rc_SQLRULE_SQLSUBTYPE_CFG_2}"
 #ls -l ${TMPCFG}.${sNum}
 #cat ${TMPCFG}.${sNum}
 
-l_SqlSubCfgLineNum=0
 # read sub sql type config line
 while read -r l_SubTypeCfg
 do
@@ -106,14 +106,14 @@ do
 	(( l_SqlSubCfgLineNum=l_SqlSubCfgLineNum+1 ))
 
 	# read sub sql type config line fields
-	sSubTypeSearchName=$(echo ${l_SubTypeCfg}|cut -f1 -d":")
-	DEBUG "Search Name is ${sSubTypeSearchName}"
+	l_SearchName=$(echo ${l_SubTypeCfg}|cut -f1 -d":")
+	DEBUG "Search Name is ${l_SearchName}"
 
 	sSubTypeSearchStringsCount=$(echo ${l_SubTypeCfg}|cut -f2 -d":")
 	DEBUG "Search strings count ${sSubTypeSearchStringsCount}"
 
 	sSubTypeSearchSQLType=$(echo ${l_SubTypeCfg}|cut -f3 -d":")
-	[[ "${sSubTypeSearchSQLType}" != "${s1}" ]] && continue
+	[[ "${sSubTypeSearchSQLType}" != "${s1}" ]] && WARN "${TMPCFG}.${sNum} file may have invalid entries !" && continue
 
 	DEBUG "Search# ${l_SqlSubCfgLineNum}"
 	DEBUG "Search String 1 ${s1}"
@@ -129,49 +129,49 @@ do
 	if [ $sSubTypeSearchStringsCount -eq 8 ]; then
 		m=$(fPatternMatch8 "${sStr}" "${s1}" "${s2}" "${s3}" "${s4}" "${s5}" "${s6}" "${s7}" "${s8}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 8 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}...${s6}...${s7}...${s8}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}...${s6}...${s7}...${s8}" && l_SqlSubTypeSearchName=l_SearchName && break
 	fi
 
 	# Search for 7 strings
 	if [ $sSubTypeSearchStringsCount -eq 7 ]; then
 		m=$(fPatternMatch7 "${sStr}" "${s1}" "${s2}" "${s3}" "${s4}" "${s5}" "${s6}" "${s7}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 7 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}...${s6}...${s7}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}...${s6}...${s7}" && l_SqlSubTypeSearchName=${l_SearchName} && break
 	fi
 
 	# Search for 6 strings
 	if [ $sSubTypeSearchStringsCount -eq 6 ]; then
 		m=$(fPatternMatch6 "${sStr}" "${s1}" "${s2}" "${s3}" "${s4}" "${s5}" "${s6}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 6 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}...${s6}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}...${s6}" && l_SqlSubTypeSearchName=${l_SearchName} && break
 	fi
 
 	# Search for 5 strings
 	if [ $sSubTypeSearchStringsCount -eq 5 ]; then
 		m=$(fPatternMatch5 "${sStr}" "${s1}" "${s2}" "${s3}" "${s4}" "${s5}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 5 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}...${s5}" && l_SqlSubTypeSearchName=${l_SearchName} && break
 	fi
 
 	# Search for 4 strings
 	if [ $sSubTypeSearchStringsCount -eq 4 ]; then
 		m=$(fPatternMatch4 "${sStr}" "${s1}" "${s2}" "${s3}" "${s4}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 4 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}...${s4}" && l_SqlSubTypeSearchName=${l_SearchName} && break
 	fi
 	
 	# Search for 3 strings
 	if [ $sSubTypeSearchStringsCount -eq 3 ]; then
 		m=$(fPatternMatch3 "${sStr}" "${s1}" "${s2}" "${s3}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 3 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}...${s3}" && l_SqlSubTypeSearchName=${l_SearchName} && break
 	fi
 
 	# Search for 2 strings
 	if [ $sSubTypeSearchStringsCount -eq 2 ]; then
 		m=$(fPatternMatch2 "${sStr}" "${s1}" "${s2}")
 		[[ "${m}" != "MATCHED" ]] && DEBUG "Search Result 2 NOT MATCHED"
-		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}" && break
+		[[ "${m}" == "MATCHED" ]] && export l_SqlSubType="${s1}...${s2}" && l_SqlSubTypeSearchName=${l_SearchName} && break
 	fi
 	
 	#echo "searching ..."
@@ -198,7 +198,7 @@ else
 	DEBUG "Calling f_FindSqlSubType_generic as \"${l_func_name}\" not defined !"
 	f_FindSqlSubType_generic
 fi
-DEBUG "SQL Sub Type ${l_SqlSubType}"
+DEBUG "ENDING f_find_sql_sub_type SQL Sub Type ${l_SqlSubType}"
 v_debug=0
 }
 
@@ -212,10 +212,15 @@ typeset sStr=""
 l_FileLineNum=0
 l_SqlLineNum=1
 sLineCnt=0
+l_SqlType=""
+l_SqlTypeUnderscore=""
+l_SqlSubType=""
 lStr=""
 cCnt=0
 
 DEBUG Processing $sFile
+
+# NOTE: User TMPFILE3/4 as TMPFILE1/2 already used in DBD.sqlrule.sh
 
 # remove multi-line comments starting with /* and ending with */  
 if [ "${rc_SPLITSQL_REMOVE_CSTYLE_COMMENTS}" != "NO" ]; then
@@ -267,8 +272,8 @@ else
 fi
 
 #final copy in ${TMPFILE3} before processing line by line
-cp ${TMPFILE4} ${TMPFILE3}
-rm -f ${TMPFILE4}
+cp ${TMPFILE4} ${TMPSCR}
+rm -f ${TMPFILE3} ${TMPFILE4}
 
 # processing begins - read full line into lStr
 while read -r lStr
@@ -326,23 +331,31 @@ do
 		DEBUG "Find SQL Type for ${sStr}"
 		f_find_sql_type "${sStr}"
 		ECHO "#SQL Type ${l_SqlType}"
+		ECHO "#SQL Object  ${l_SqlObjectName}"
 
 		DEBUG "Find SQL Sub Type for ${l_SqlType}"
-		f_find_sql_sub_type "${sStr}" "${l_SqlType}"
+		f_find_sql_sub_type 
 		ECHO "#SQL Sub Type ${l_SqlSubType}"
+		ECHO "#SQL Sub Name ${l_SqlSubTypeSearchName}"
 
-		DEBUG "find rules for execution"
-		#vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[YN]:.*:${x}:"
+		DEBUG "Show rules for SQL Type (Rules-Category-2) ${l_SqlTypeUnderscore}"
+		vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:"
+		ShowRulesForPattern
+
+		DEBUG "Show rules for Rule-Name (Based on SQL Sub type)"
+		vGrepPattern="^[0-9]*:${l_SqlSubTypeSearchName}:[Y]:.*:${l_SqlTypeUnderscore}:"
+		ShowRulesForPattern
+
+		DEBUG "Show rules for Rules-Category-3 (SQL Sub Type)"
+		#vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:${"
 		#ShowRulesForPattern
-
-		DEBUG "exec rules"
 
 		ECHO "${cLINE2}"
 		# start new sql string
 		sStr=""
 		l_SqlLineNum=0
 	fi
-done < ${TMPFILE3} 
+done < ${TMPSCR} 
 
 ECHO "${cLINE2}"
 ECHO "Summary:"
