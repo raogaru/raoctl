@@ -17,8 +17,11 @@ zz,none,zz_description \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
+rc_SQLRULE_RULES_CFG=${rc_DBD_SQLRULE_RULES_CFG:=${RC_DIR}/src/${v_class}/${v_module}/sqlrule.cfg}
+rc_SQLRULE_SQLTYPE_FOR=${rc_SQLRULE_SQLTYPE_FOR:=all}
+rc_SQLRULE_SQLTYPE_CFG_DIR=${rc_SQLRULE_SQLTYPE_CFG_DIR:=${RC_DIR}/src/${v_class}/${v_module}/sqltype}
+rc_SQLRULE_SQLTYPE_CFG_FILE=${rc_SQLRULE_SQLTYPE_CFG_DIR}/${rc_SQLRULE_SQLTYPE_FOR}.cfg
 rc_SQLRULE_SQLSUBTYPE_CFG_DIR=${rc_SQLRULE_SQLSUBTYPE_CFG_DIR:=${RC_DIR}/src/${v_class}/${v_module}/sqlsubtype}
-rc_SQLRULE_RULES_CFG=${rc_DBD_SQLRULE_RULES_CFG:=${CFG_DIR}/sqlrule.cfg}
 #
 rc_SPLITSQL_FIND_SQLTYPE=YES
 rc_SPLITSQL_FIND_SQLSUBTYPE=YES
@@ -44,6 +47,7 @@ vGrepPattern=""
 
 # ------------------------------------------------------------
 CHKFILE ${rc_SQLRULE_RULES_CFG}
+CHKFILE ${rc_SQLRULE_SQLTYPE_CFG_FILE}
 # ------------------------------------------------------------
 ShowRulesForPattern () {
 cat ${rc_SQLRULE_RULES_CFG} |grep -v "^$" | grep -v "^#" | grep "${vGrepPattern}" > ${TMPFILE1} 
