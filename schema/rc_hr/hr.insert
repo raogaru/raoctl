@@ -1,0 +1,280 @@
+-- ----------------------------------------------------------------------
+-- hr.insert
+-- ----------------------------------------------------------------------
+
+PROMPT Insert Data
+
+--whenever sqlerror exit 1;
+
+set echo off feedback on verify off
+
+@@hr.set
+
+--
+-- ----------------------------------------------------------------------
+prompt org
+-- ----------------------------------------------------------------------
+--
+insert into org values (1,'ORG1');
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt div
+-- ----------------------------------------------------------------------
+--
+insert into div values (11,'DIV11',1);
+insert into div values (12,'DIV12',1);
+insert into div values (13,'DIV13',1);
+--insert into div select id*10+1, 'DIV-'||id||'-1', id from org where id!=0 connect by rownum<2;
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt prg
+-- ----------------------------------------------------------------------
+--
+-- Programs of Org1-Div11
+insert into prg values (111,'PRG111',1,11);
+
+-- Programs of Org1-Div12
+insert into prg values (121,'PRG121',1,12);
+
+-- Programs of Org1-Div13
+insert into prg values (131,'PRG131',1,13);
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt prj
+-- ----------------------------------------------------------------------
+--
+
+-- Projects with in Program111
+insert into prj values (1111,'Microservice - 1',111);
+insert into prj values (1112,'Microservice - 2',111);
+insert into prj values (1113,'Microservice - 3',111);
+insert into prj values (1114,'Microservice - 4',111);
+insert into prj values (1115,'Microservice - 5',111);
+insert into prj values (1116,'Microservice - 6',111);
+insert into prj values (1117,'Microservice - 7',111);
+insert into prj values (1118,'Microservice - 8',111);
+insert into prj values (1119,'Microservice - 9',111);
+insert into prj values (1120,'Microservice - 10',111);
+insert into prj values (1121,'Microservice - 11',111);
+insert into prj values (1122,'Microservice - 12',111);
+insert into prj values (1123,'Microservice - 13',111);
+insert into prj values (1124,'Microservice - 14',111);
+insert into prj values (1125,'Microservice - 15',111);
+insert into prj values (1126,'Microservice - 16',111);
+insert into prj values (1127,'Microservice - 17',111);
+insert into prj values (1128,'Microservice - 18',111);
+insert into prj values (1129,'Microservice - 19',111);
+insert into prj values (1130,'Microservice - 20',111);
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt ven
+-- ----------------------------------------------------------------------
+--
+insert into ven values (1,'ABC Inc');
+insert into ven values (2,'PQR LLC');
+insert into ven values (3,'XYZ Corp');
+commit;
+
+--
+-- ----------------------------------------------------------------------
+-- Team Type
+-- ----------------------------------------------------------------------
+--
+insert into team_typ values (1,'MANAGEMENT','Management Team');
+insert into team_typ values (2,'PROGRAM','Program Team');
+insert into team_typ values (3,'PROJECT','Project Team');
+insert into team_typ values (4,'SECURITY','Security Team');
+insert into team_typ values (5,'CONTRACTOR','Contractor Team');
+insert into team_typ values (6,'DEVELOPMENT','Development Team');
+insert into team_typ values (7,'DEVOPS','DevOps Team');
+insert into team_typ values (8,'TIGER','Tiger Team');
+insert into team_typ values (9,'WHITE','White Team');
+insert into team_typ values (10,'BLUE','Blue Team');
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt team
+-- ----------------------------------------------------------------------
+--
+insert into team values (1,1,'MyPRG Management Team');
+insert into team values (2,2,'MyPRG Program Management Team');
+insert into team values (3,3,'MyPRG Project Management Team');
+insert into team values (4,4,'MyPRG Security Management Team');
+
+insert into team values (501,5,'Contract Team - ABC Inc');
+insert into team values (502,5,'Contract Team - PQR LLC');
+insert into team values (503,5,'Contract Team - XYZ Corp');
+
+--20 dev teams
+insert into team values (601,6,'DevTeam - Hydrogen');
+insert into team values (602,6,'DevTeam - Oxygen');
+insert into team values (603,6,'DevTeam - Nitrogen');
+insert into team values (604,6,'DevTeam - Biotech');
+insert into team values (605,6,'DevTeam - Apple');
+insert into team values (606,6,'DevTeam - Orange');
+insert into team values (607,6,'DevTeam - Kiwi');
+insert into team values (608,6,'DevTeam - Verizon');
+insert into team values (609,6,'DevTeam - Sprint');
+insert into team values (610,6,'DevTeam - Mobile');
+insert into team values (611,6,'DevTeam - 11');
+insert into team values (612,6,'DevTeam - 12');
+insert into team values (613,6,'DevTeam - 13');
+insert into team values (614,6,'DevTeam - 14');
+insert into team values (615,6,'DevTeam - 15');
+insert into team values (616,6,'DevTeam - 16');
+insert into team values (617,6,'DevTeam - 17');
+insert into team values (618,6,'DevTeam - 18');
+insert into team values (619,6,'DevTeam - 19');
+insert into team values (620,6,'DevTeam - 20');
+
+-- 2 devops teams
+insert into team values (701,7,'DevOpsTeam - Think');
+insert into team values (702,7,'DevOpsTeam - Excel');
+
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt loc
+-- ----------------------------------------------------------------------
+--
+insert into loc values (1,'HeadQuarters','000 My Street','','Washington','DC','20001');
+insert into loc values (2,'Building-1','111 My Street','','Washington','DC','20001');
+insert into loc values (3,'Building-2','222 My Street','','Washington','DC','20001');
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt job_typ
+-- ----------------------------------------------------------------------
+--
+
+-- mgmt category
+insert into job_typ values (1,'EXECUTIVE');
+insert into job_typ values (2,'DIRECTOR');
+insert into job_typ values (3,'CHIEF');
+insert into job_typ values (4,'MANAGER');
+insert into job_typ values (5,'SUPERVISOR');
+
+-- worker category
+insert into job_typ values (6,'PROGLEAD');
+insert into job_typ values (7,'TECHLEAD');
+insert into job_typ values (8,'TEAMLEAD');
+insert into job_typ values (9,'ASSOCIATE');
+commit;
+
+
+--
+-- ----------------------------------------------------------------------
+prompt emp
+-- ----------------------------------------------------------------------
+--
+-- management
+insert into emp values (1,'CEO Name','CEO','ceo@company.com',1,0,0,1,'E');
+insert into emp values (2,'Director Name','DIR','director@company.com',2,1,1,1,'E');
+insert into emp values (3,'Program Chief Name','PRGCHIEF1','program.cheif1@company.com',3,1,2,1,'E');
+insert into emp values (4,'Program Chief Name','PRGCHIEF2','program.cheif2@company.com',3,2,2,1,'E');
+insert into emp values (5,'Branch Chief Name','BRNCHIEF','branch.cheif@company.com',3,3,4,1,'E');
+-- 3 managers
+insert into emp values (101,'Manager Name101','MGR101','manager.name101@company.com',4,5,5,1,'E');
+insert into emp values (102,'Manager Name102','MGR102','manager.name102@company.com',4,5,5,1,'E');
+insert into emp values (103,'Manager Name103','MGR103','manager.name103@company.com',4,5,5,1,'E');
+-- 3 supervisors
+insert into emp values (201,'Supervisor Name101','SUP101','supervisor.name101@company.com',5,101,101,1,'E');
+insert into emp values (202,'Supervisor Name102','SUP102','supervisor.name102@company.com',5,102,102,1,'E');
+insert into emp values (203,'Supervisor Name103','SUP103','supervisor.name103@company.com',5,103,103,1,'E');
+commit;
+
+
+-- each contractor team have program lead
+insert into emp 
+select 
+id*100+1,
+'ProgLead Name'||id||' for '||name,
+'PROG'||ltrim(to_char(id*100+1)),
+'prog_lead.name'||ltrim(to_char(id*100+1))||'@company.name',
+6, -- PROGLEAD
+101, -- manager is MGR101
+101, -- lead is also MGR101
+1,'C'
+from team where typ_id=5;
+
+-- each contractor team have tech lead
+insert into emp 
+select 
+id*100+2,
+'TechLead Name'||id||' for '||name,
+'TECH'||ltrim(to_char(id*100+2)),
+'tech_lead.name'||ltrim(to_char(id*100+2))||'@company.name',
+7, -- TECHLEAD
+101, -- manager is MGR101
+101, -- lead is also MGR101
+1,'C'
+from team where typ_id=5;
+commit;
+
+-- each of development/devops teams have 1 team lead
+insert into emp 
+select 
+id*100+3,
+'TeamLeadName'||ltrim(to_char(id*100+1))||' for '||name,
+'LEAD'||ltrim(to_char(id*100+1)),
+'TeamLead.name'||ltrim(to_char(id*100+1))||'@company.name',
+8, -- TEAMLEAD
+101, -- manager is MGR101
+101, -- lead is also MGR101
+1,'C'
+from team where typ_id in (6,7);
+
+-- each of development team have 8 associates
+insert into emp 
+select 
+id*100+3+b.rn,
+'MemberName'||ltrim(to_char(id*101+b.rn))||' for '||name,
+'MEM'||ltrim(to_char(id*101+b.rn)),
+'member.name'||ltrim(to_char(id*101+b.rn))||'@company.name',
+9, -- ASSOCIATE
+101, -- manager is MGR101
+id*100+3, -- lead is also MGR101
+1,'C'
+from team, (select rownum rn from user_tables where rownum<=7) b 
+where typ_id in (6,7);
+
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt mem
+-- ----------------------------------------------------------------------
+--
+-- contract team 501 (dev team 601 to 610) 
+insert into mem values (501, 50101, 1, 0);
+insert into mem values (501, 50102, 1, 0);
+insert into mem select 501, emp.id, 1, 0 from emp where id between 60100 and 61099;
+
+-- contract team 502 (dev team 611 to 620) 
+insert into mem values (502, 50201, 1, 0);
+insert into mem values (502, 50202, 1, 0);
+insert into mem select 502, emp.id, 1, 0 from emp where id between 61100 and 62099;
+
+-- contract team 503 (dev team 701 to 702) 
+insert into mem values (503, 50301, 1, 0);
+insert into mem values (503, 50302, 1, 0);
+insert into mem select 503, emp.id, 1, 0 from emp where id between 70100 and 70299;
+
+commit;
+
+--
+
+-- ----------------------------------------------------------------------
+-- hr.insert
+-- ----------------------------------------------------------------------

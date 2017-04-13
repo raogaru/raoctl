@@ -1,0 +1,18 @@
+-- ----------------------------------------------------------------------
+-- hr.tbs
+-- ----------------------------------------------------------------------
+
+PROMPT Create Tablespace 
+
+--drop tablespace rc_hr including contents and datafiles;
+
+create tablespace rc_hr 
+datafile '/oracle/data/RAODB/hr.dbf' size 10m 
+autoextend on next 1m maxsize unlimited
+extent management local
+segment space management auto
+flashback off;
+
+-- ----------------------------------------------------------------------
+-- hr.tbs
+-- ----------------------------------------------------------------------

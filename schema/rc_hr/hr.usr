@@ -1,0 +1,26 @@
+-- ----------------------------------------------------------------------
+-- hr.usr
+-- ----------------------------------------------------------------------
+
+PROMPT Dropping User ...
+
+drop user rc_hr cascade;
+
+PROMPT Creating User ...
+
+create user rc_hr 
+identified by rc_hr
+default tablespace rc_hr
+temporary tablespace temp;
+
+grant unlimited tablespace to rc_hr;
+grant connect to rc_hr;
+grant resource to rc_hr;
+grant select any table to rc_hr;
+grant dba to rc_hr;
+grant create public synonym to rc_hr;
+
+-- ----------------------------------------------------------------------
+-- hr.usr
+-- ----------------------------------------------------------------------
+

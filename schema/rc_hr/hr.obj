@@ -1,0 +1,280 @@
+-- ----------------------------------------------------------------------
+-- hr.obj
+-- ----------------------------------------------------------------------
+--whenever sqlerror exit 1;
+
+@@hr.set
+
+set echo off feedback off
+
+--
+-- ----------------------------------------------------------------------
+prompt Sequence
+-- ----------------------------------------------------------------------
+--
+create sequence seq start with 100001 nocache;
+
+--
+-- ----------------------------------------------------------------------
+prompt Organization
+-- ----------------------------------------------------------------------
+--
+create table org (
+	id number(8) not null,
+	name  varchar2(30) not null
+);
+
+comment on table org is 'Organization';
+comment on column org.id is 'Oraganization ID';
+comment on column org.name is 'Oraganization Name';
+
+create unique index org_pk on org (id);
+alter table org add constraint org_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Division
+-- ----------------------------------------------------------------------
+--
+create table div (
+	id number(8) not null,
+	name  varchar2(30) not null,
+	org_id number(8) not null
+);
+
+comment on table div is 'Division';
+comment on column div.id is 'Division ID';
+comment on column div.name is 'Division Name';
+comment on column div.org_id is 'Organization ID that this Division is part of';
+
+create unique index div_pk on div (id);
+alter table div add constraint div_pk primary key (id);
+
+create index div_fk1 on div (org_id);
+alter table div add constraint div_fk1 foreign key (org_id) references org(id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Program
+-- ----------------------------------------------------------------------
+--
+create table prg (
+	id number(8) not null,
+	name  varchar2(30) not null,
+	org_id number(8) not null,
+	div_id number(8) not null
+);
+
+comment on table prg is 'Program';
+comment on column prg.id is 'Program ID';
+comment on column prg.name is 'Program Name';
+comment on column prg.org_id is 'Oranization ID to which this Program belongs to';
+comment on column prg.div_id is 'Division ID to which this Program belongs to';
+
+create unique index prg_pk on prg (id);
+alter table prg add constraint prg_pk primary key (id);
+
+create index prg_fk1 on prg (org_id);
+alter table prg add constraint prg_fk1 foreign key (org_id) references org(id);
+
+create index prg_fk2 on prg (div_id);
+alter table prg add constraint prg_fk2 foreign key (div_id) references div(id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Project
+-- ----------------------------------------------------------------------
+--
+create table prj (
+	id number(8) not null,
+	name  varchar2(30) not null,
+	prg_id number(8) not null
+);
+
+comment on table prj is 'Project';
+comment on column prj.id is 'Project ID';
+comment on column prj.name is 'Project Name';
+comment on column prj.prg_id is 'Program ID that this projec is part of';
+
+create unique index prj_pk on prj (id);
+alter table prj add constraint prj_pk primary key (id);
+
+create index prj_fk1 on prj (prg_id);
+alter table prj add constraint prj_fk1 foreign key (prg_id) references prg(id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Vendor
+-- ----------------------------------------------------------------------
+--
+create table ven (
+	id number(8) not null,
+	name  varchar2(30) not null
+);
+
+comment on table ven is 'Vendor';
+comment on column ven.id is 'Vendor ID';
+comment on column ven.name is 'Vendor Name';
+
+create unique index ven_pk on ven (id);
+alter table ven add constraint ven_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Team Type
+-- ----------------------------------------------------------------------
+--
+create table team_typ (
+	id number(8) not null,
+	cd varchar2(12) not null,
+	name  varchar2(30) not null
+);
+
+comment on table team_typ is 'Team Type';
+comment on column team_typ.id is 'Team Type ID';
+comment on column team_typ.cd is 'Team Type Code';
+comment on column team_typ.name is 'Team Type Name';
+
+create unique index team_typ_pk on team_typ (id);
+create unique index team_typ_uk1 on team_typ (cd);
+create unique index team_typ_uk2 on team_typ (name);
+
+alter table team_typ add constraint team_typ_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Team 
+-- ----------------------------------------------------------------------
+--
+create table team (
+	id number(8) not null,
+	typ_id number(8) not null,
+	name varchar2(30) not null
+);
+
+comment on table team is 'Team';
+comment on column team.id is 'Team ID';
+comment on column team.typ_id is 'Team Type ID';
+comment on column team.name is 'Team Name';
+
+create unique index team_pk on team(id);
+alter table team add constraint team_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Location
+-- ----------------------------------------------------------------------
+--
+create table loc (
+	id number(8) not null,
+	name  varchar2(30) not null,
+	addr1 varchar2(30) not null,
+	addr2 varchar2(30) ,
+	city  varchar2(30) not null,
+	state varchar2(2) not null,
+	zip   varchar2(10) not null
+);
+
+comment on table loc is 'Location';
+
+create unique index loc_pk on loc (id);
+
+alter table loc add constraint loc_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Job Type
+-- ----------------------------------------------------------------------
+--
+create table job_typ (
+	id	number(8) not null,
+	cd	varchar2(30) not null
+);
+
+comment on table job_typ is 'Job Type';
+comment on column job_typ.id is 'Job Type ID';
+comment on column job_typ.cd is 'Job Type Code';
+
+create unique index job_typ_pk on job_typ (id);
+create unique index job_typ_uk1 on job_typ (cd);
+alter table job_typ add constraint job_typ_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Employee
+-- ----------------------------------------------------------------------
+--
+create table emp (
+	id		number(8) not null,
+	name	varchar2(50) not null,
+	ldap	varchar2(10) not null,
+	email   varchar2(70) not null,
+    job_id  number(8) not null,
+	mgr_id  number(8) not null,
+	lead_id number(8) not null,
+	org_id number(8) not null,
+	typ		char(1) default 'C' not null
+);
+
+comment on table emp is 'Employee';
+comment on column emp.id is 'Employee ID';
+comment on column emp.name is 'Employee Name';
+comment on column emp.ldap is 'Employee LDAP ID';
+comment on column emp.email is 'Employee Email';
+comment on column emp.job_id is 'Employee Job Type ID';
+comment on column emp.mgr_id is 'Manager Employee ID of Employee';
+comment on column emp.lead_id is 'Lead Employee ID of Employee';
+comment on column emp.org_id is 'Organization Id of Employee';
+comment on column emp.typ is 'Employee Type - C for Contractor and E for Employee';
+
+create unique index emp_pk on emp (id);
+create unique index emp_uk1 on emp (ldap);
+create unique index emp_uk2 on emp (email);
+create index emp_uk3 on emp (job_id);
+create index emp_fk1 on emp (mgr_id);
+create index emp_fk2 on emp (lead_id);
+create index emp_fk3 on emp (org_id);
+
+alter table emp add constraint emp_pk primary key (id);
+alter table emp add constraint emp_fk1 foreign key (job_id) references job_typ(id);
+alter table emp add constraint emp_fk2 foreign key (mgr_id) references emp(id);
+alter table emp add constraint emp_fk3 foreign key (lead_id) references emp(id);
+alter table emp add constraint emp_fk4 foreign key (org_id) references org(id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Members ( Team Members )
+-- ----------------------------------------------------------------------
+--
+create table mem (
+	team_id number(8) not null,
+	emp_id number(8) not null,
+	ven_id number(8) default 0 not null ,
+	prj_id number(8) default 0 not null 
+);
+
+comment on table mem is 'Members';
+comment on column mem.team_id is 'Member Team ID';
+comment on column mem.emp_id is 'Member Employee ID';
+comment on column mem.ven_id is 'Member Vendor ID';
+comment on column mem.prj_id is 'Member Project ID';
+
+create unique index mem_pk on mem (team_id,emp_id);
+alter table mem add constraint mem_pk primary key (team_id, emp_id);
+
+create index mem_fk1 on mem (team_id);
+alter table mem add constraint mem_fk1 foreign key (team_id) references team(id);
+
+create index mem_fk2 on mem (emp_id);
+alter table mem add constraint mem_fk2 foreign key (emp_id) references emp(id);
+
+create index mem_fk3 on mem (ven_id);
+alter table mem add constraint mem_fk3 foreign key (ven_id) references ven(id);
+
+create index mem_fk4 on mem (prj_id);
+alter table mem add constraint mem_fk4 foreign key (prj_id) references prj(id);
+
+
+-- ----------------------------------------------------------------------
+-- hr.obj
+-- ----------------------------------------------------------------------

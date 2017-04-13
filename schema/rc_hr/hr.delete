@@ -1,0 +1,24 @@
+-- ----------------------------------------------------------------------
+-- hr.delete
+-- ----------------------------------------------------------------------
+whenever sqlerror exit 1;
+
+@@hr.set
+
+delete from mem ;
+delete from emp where id!=0;
+delete from job_typ where id!=0;
+delete from loc where id!=0;
+delete from team where id!=0;
+delete from team_typ where id!=0;
+delete from ven where id!=0;
+delete from prj where id!=0;
+delete from prg where id!=0;
+delete from div where id!=0;
+delete from org where id!=0;
+
+commit;
+
+-- ----------------------------------------------------------------------
+-- hr.delete
+-- ----------------------------------------------------------------------
