@@ -1,5 +1,7 @@
 README.txt for RC_HR Schema
 
+RC_HR = raoctl for Humar Resources
+
 Organization
 Oraganizations have Divisions 1:N
 Divisons have Programs 1:N
