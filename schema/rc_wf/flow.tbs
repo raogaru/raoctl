@@ -1,0 +1,16 @@
+-- ----------------------------------------------------------------------
+-- flow.tbs
+-- ----------------------------------------------------------------------
+
+PROMPT Creating Tablespace ...
+
+CREATE TABLESPACE FLOW
+DATAFILE '/oracle/data/FLOW/flow.dbf' SIZE 50M
+AUTOEXTEND ON NEXT 1M MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL
+SEGMENT SPACE MANAGEMENT AUTO
+FLASHBACK OFF;
+
+-- ----------------------------------------------------------------------
+-- flow.tbs
+-- ----------------------------------------------------------------------
