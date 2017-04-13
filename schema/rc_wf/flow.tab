@@ -1,0 +1,605 @@
+-- ----------------------------------------------------------------------
+-- flow.tab
+-- ----------------------------------------------------------------------
+
+PROMPT Creating Tables ...
+
+CREATE TABLE WF_ACTI_ATTRIB_INSTANCES_ARCH
+ (ACAT_ID NUMBER(10,0) NOT NULL
+ ,ACIA_ID NUMBER(10,0) NOT NULL
+ ,VALUE VARCHAR2(4000) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTI_ATTRIB_INSTANCES_ARCH.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ACTIVITY_INSTANCES_ARCH
+ (ID NUMBER(10,0) NOT NULL
+ ,DELI_ID NUMBER(10,0)
+ ,ACTI_PRCE_ID NUMBER(10,0) NOT NULL
+ ,ACTI_ID INTEGER NOT NULL
+ ,PRIA_ID NUMBER(10,0) NOT NULL
+ ,DATE_CREATED DATE NOT NULL
+ ,DATE_STARTED DATE
+ ,DATE_ENDED DATE
+ ,DATE_DUE DATE
+ ,STATE VARCHAR2(240) NOT NULL
+ ,REMARKS VARCHAR2(4000)
+ ,WORKLIST_DISPLAY VARCHAR2(4000)
+ ,SESSION_STATE BLOB
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES_ARCH.DATE_CREATED IS 'Date at which the activity was instantiated.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES_ARCH.DATE_STARTED IS 'Date at which the activity was chosen from worklist by participant.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES_ARCH.DATE_DUE IS 'Calculated with activity.must_finish_within, if not zero'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES_ARCH.REMARKS IS 'Remarks made by the performer'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES_ARCH.SESSION_STATE IS 'Serialized state of the suspended activity'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES_ARCH.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PROCESS_INSTANCES_ARCH
+ (ID NUMBER(10,0) NOT NULL
+ ,PATI_ID NUMBER(10,0)
+ ,ACIA_ID NUMBER(10,0)
+ ,PRCE_ID NUMBER(10,0) NOT NULL
+ ,DATE_CREATED DATE NOT NULL
+ ,DATE_STARTED DATE
+ ,DATE_ENDED DATE
+ ,STATE VARCHAR2(15) NOT NULL
+ ,REMARKS VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES_ARCH.DATE_CREATED IS 'Date of createprocessinstance'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES_ARCH.DATE_STARTED IS 'Date of start process'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES_ARCH.STATE IS 'If Y, then the process will be ended after the next completeworkitem. (graceful)'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES_ARCH.REMARKS IS 'Records termination and other happenings'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES_ARCH.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_FORMAL_PARAMETERS
+ (ID NUMBER(10,0) NOT NULL
+ ,ATRI_ID NUMBER(10,0)
+ ,PRCE_ID NUMBER(10,0)
+ ,APLI_ID NUMBER(10,0)
+ ,DATA_TYPE VARCHAR2(20) NOT NULL
+ ,FOPA_INDEX NUMBER(10)
+ ,FOPA_MODE VARCHAR2(5) NOT NULL
+ ,DESCRIPTION VARCHAR2(4000)
+ ,NAME VARCHAR2(50)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_FORMAL_PARAMETERS.DATA_TYPE IS 'Data type of the formal parameter. See section 7.9 of tc-1025-10-xpdl'
+;
+
+COMMENT ON COLUMN WF_FORMAL_PARAMETERS.FOPA_INDEX IS 'Index of the parameter'
+;
+
+COMMENT ON COLUMN WF_FORMAL_PARAMETERS.FOPA_MODE IS 'Parameter passing'
+;
+
+COMMENT ON COLUMN WF_FORMAL_PARAMETERS.DESCRIPTION IS 'Textual description of the formal parameter'
+;
+
+COMMENT ON COLUMN WF_FORMAL_PARAMETERS.NAME IS 'Not WFMC standard. Specify name for named parameter passing'
+;
+
+COMMENT ON COLUMN WF_FORMAL_PARAMETERS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PARTICIPANTS
+ (ID NUMBER(10,0) NOT NULL
+ ,NAME VARCHAR2(100) NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,PARTICIPANT_TYPE VARCHAR2(20) NOT NULL
+ ,STATE VARCHAR2(20)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PARTICIPANTS.STATE IS 'Not Wfmc: ACTIVE (or null) or terminated.'
+;
+
+COMMENT ON COLUMN WF_PARTICIPANTS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PERFORMERS_ARCH
+ (ID NUMBER(10,0) NOT NULL
+ ,PEAR_ID NUMBER(10,0)
+ ,PATI_ID NUMBER(10,0) NOT NULL
+ ,ACIA_ID NUMBER(10,0) NOT NULL
+ ,DATE_CREATED DATE NOT NULL
+ ,STATE VARCHAR2(10) DEFAULT 'CURRENT' NOT NULL
+ ,ACCEPTED VARCHAR2(240)
+ ,REMARKS VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PERFORMERS_ARCH.STATE IS 'CURRENT, DELEGATED'
+;
+
+COMMENT ON COLUMN WF_PERFORMERS_ARCH.ACCEPTED IS 'Only used for delegated performers.'
+;
+
+COMMENT ON COLUMN WF_PERFORMERS_ARCH.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_TRANSITION_INSTANCES
+ (TRSI_ACTI_PRCE_ID_FROM NUMBER(10,0) NOT NULL
+ ,TRSI_ACTI_ID_FROM INTEGER NOT NULL
+ ,TRSI_ACTI_PRCE_ID_TO NUMBER(10,0) NOT NULL
+ ,TRSI_ACTI_ID_TO INTEGER NOT NULL
+ ,ACIN_ID_FROM NUMBER(10,0) NOT NULL
+ ,ACIN_ID_TO NUMBER(10,0) NOT NULL
+ ,NEGATION_IND VARCHAR2(1) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_TRANSITION_INSTANCES.NEGATION_IND IS 'To keep track of disabled execution paths for the purpose of deciding how many paths have to be joined after a conditional-AND-split; is only ''Y'' when the transition condition is false or from activity_instance.negation_ind=''Y'''
+;
+
+COMMENT ON COLUMN WF_TRANSITION_INSTANCES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PROCESS_INSTANCES
+ (ID NUMBER(10,0) NOT NULL
+ ,PATI_ID NUMBER(10,0)
+ ,ACIN_ID NUMBER(10,0)
+ ,PRCE_ID NUMBER(10,0) NOT NULL
+ ,DATE_CREATED DATE NOT NULL
+ ,DATE_STARTED DATE
+ ,DATE_ENDED DATE
+ ,STATE VARCHAR2(15) NOT NULL
+ ,REMARKS VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES.DATE_CREATED IS 'Date of createprocessinstance'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES.DATE_STARTED IS 'Date of start process'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES.STATE IS 'If state = TERMINATED, then the process will be ended after the next completeworkitem. (graceful)'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES.REMARKS IS 'Records termination and other happenings'
+;
+
+COMMENT ON COLUMN WF_PROCESS_INSTANCES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_TRANSITIONS
+ (ACTI_PRCE_ID_FROM NUMBER(10,0) NOT NULL
+ ,ACTI_ID_FROM INTEGER NOT NULL
+ ,ACTI_PRCE_ID_TO NUMBER(10,0) NOT NULL
+ ,ACTI_ID_TO INTEGER NOT NULL
+ ,NAME VARCHAR2(100) NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,CONDITION VARCHAR2(1000)
+ ,CONDITION_TYPE VARCHAR2(240)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_TRANSITIONS.NAME IS 'Text for identification'
+;
+
+COMMENT ON COLUMN WF_TRANSITIONS.DESCRIPTION IS 'Short textual description of the transition'
+;
+
+COMMENT ON COLUMN WF_TRANSITIONS.CONDITION IS 'Anonymous PL;SQL block that should return true or fals.e'
+;
+
+COMMENT ON COLUMN WF_TRANSITIONS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ACTUAL_PARAMETERS
+ (ID NUMBER(10,0) NOT NULL
+ ,ATRI_ID NUMBER(10,0)
+ ,ACTI_ID INTEGER NOT NULL
+ ,ACTI_PRCE_ID NUMBER(10,0) NOT NULL
+ ,FOPA_ID NUMBER(10,0) NOT NULL
+ ,EXPRESSION VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTUAL_PARAMETERS.EXPRESSION IS 'An expression (SQL)'
+;
+
+COMMENT ON COLUMN WF_ACTUAL_PARAMETERS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PERFORMERS
+ (ID NUMBER(10,0) NOT NULL
+ ,PEFO_ID NUMBER(10,0)
+ ,PATI_ID NUMBER(10,0) NOT NULL
+ ,ACIN_ID NUMBER(10,0) NOT NULL
+ ,DATE_CREATED DATE NOT NULL
+ ,STATE VARCHAR2(10) DEFAULT 'CURRENT' NOT NULL
+ ,ACCEPTED VARCHAR2(240)
+ ,REMARKS VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PERFORMERS.STATE IS 'CURRENT, DELEGATED'
+;
+
+COMMENT ON COLUMN WF_PERFORMERS.ACCEPTED IS 'Only used for delegated performers.'
+;
+
+COMMENT ON COLUMN WF_PERFORMERS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PARTICIPANT_RELATIONS
+ (PATI_ID_ARG1 NUMBER(10,0) NOT NULL
+ ,PATI_ID_ARG2 NUMBER(10,0) NOT NULL
+ ,RELATION_TYPE VARCHAR2(240) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PARTICIPANT_RELATIONS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ACTIVITY_ATTRIBUTES
+ (ID NUMBER(10,0) NOT NULL
+ ,ACTI_ID INTEGER NOT NULL
+ ,ACTI_PRCE_ID NUMBER(10,0) NOT NULL
+ ,DATA_TYPE VARCHAR2(10) NOT NULL
+ ,NAME VARCHAR2(100) NOT NULL
+ ,LENGTH INTEGER NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,INITIAL_VALUE VARCHAR2(1000)
+ ,KEEP VARCHAR2(1) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_ATTRIBUTES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ATTRIBUTE_INSTANCES_ARCH
+ (ATRI_ID NUMBER(10,0) NOT NULL
+ ,PRIA_ID NUMBER(10,0) NOT NULL
+ ,VALUE VARCHAR2(4000) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTE_INSTANCES_ARCH.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_TRANSITION_INSTANCES_ARCH
+ (ACIA_ID_TO NUMBER(10,0) NOT NULL
+ ,ACIA_ID_FROM NUMBER(10,0) NOT NULL
+ ,TRSI_ACTI_PRCE_ID_TO NUMBER(10,0) NOT NULL
+ ,TRSI_ACTI_PRCE_ID_FROM NUMBER(10,0) NOT NULL
+ ,TRSI_ACTI_ID_FROM INTEGER NOT NULL
+ ,TRSI_ACTI_ID_TO INTEGER NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_TRANSITION_INSTANCES_ARCH.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ACTI_ATTRIBUTE_INSTANCES
+ (ACAT_ID NUMBER(10,0) NOT NULL
+ ,ACIN_ID NUMBER(10,0) NOT NULL
+ ,VALUE VARCHAR2(1000) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTI_ATTRIBUTE_INSTANCES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_APPLICATIONS
+ (ID NUMBER(10,0) NOT NULL
+ ,NAME VARCHAR2(100) NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,PLSQL_PROC_NAME VARCHAR2(200) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_APPLICATIONS.NAME IS 'Text for identification'
+;
+
+COMMENT ON COLUMN WF_APPLICATIONS.DESCRIPTION IS 'Short textual description'
+;
+
+COMMENT ON COLUMN WF_APPLICATIONS.PLSQL_PROC_NAME IS 'Name is name of automatically invoked PL;SQL procedure'
+;
+
+COMMENT ON COLUMN WF_APPLICATIONS.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_DEADLINES
+ (ID NUMBER(10,0) NOT NULL
+ ,ACTI_ID INTEGER NOT NULL
+ ,ACTI_PRCE_ID NUMBER(10,0) NOT NULL
+ ,EXECUTION VARCHAR2(7) NOT NULL
+ ,CONDITION VARCHAR2(4000) NOT NULL
+ ,EXCEPTION_NAME VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_DEADLINES.EXECUTION IS 'Define the system behaviour on raising the arrival of the deadline'
+;
+
+COMMENT ON COLUMN WF_DEADLINES.CONDITION IS 'An expression indicating the time of the deadline. This expression is implementationg dependent and may include at least:'
+;
+
+COMMENT ON COLUMN WF_DEADLINES.EXCEPTION_NAME IS 'The name of the exception to be raised on arrival of the deadline.'
+;
+
+COMMENT ON COLUMN WF_DEADLINES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ATTRIBUTES
+ (ID NUMBER(10,0) NOT NULL
+ ,PRCE_ID NUMBER(10,0) NOT NULL
+ ,DATA_TYPE VARCHAR2(10) NOT NULL
+ ,NAME VARCHAR2(100) NOT NULL
+ ,LENGTH INTEGER NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,INITIAL_VALUE VARCHAR2(1000)
+ ,KEEP VARCHAR2(1) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.DATA_TYPE IS 'INTEGER or CHARACTER or BOOLEAN'
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.NAME IS 'Name of the relevant data'
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.LENGTH IS 'Length of the relevant data'
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.DESCRIPTION IS 'Short textual description'
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.INITIAL_VALUE IS 'Pre-assignment of data for run time.'
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.KEEP IS 'Keep the instance after the proces instance is finished? (not wfmc)'
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_DEBUG_LOG
+ (ID NUMBER(10,0) NOT NULL
+ ,WHEN DATE NOT NULL
+ ,WHAT VARCHAR2(4000) NOT NULL
+ )
+;
+
+CREATE TABLE WF_ATTRIBUTE_INSTANCES
+ (ATRI_ID NUMBER(10,0) NOT NULL
+ ,PRIN_ID NUMBER(10,0) NOT NULL
+ ,VALUE VARCHAR2(1000) NOT NULL
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ATTRIBUTE_INSTANCES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ACTIVITY_INSTANCES
+ (ID NUMBER(10,0) NOT NULL
+ ,DELI_ID NUMBER(10,0)
+ ,ACTI_PRCE_ID NUMBER(10,0) NOT NULL
+ ,PRIN_ID NUMBER(10,0) NOT NULL
+ ,ACTI_ID INTEGER NOT NULL
+ ,PATI_ID NUMBER(10,0)
+ ,PATI_ID_EXCLUDE NUMBER(10,0)
+ ,DATE_CREATED DATE NOT NULL
+ ,DATE_STARTED DATE
+ ,DATE_ENDED DATE
+ ,DATE_DUE DATE
+ ,NEGATION_IND VARCHAR2(1) DEFAULT 'N' NOT NULL
+ ,STATE VARCHAR2(15) NOT NULL
+ ,REMARKS VARCHAR2(4000)
+ ,WORKLIST_DISPLAY VARCHAR2(4000)
+ ,SESSION_STATE BLOB
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.DATE_CREATED IS 'Date at which the activity was instantiated.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.DATE_STARTED IS 'Date at which the activity was chosen from worklist by participant.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.DATE_DUE IS 'Calculated with activity.must_finish_within, if not zero'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.NEGATION_IND IS 'To keep track of disabled execution paths for the purpose of deciding how many paths have to be joined after a conditional-AND-split; Is ''Y'' when every incoming transition.negation_ind is ''Y'''
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.REMARKS IS 'Remarks made by the performer'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.WORKLIST_DISPLAY IS 'To contain cached information to be shown in the worklist'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.SESSION_STATE IS 'Serialized state of the suspended activity'
+;
+
+COMMENT ON COLUMN WF_ACTIVITY_INSTANCES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_EXTERNAL_REFERENCES
+ (ID NUMBER(10,0) NOT NULL
+ ,PATI_ID NUMBER(10,0)
+ ,APLI_ID NUMBER(10,0)
+ ,LOCATION VARCHAR2(4000) NOT NULL
+ ,NAMESPACE VARCHAR2(4000)
+ ,XREF VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_EXTERNAL_REFERENCES.LOCATION IS 'It specifies the URI of the document that defines the type.'
+;
+
+COMMENT ON COLUMN WF_EXTERNAL_REFERENCES.NAMESPACE IS 'It allows specification of the scope in which the entity is defined.'
+;
+
+COMMENT ON COLUMN WF_EXTERNAL_REFERENCES.XREF IS 'It specifies the identity of the entity within the external document.'
+;
+
+COMMENT ON COLUMN WF_EXTERNAL_REFERENCES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_ACTIVITIES
+ (PRCE_ID NUMBER(10,0) NOT NULL
+ ,ID INTEGER NOT NULL
+ ,PRCE_ID_HAS_SUBFLOW NUMBER(10,0)
+ ,APLI_ID NUMBER(10,0)
+ ,ACTI_PRCE_ID_JOIN_OF NUMBER(10,0)
+ ,ACTI_ID_JOIN_OF INTEGER
+ ,NAME VARCHAR2(100) NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,JOIN VARCHAR2(3)
+ ,SPLIT VARCHAR2(3)
+ ,START_MODE VARCHAR2(9) NOT NULL
+ ,FINISH_MODE VARCHAR2(9) NOT NULL
+ ,IMPLEMENTATION VARCHAR2(10) NOT NULL
+ ,SUBFLOW_EXECUTION VARCHAR2(240)
+ ,LIMIT NUMBER(15,5)
+ ,PRIORITY NUMBER(2,0)
+ ,PATI_QUERY VARCHAR2(4000)
+ ,PATI_EXCLUDE_QUERY VARCHAR2(4000)
+ ,ASSIGN_TO VARCHAR2(4000)
+ ,READ_ACCESS VARCHAR2(10)
+ ,WRITE_ACCESS VARCHAR2(10)
+ ,CREATE_DELAY_EXPR VARCHAR2(4000)
+ ,WORKLIST_DISPLAY_QUERY VARCHAR2(4000)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.JOIN IS 'Semantics for multiple incoming transactions'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.SPLIT IS 'Semantics for multiple outgoing transactions.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.START_MODE IS 'Describes how the execution of an Activity is triggered.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.FINISH_MODE IS 'Describes how the system operates at the end of the Activity.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.IMPLEMENTATION IS 'A "regular" Activity. Mandatory if not a Route. Alternative implementations are no, or subflow'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.SUBFLOW_EXECUTION IS 'The subflow may be executed synchronously or asynchronously.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.LIMIT IS 'Expected duration for time management purposes (e.g. starting an escalation procedure etc.) in units of DurationUnit. It is counted from the starting date;time of the Process. The consequences of reaching the limit value are not defined in this document (i.e. vendor specific).'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.PRIORITY IS 'A value that describes the initial priority of this activity when it starts execution. If this attribute is not defined but a priority is defined in the Process definition then that is used. By default it is assumed that the priority levels are the natural numbers starting with zero, and that the higher the value the higher the priority (i.e.: 0, 1, , n).'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.PATI_QUERY IS 'Indicates the participant who is allowed to perform this activity. Enter the ID statically, or you can use a query. NB: only use query if the meaning of the activity is necessarily dynamic (consider using different activities in the first place).'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.PATI_EXCLUDE_QUERY IS 'Selects a human participant that is NOT allowed to perform the activity. This allows for statements like: this activity may not be performed by the performer of activity X of this process; e.g. one is not allowed to approve his own actions.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.ASSIGN_TO IS '(extended attribute) : sql query to return the participant that the activity instance must be assigned to. (for dynamic human participant assignment). Takes precedence over static role;skill assignment.'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.READ_ACCESS IS '(extended attribute) : Defines who may see workitems of other performers'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.WRITE_ACCESS IS '(extended attribute) : Defines who may alter workitems of other performers'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.CREATE_DELAY_EXPR IS 'Expression that returns days to wait before the activity becomes active. (not wfmc)'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.WORKLIST_DISPLAY_QUERY IS 'If present, output of this query will be put in workitem html of activity instance'
+;
+
+COMMENT ON COLUMN WF_ACTIVITIES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+CREATE TABLE WF_PROCESSES
+ (ID NUMBER(10,0) NOT NULL
+ ,NAME VARCHAR2(100) NOT NULL
+ ,DESCRIPTION VARCHAR2(1000) NOT NULL
+ ,CREATION_DATE DATE
+ ,VERSION VARCHAR2(20)
+ ,AUTHOR VARCHAR2(100)
+ ,DURATION NUMBER(15,5)
+ ,LIMIT NUMBER(15,5)
+ ,VALID_FROM DATE
+ ,VALID_TO DATE
+ ,WAITING_TIME VARCHAR2(240)
+ ,WORKING_TIME VARCHAR2(240)
+ ,REPLICATION_TIMESTAMP DATE
+ )
+;
+
+COMMENT ON COLUMN WF_PROCESSES.DESCRIPTION IS 'Short textual description of the process.'
+;
+
+COMMENT ON COLUMN WF_PROCESSES.DURATION IS 'Expected duration time to perform a task in units of DurationUnit.'
+;
+
+COMMENT ON COLUMN WF_PROCESSES.LIMIT IS 'Expected duration for time management purposes (e.g. starting an escalation procedure etc.) in units of DurationUnit. It is counted from the starting date;time of the Process. The consequences of reaching the limit value are not defined in this document (i.e. vendor specific). It is assumed that in this case at least the Responsible of the current process is notified of this situation.'
+;
+
+COMMENT ON COLUMN WF_PROCESSES.WAITING_TIME IS 'Describes the amount of time, which is needed to prepare the performance of the task (time estimation) (waiting time is provided by the analysis environment and may be updated by the runtime environment) in units of DurationUnit.'
+;
+
+COMMENT ON COLUMN WF_PROCESSES.WORKING_TIME IS 'Describes the amount of time the performer of the activity needs to perform the task (time estimation) (working time is needed for analysis purposes and is provided by the evaluation of runtime parameters) in units of DurationUnit.'
+;
+
+COMMENT ON COLUMN WF_PROCESSES.REPLICATION_TIMESTAMP IS 'This column can be used by the replication conflict resolution last timestamp method. Use a trigger to update this column.'
+;
+
+-- ----------------------------------------------------------------------
+-- flow.tab
+-- ----------------------------------------------------------------------
