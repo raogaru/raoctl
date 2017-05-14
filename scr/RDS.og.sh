@@ -3,16 +3,20 @@
 # ############################################################
 # ------------------------------------------------------------
 # AWS RDS OG actions
-action_L1="list create delete show copy "
+action_L1="list create delete copy "
 action_L2="list_opt add_opt del_opt "
-action_L3="zz "
+action_L3=" "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-xx,none,xx_description \
-yy,none,yy_description \
-zz,none,zz_description \
+list,none,List_Option_Groups \
+create,og_name:engine-name:major-engine-version,Create_Option_Group \
+delete,og_name,Drop_Option_Group \
+copy,source_og_name:target_og_name:target_og_description,Copy_Option_Group \
+list_opt,og_name,List_Options_of_a_Option_Group \
+add_opt,og_name:option_name,Add_Option_to_a_Option_Group \
+del_opt,og_name:option_name,Delete_Option_from_a_Option_Group \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
@@ -22,9 +26,6 @@ zz,none,zz_description \
 
 # ------------------------------------------------------------
 # Module specific common functions
-AWSRDS () {
-aws rds "$*"
-}
 
 # ------------------------------------------------------------
 [[ -z "${AWS_ACCESS_KEY_ID}" ]] && ERROR "AWS_ACCESS_KEY_ID env variable not defined !"
@@ -64,7 +65,3 @@ INPUT 2
 aws rds remove-option-from-option-group --option-group-name "${input1}" --options "${input2}" --apply-immediately 
 }
 # ------------------------------------------------------------
-
-
-#add-option-to-option-group
-
