@@ -3,10 +3,12 @@
 # raoctl: Rao Control
 # ======================================================================
 rc_NAME="raoctl"
+if [ -z "$RC_DIR" ]; then
 if [ "$USERNAME" = "root" ]; then
 	RC_DIR=${HOME}/rc
 else
 	RC_DIR=$(dirname $0)
+fi
 fi
 [[ -z "${RC_DIR}" ]] && echo "RC_DIR not defined!" && exit 1
 [[ ! -f ${RC_DIR}/cfg/${rc_NAME}.env ]] && echo "File not found: ${RC_DIR}/cfg/${rc_NAME}.env" && exit 1
