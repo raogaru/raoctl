@@ -327,7 +327,20 @@ fi
 }
 # ------------------------------------------------------------
 include_module_script () {
-INCLUDE ${SCR_DIR}/${v_class}.${v_module}.sh
+yesno=n
+v_module_script=${v_class}.${v_module}.sh
+DEBUG "v_module_script is $v_module_script"
+if [ -f ${SCR_DIR}/${v_module_script} ]; then
+	yesno=y
+	DEBUG "Module script sourced is ${SCR_DIR}/${v_module_script}"
+	INCLUDE ${SCR_DIR}/${v_module_script}
+	
+elif [ -f ${SCR_DIR}/${v_product}/${v_module_script} ]; then
+	yesno=y
+	DEBUG "Module script sourced is ${SCR_DIR}/${v_product}/${v_module_script}"
+	INCLUDE ${SCR_DIR}/${v_product}/${v_module_script}
+fi
+[[ "$yesno" = "n" ]] && ERROR "File not found ${v_module_script}"
 }
 # ------------------------------------------------------------
 assign_actions () {

@@ -96,6 +96,35 @@ cat ${OGG_PRM}/${OGG_SVC_NAME}.prm
 ECHO "${cLINE4}"
 }
 # ------------------------------------------------------------
+f_extract_defgen () {
+INPUT
+ReadServiceCfg ${input1}
+DEFGEN_PRM=${OGG_PRM}/${OGG_SVC_NAME}_defgen.prm
+DEFGEN_DEF= ${OGG_DEF}/${OGG_SVC_NAME}.def
+echo "
+defsfile ${DEFGEN_DEF}, purge 
+USERID ${OGG_ADM_USR}@${OGG_ADM_TNS}, PASSWORD ${OGG_ADM_PWD}
+TABLE ${OGG_SRC_USR}.*;
+" > ${DEFGEN_PRM}
+
+CHKFILE ${DEFGEN_PRM}
+
+ECHO "defgen parameter file created: ${DEFGEN_PRM}"
+
+ECHO "${vLINE4}"
+cat ${DEFGEN_PRM}
+ECHO "${vLINE4}"
+
+ECHO "Running defgen using ${DEFGEN_PRM}"
+defgen ParamFile ${DEFGEN_PRM}
+retval=$?
+[[ $retval -eq 0 ]] && ERROR "defgen failed. Please check ${DEFGEN_PRM} for details."
+
+CHKFILE ${DEFGEN_DEF}
+
+ECHO "defgen successful. ${DEFGEN_DEF} generated."
+}
+# ------------------------------------------------------------
 f_extract_start () {
 INPUT
 ReadServiceCfg ${input1}
