@@ -5,8 +5,8 @@
 # GG EXTRACT actions
 action_L1="list info status init prmgen defgen "
 action_L2="start stop report details tasks ckpts "
-action_L3="stats lag log_stats "
-action_L4="trace_on trace_off "
+action_L3="stats lag log_stats trace_on trace_off "
+action_L4="cleanup delete register_integrated register_classic unregister "
 action_L="$action_L1 $action_L2 $action_L3 $action_L4"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -29,6 +29,8 @@ log_stats,extract_name,Show_LogSwitch_Statistics \
 trace_on,extract_name,Trace_ON_Extract \
 trace_off,extract_name,Trace_OFF_Extract \
 "
+# ------------------------------------------------------------
+INCLIB_c
 # ------------------------------------------------------------
 # Global variable overwrites
 
@@ -151,6 +153,33 @@ GGSCI "send extract ${input1} Trace2 ${OGG_TRC}/${input1}.trc"
 f_extract_trace_off () {
 INPUT
 GGSCI "send extract ${input1} Trace2 off"
+}
+# ------------------------------------------------------------
+f_extract_cleanup () {
+INPUT
+GGSCI "cleanup extract ${input1} "
+}
+# ------------------------------------------------------------
+f_extract_delete () {
+INPUT
+GGSCI "delete extract ${input1}"
+}
+# ------------------------------------------------------------
+f_extract_register_integrated () {
+INPUT
+ECHO "Resiter as Integrated Extract"
+GGSCI "register extract ${input1} LogRetention"
+}
+# ------------------------------------------------------------
+f_extract_register_classic () {
+INPUT
+ECHO "Resiter as Classic Extract"
+GGSCI "register extract ${input1} database"
+}
+# ------------------------------------------------------------
+f_extract_unregister () {
+INPUT
+GGSCI "unregister extract ${input1} "
 }
 # ------------------------------------------------------------
 
