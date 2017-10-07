@@ -8,7 +8,7 @@ action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-module,class_name:module_name,Generate_Man_page_for_given_class_and_module \
+module,product_name:class_name:module_name,Generate_Man_page_for_given_class_and_module \
 "
 # ------------------------------------------------------------
 # local variables
@@ -22,7 +22,7 @@ echo $* >> ${v_manfile}
 # ============================================================
 f_man_module () {
 INPUT 3
-ECHO "Generate Man page for class=${input1} module=${input2}"
+ECHO "Generate Man page for product=${input1} class=${input2} module=${input3}"
 v_product=${input1}
 v_class=${input2}
 v_module=${input3}
