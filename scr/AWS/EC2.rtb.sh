@@ -16,6 +16,7 @@ delete,rtb_id,Delete_Route_Table \
 desc,rtb_id,Describe_Route_Table \
 desc_all,none,Describe_ALL_Route_Tables \
 associate,rtb_id:subnet_id:Associate_subnet_with_Route_Table \
+disassociate,rtb_id:subnet_id:Disassociate_subnet_with_Route_Table \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
@@ -56,6 +57,11 @@ aws ec2 describe-route-tables
 f_rtb_associate () {
 INPUT 2
 aws ec2 associate-route-table --route-table-id ${input1} --subnet-id ${input2}
+}
+# ------------------------------------------------------------
+f_rtb_disassociate () {
+INPUT
+aws ec2 disassociate-route-table --association-id ${input1}
 }
 # ------------------------------------------------------------
 
