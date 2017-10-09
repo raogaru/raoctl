@@ -10,7 +10,7 @@ action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-list,none,List_Mount_Targets \
+list,fs_id,List_Mount_Targets \
 create,fs_id:subnet_id,Create_Mount_Target \
 delete,mt_id,Delete_Mount_Target \
 desc,fs_id,Describe_Mount_Target \
@@ -30,7 +30,8 @@ modify_sg,mt_id:sg_list,Modify_Mount_Target_Security_Groups \
 [[ -z "${AWS_SECRET_ACCESS_KEY}" ]] && ERROR "AWS_SECRET_ACCESS_KEY env variable not defined !"
 # ------------------------------------------------------------
 f_mt_list () {
-aws efs describe-mount-targets
+INPUT
+aws efs describe-mount-targets --file-system-id ${input1}
 }
 # ------------------------------------------------------------
 f_mt_create () {
