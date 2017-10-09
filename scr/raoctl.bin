@@ -88,6 +88,7 @@ ECHO x=$x
 # ------------------------------------------------------------
 HELP () {
 typeset v_manfile=${MAN_DIR}/man1/${v_class}.${v_module}.1
+export MANPATH
 ECHO "HELP SCREEN ${cLINE1} BEGIN"
 [[ ! -f ${v_manfile} ]] && [[ ! -f ${v_manfile}.gz ]] && ECHO "Man page Not found ${v_manfile}"
 ( [[ -f ${v_manfile} ]] || [[ -f ${v_manfile}.gz ]] ) && man ${v_class}.${v_module}
