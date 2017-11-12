@@ -1,8 +1,8 @@
 # ############################################################
-# AWS EFS MT FUNCTIONS - AWS EFS Mount Targets Management
+# AWS EFS SG FUNCTIONS - AWS EFS Security Groups Management
 # ############################################################
 # ------------------------------------------------------------
-# AWS EFS MT actions
+# AWS EFS SG actions
 action_L1="list create delete desc "
 action_L2="modify_sg "
 action_L3=" "
