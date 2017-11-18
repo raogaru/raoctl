@@ -92,7 +92,7 @@ SQLLINE "set head on feedback on pagesi 1000 "
 SQLLINE "col pdb_id format 99"
 SQLLINE "col pdb_name format a10"
 SQLLINE "col dbid format 999999999999"
-SQLLINE "col open_time format a30"
+SQLLINE "col open_time format a32"
 SQLLINE "select a.pdb_id, a.pdb_name, b.open_mode, b.open_time, a.dbid, a.status"
 SQLLINE "from dba_pdbs a, v\$pdbs b where a.dbid=b.dbid order by a.pdb_id;"
 SQLEXEC
