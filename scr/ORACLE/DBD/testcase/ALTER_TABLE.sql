@@ -205,6 +205,3 @@ ALTER TABLE employees
    PCTFREE 30
    PCTUSED 60; 
 
-
-
-
