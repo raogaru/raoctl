@@ -83,6 +83,7 @@ cat ${TMPFILE2} | while read rID rName rEnabled rType
 do
 	ECHO ${cLINE3}
 	(( rSeq=rSeq+1 ))
+	if [ "${rEnabled}" == "Y" ]; then 
 	ECHO "Executing Rule#${rSeq}-${rID}:${rName}:${rType}"
 	if [ "${rType}" == "NotAllowed" ]; then 
 		WARN "Rule#${rSeq}-${rID}:${rName} is a NotAllowed Rule."
@@ -97,6 +98,9 @@ do
 			${v_rule_function}
 			[[ $? -ne 0 ]] && WARN "${v_rule_function} return code non-zero. Exiting"
 		fi
+	fi
+	else
+		ECHO "Rule#${rSeq}-${rID}:${rName} is disabled"
 	fi
 	
 done
