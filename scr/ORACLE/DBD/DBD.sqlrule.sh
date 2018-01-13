@@ -44,8 +44,6 @@ rc_SQLRULE_SQLTYPE_CFG_FILE=${rc_SQLRULE_SQLTYPE_CFG_DIR}/${rc_SQLRULE_SQLTYPE_F
 rc_SQLRULE_SQLSUBTYPE_CFG_DIR=${rc_SQLRULE_SQLSUBTYPE_CFG_DIR:=${RC_DIR}/scr/${v_class}/${v_module}/sqlsubtype}
 # ------------------------------------------------------------
 # Module specific environment variables
-v_debug=1
-sStr=""				# sql string
 vRulesGrepPattern=""
 
 # ------------------------------------------------------------
