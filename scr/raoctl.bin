@@ -52,12 +52,17 @@ CHKFILE () {
 # ------------------------------------------------------------
 INCLUDE () {
 x=$1
+#CHKFILE ${x}
+
 if [ -f ${x} ]; then
 	DEBUG "Sourcing ${x}"
 	. ${x}
 else
 	ERROR "File Not Found ${x}"
 fi
+
+#DEBUG "Sourcing ${x}"
+#. ${x}
 }
 # ------------------------------------------------------------
 GETCFG () { 
@@ -297,6 +302,7 @@ done
 [[ "${v_help}" = "Y" ]] && HELP ${v_product}
 ECHO "Valid classes : ${class_L}"
 ERROR "Invalid class \"${v_class}\""
+v_class_dir=${SCR_DIR}/${v_class}
 }
 # ------------------------------------------------------------
 assign_modules () {
@@ -326,6 +332,7 @@ done
 ECHO "product=${v_product}" "class=${v_class}" 
 ECHO "Valid modules : ${module_L}"
 ERROR "Invalid module \"${v_module}\""
+v_module_dir=${SCR_DIR}/${v_class}/${v_module}
 }
 # ------------------------------------------------------------
 SearchAndInclude () {
