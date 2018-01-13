@@ -6,8 +6,7 @@
 action_L1="list_all list_id list_name list_cat1 list_cat2 list_cat3 list_disabled list_enabled "
 action_L2="show_all show_id show_name show_cat1 show_cat2 show_cat3 show_disabled show_enabled "
 action_L3="exec_all exec_id exec_name exec_cat1 exec_cat2 exec_cat3 exec_disabled exec_enabled "
-action_L4=" "
-action_L="$action_L1 $action_L2 $action_L3 $action_L4"
+action_L="$action_L1 $action_L2 $action_L3 "
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
