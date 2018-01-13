@@ -3,12 +3,12 @@
 # raoctl: Rao Control
 # ======================================================================
 rc_NAME="raoctl"
-if [ -z "$RC_DIR" ]; then
-if [ "$USERNAME" = "root" ]; then
-	RC_DIR=${HOME}/rc
-else
-	RC_DIR=$(dirname $0)
-fi
+if [ -z "${RC_DIR}" ]; then
+	if [ "$USERNAME" = "root" ]; then
+		RC_DIR=${HOME}/rc
+	else
+		RC_DIR=$(dirname $0)
+	fi
 fi
 [[ -z "${RC_DIR}" ]] && echo "RC_DIR not defined!" && exit 1
 [[ ! -f ${RC_DIR}/cfg/${rc_NAME}.env ]] && echo "File not found: ${RC_DIR}/cfg/${rc_NAME}.env" && exit 1
@@ -31,6 +31,10 @@ echo "$*"
 ECHODO () {
 echo "$*"
 "$*"
+}
+# ------------------------------------------------------------
+WARN () {
+echo "WARNING:$*"
 }
 # ------------------------------------------------------------
 ERROR () {
@@ -88,7 +92,6 @@ ECHO x=$x
 # ------------------------------------------------------------
 HELP () {
 typeset v_manfile=${MAN_DIR}/man1/${v_class}.${v_module}.1
-export MANPATH
 ECHO "HELP SCREEN ${cLINE1} BEGIN"
 [[ ! -f ${v_manfile} ]] && [[ ! -f ${v_manfile}.gz ]] && ECHO "Man page Not found ${v_manfile}"
 ( [[ -f ${v_manfile} ]] || [[ -f ${v_manfile}.gz ]] ) && man ${v_class}.${v_module}
@@ -96,9 +99,15 @@ ECHO "HELP SCREEN ${cLINE1} END"
 USAGE
 }
 # ------------------------------------------------------------
+SQLSHOW () {
+[[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
+cat ${TMPSQL}
+[[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
+}
+# ------------------------------------------------------------
 SQLEXEC () {
 #constr="dgadm/dgadm@${1} as sysdba"
-constr="/ as sysdba"
+constr=${constr:="/ as sysdba"}
 [[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
 [[ "${rc_SHOW_SQL}" != "NO" ]] && cat ${TMPSQL}
 #cat $TMPSQL >> ${rc_EXEC_LOG}
@@ -319,29 +328,46 @@ ECHO "Valid modules : ${module_L}"
 ERROR "Invalid module \"${v_module}\""
 }
 # ------------------------------------------------------------
-INCLIB_c () {
-if [ ! -z $1 ]; then
-	INCLUDE ${SCR_DIR}/${1}.lib.sh
+SearchAndInclude () {
+x=$1
+y=""
+if [ -f ${SCR_DIR}/${x} ]; then
+	y=${SCR_DIR}/${x}
+elif [ -f ${SCR_DIR}/${v_product}/${x} ]; then
+	y=${SCR_DIR}/${v_product}/${x}
+elif [ -f ${SCR_DIR}/${v_product}/${v_class}/${x} ]; then
+	y=${SCR_DIR}/${v_product}/${v_class}/${x}
 else
-	INCLUDE ${SCR_DIR}/${v_class}.lib.sh
+	ECHO  "script not found ... "
+	ECHO "${SCR_DIR}/${x}"
+	ECHO "or"
+	ECHO "${SCR_DIR}/${v_product}/${x}"
+	ECHO "or"
+	ECHO "${SCR_DIR}/${v_product}/${v_class}/${x}"
+	ERROR "Exiting !"
+fi
+INCLUDE ${y}
+}
+# ------------------------------------------------------------
+INCLIB_c () {
+cName=$1
+if [ ! -z $cName ]; then
+	SearchAndInclude ${cName}.lib.sh
+else
+	SearchAndInclude ${v_class}.lib.sh
 fi
 }
 # ------------------------------------------------------------
+INCLIB_m () {
+	SearchAndInclude ${v_class}.${v_module}.lib.sh
+}
+# ------------------------------------------------------------
+INCLIB_a () {
+	SearchAndInclude ${SCR_DIR}/${v_class}.${v_module}.${v_action}.lib.sh
+}
+# ------------------------------------------------------------
 include_module_script () {
-yesno=n
-v_module_script=${v_class}.${v_module}.sh
-DEBUG "v_module_script is $v_module_script"
-if [ -f ${SCR_DIR}/${v_module_script} ]; then
-	yesno=y
-	DEBUG "Module script sourced is ${SCR_DIR}/${v_module_script}"
-	INCLUDE ${SCR_DIR}/${v_module_script}
-	
-elif [ -f ${SCR_DIR}/${v_product}/${v_module_script} ]; then
-	yesno=y
-	DEBUG "Module script sourced is ${SCR_DIR}/${v_product}/${v_module_script}"
-	INCLUDE ${SCR_DIR}/${v_product}/${v_module_script}
-fi
-[[ "$yesno" = "n" ]] && ERROR "File not found ${v_module_script}"
+	SearchAndInclude ${v_class}.${v_module}.sh
 }
 # ------------------------------------------------------------
 assign_actions () {
@@ -372,7 +398,7 @@ typeset -f ${v_function} > /dev/null
 }
 # ------------------------------------------------------------
 log_rc_options () {
-echo "$TIMESTAMP h=${HOSTNAME} p=${v_product} c=${v_class} m=${v_module} a=${v_action} i=${input} r=${v_repeat_count} s=${v_sleep_seconds}" >>${rc_MAST_LOG}
+echo "$TIMESTAMP h=${HOSTNAME} o=${ORACLE_SID} p=${v_product} c=${v_class} m=${v_module} a=${v_action} i=${input} r=${v_repeat_count} s=${v_sleep_seconds}" >>${rc_MAST_LOG}
 }
 # ------------------------------------------------------------
 execute_action () {
