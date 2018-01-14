@@ -4,7 +4,7 @@
 # ------------------------------------------------------------
 # RMAN RESTORE actions
 action_L1="db ts df cf al  "
-action_L1="cold_db "
+action_L2="cold_db soil "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -36,14 +36,29 @@ allocate auxiliary channel ch02 device type disk;
 allocate auxiliary channel ch03 device type disk;
 allocate auxiliary channel ch04 device type disk;
 
-duplicate target database to ${ORACLE_SID}
+duplicate target database to '${ORACLE_SID}'
 pfile=${ORACLE_HOME}/dbs/init${ORACLE_SID}.ora
 backup location '${input1}'
 nofilenamecheck noredo;
 }
 quit;
 EOFrman
-
 }
+# ------------------------------------------------------------
+f_restore_soil () { # temporary action. remove this later. 11/17/2015
+INPUT
+SQLRUN "startup nomount pfile=${ORACLE_HOME}/dbs/init${ORACLE_SID}.ora;"
+rman debug auxiliary / <<-EOFrman >${RMAN_LOG}
+run
+{
+allocate auxiliary channel ch01 device type disk;
 
+duplicate target database to '${ORACLE_SID}'
+pfile=${ORACLE_HOME}/dbs/init${ORACLE_SID}.ora
+backup location '${input1}'
+nofilenamecheck noredo;
+}
+quit;
+EOFrman
+}
 # ------------------------------------------------------------
