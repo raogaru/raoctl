@@ -83,7 +83,7 @@ fi
 cp ${TMPFILE4} ${TMPSCR}
 rm -f ${TMPFILE3} ${TMPFILE4}
 DEBUG "SQL File is ${TMPSCR} before processing line by line"
-ECHO "${cLINE2}"
+DEBUG "${cLINE2}"
 
 # processing begins - read full line into lStr
 while read -r lStr
