@@ -9,8 +9,6 @@ rc_SQLSUBTYPE_CFG_DIR=${rc_SQLSUBTYPE_CFG_DIR:=${SCR_DIR}/${v_product}/${v_class
 rc_FIND_SQLTYPE=${rc_FIND_SQLTYPE:=YES}
 rc_FIND_SQLSUBTYPE=${rc_FIND_SQLSUBTYPE:=YES}
 rc_FIND_SQLOBJECT=${rc_FIND_SQLOBJECT:=YES}
-#rc_PROCESS_SQLTYPE_RULES=${rc_PROCESS_SQLTYPE_RULES:=YES}
-#rc_PROCESS_SQLSUBTYPE_RULES=${rc_PROCESS_SQLSUBTYPE_RULES:=YES}
 rc_SQLTYPE_WRITE_DESCRIPTIVE_STORY=${rc_SQLTYPE_WRITE_DESCRIPTIVE_STORY:=YES}
 #
 # ------------------------------------------------------------
@@ -75,8 +73,8 @@ mySqlStr=$1
 v_debug=0
 DEBUG "BEGIN f_find_sql_type"
 
-DEBUG "Parsing sql string as-is : ${input1}"
-ucSqlStr=${input1^^}
+DEBUG "Parsing sql string as-is : ${mySqlStr}"
+ucSqlStr=${mySqlStr^^}
 DEBUG "Parsing sql string in upper-case : ${ucSqlStr}"
 
 # initialize to null. check for null later
@@ -115,6 +113,7 @@ DEBUG "END f_find_sql_type l_SqlType=${l_SqlType}"
 
 # write SQL Type story
 if [ "${rc_SQLTYPE_WRITE_DESCRIPTIVE_STORY}" = "YES" ]; then
+	DEBUG "Story by f_find_sql_type"
 	ECHO "#SQL Input string: ${mySqlStr}"
 	ECHO "#SQL Upper string: ${ucSqlStr}"
 	ECHO "#SQL Type ID: ${l_SqlTypeID}"
@@ -122,6 +121,7 @@ if [ "${rc_SQLTYPE_WRITE_DESCRIPTIVE_STORY}" = "YES" ]; then
 fi
 
 v_debug=0
+DEBUG "END f_find_sql_type"
 }
 # ------------------------------------------------------------
 f_find_sql_object () {
@@ -141,13 +141,15 @@ DEBUG "END f_find_sql_object l_SqlObjectName=${l_SqlObjectName}"
 
 # write SQL Type story
 if [ "${rc_SQLTYPE_WRITE_DESCRIPTIVE_STORY}" = "YES" ]; then
-	DEBUG "#SQL Input string: ${mySqlStr}"
-	DEBUG "#SQL Upper string: ${ucSqlStr}"
-	DEBUG "#SQL Type ID: ${l_SqlTypeID}"
-	DEBUG "#SQL Type Name: ${l_SqlType}"
+	DEBUG "Story by f_find_sql_object"
+	#DEBUG "#SQL Input string: ${mySqlStr}"
+	#DEBUG "#SQL Upper string: ${ucSqlStr}"
+	#DEBUG "#SQL Type ID: ${l_SqlTypeID}"
+	#DEBUG "#SQL Type Name: ${l_SqlType}"
 	ECHO "#SQL Object Name: ${l_SqlObjectName}"
 fi
-
+DEBUG "END f_find_sql_object"
+v_debug=0
 }
 # ------------------------------------------------------------
 f_FindSqlSubType_generic () {
@@ -283,12 +285,14 @@ DEBUG "ENDING f_find_sql_sub_type SQL Sub Type ${l_SqlSubType}"
 # write SQL Type story
 if [ "${rc_SQLTYPE_WRITE_DESCRIPTIVE_STORY}" = "YES" ]; then
 	DEBUG "#----------"
-	DEBUG "#SQL Input string: ${mySqlStr}"
-	DEBUG "#SQL Upper string: ${ucSqlStr}"
+	DEBUG "Story by f_find_sql_sub_type"
+	#DEBUG "#SQL Input string: ${mySqlStr}"
+	#DEBUG "#SQL Upper string: ${ucSqlStr}"
 	ECHO "#SQL Sub Type ID ${l_SqlSubTypeID}"
 	ECHO "#SQL Sub Type ${l_SqlSubType}"
 	ECHO "#SQL Sub Name ${l_SqlSubTypeSearchName}"
 fi
 v_debug=0
+DEBUG "END f_find_sql_sub_type"
 }
 # ------------------------------------------------------------
