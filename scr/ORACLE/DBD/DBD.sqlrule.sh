@@ -250,11 +250,6 @@ ExecRulesForPattern
 # ------------------------------------------------------------
 #ACTIONS cat1=NotAllowed|PreBuild cat2=SqlType cat3=SqlSubType
 # ------------------------------------------------------------
-f_sqlrule_list_not_allowed () {
-INPUT=NotAllowed
-f_sqlrule_list_cat1
-}
-# ------------------------------------------------------------
 f_sqlrule_list_sqltype () {
 INPUT 
 f_sqlrule_list_cat2 
@@ -265,11 +260,6 @@ INPUT
 f_sqlrule_list_cat3 
 }
 # ------------------------------------------------------------
-f_sqlrule_show_not_allowed () {
-INPUT=NotAllowed
-f_sqlrule_show_cat1
-}
-# ------------------------------------------------------------
 f_sqlrule_show_sqltype () {
 INPUT
 f_sqlrule_show_cat2
@@ -278,11 +268,6 @@ f_sqlrule_show_cat2
 f_sqlrule_show_sqlsubtype () {
 INPUT
 f_sqlrule_show_cat3 
-}
-# ------------------------------------------------------------
-f_sqlrule_exec_not_allowed () {
-INPUT=NotAllowed
-f_sqlrule_exec_cat1
 }
 # ------------------------------------------------------------
 f_sqlrule_exec_sqltype () {
