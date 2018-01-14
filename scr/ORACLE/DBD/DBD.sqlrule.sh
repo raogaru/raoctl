@@ -6,7 +6,10 @@
 action_L1="list_all list_id list_name list_cat1 list_cat2 list_cat3 list_disabled list_enabled "
 action_L2="show_all show_id show_name show_cat1 show_cat2 show_cat3 show_disabled show_enabled "
 action_L3="exec_all exec_id exec_name exec_cat1 exec_cat2 exec_cat3 exec_disabled exec_enabled "
-action_L="$action_L1 $action_L2 $action_L3 "
+action_L4="list_not_allowed list_sqltype list_sqlsubtype "
+action_L5="show_not_allowed show_sqltype show_sqlsubtype "
+action_L6="exec_not_allowed exec_sqltype exec_sqlsubtype "
+action_L="$action_L1 $action_L2 $action_L3 $action_L4 $action_L5 $action_L6 "
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
@@ -243,5 +246,49 @@ ExecRulesForPattern
 f_sqlrule_exec_enabled () {
 vRulesGrepPattern="^[0-9]*:[A-Za-z0-9]*:Y:"
 ExecRulesForPattern
+}
+# ------------------------------------------------------------
+#ACTIONS cat1=NotAllowed|PreBuild cat2=SqlType cat3=SqlSubType
+# ------------------------------------------------------------
+f_sqlrule_list_not_allowed () {
+f_sqlrule_list_cat1 -i NotAllowed
+}
+# ------------------------------------------------------------
+f_sqlrule_list_sqltype () {
+INPUT 
+f_sqlrule_list_cat2 
+}
+# ------------------------------------------------------------
+f_sqlrule_list_sqlsubtype () {
+INPUT 
+f_sqlrule_list_cat3 
+}
+# ------------------------------------------------------------
+f_sqlrule_show_not_allowed () {
+f_sqlrule_show_cat1 -i NotAllowed
+}
+# ------------------------------------------------------------
+f_sqlrule_show_sqltype () {
+INPUT
+f_sqlrule_show_cat2
+}
+# ------------------------------------------------------------
+f_sqlrule_show_sqlsubtype () {
+INPUT
+f_sqlrule_show_cat3 
+}
+# ------------------------------------------------------------
+f_sqlrule_exec_not_allowed () {
+f_sqlrule_exec_cat1 -i NotAllowed
+}
+# ------------------------------------------------------------
+f_sqlrule_exec_sqltype () {
+INPUT
+f_sqlrule_exec_cat2
+}
+# ------------------------------------------------------------
+f_sqlrule_exec_sqlsubtype () {
+INPUT
+f_sqlrule_exec_cat3 
 }
 # ------------------------------------------------------------
