@@ -45,13 +45,19 @@ rc_SQLRULE_SQLTYPE_FOR=${rc_SQLRULE_SQLTYPE_FOR:=all}
 rc_SQLRULE_SQLTYPE_CFG_DIR=${rc_SQLRULE_SQLTYPE_CFG_DIR:=${SCR_DIR}/${v_product}/${v_class}/sqltype}
 rc_SQLRULE_SQLTYPE_CFG_FILE=${rc_SQLRULE_SQLTYPE_CFG_DIR}/${rc_SQLRULE_SQLTYPE_FOR}.cfg
 rc_SQLRULE_SQLSUBTYPE_CFG_DIR=${rc_SQLRULE_SQLSUBTYPE_CFG_DIR:=${RC_DIR}/scr/${v_class}/${v_module}/sqlsubtype}
+rc_SQLRULE_NOTALLOWED_ACTION=${rc_SQLRULE_NOTALLOWED_ACTION:=WARN}
 # ------------------------------------------------------------
 # Module specific environment variables
 vRulesGrepPattern=""
-
+v_debug=1
 # ------------------------------------------------------------
 # Module specific common functions
-
+f_NotAllowedRule () {
+DEBUG "BEGIN f_NotAllowedRule"
+[[ "${rc_SQLRULE_NOTALLOWED_ACTION}" == "ERROR" ]] && ERROR "Exiting !!!"
+WARN "You have been warned !!!"
+DEBUG "END f_NotAllowedRule"
+}
 # ------------------------------------------------------------
 CHKFILE ${rc_SQLRULE_RULES_CFG}
 CHKFILE ${rc_SQLRULE_SQLTYPE_CFG_FILE}
@@ -88,6 +94,7 @@ do
 	ECHO "Executing Rule#${rSeq}-${rID}:${rName}:${rType}"
 	if [ "${rType}" == "NotAllowed" ]; then 
 		WARN "Rule#${rSeq}-${rID}:${rName} is a NotAllowed Rule."
+		f_NotAllowedRule
 	fi
 	if [ "${rType}" == "Custom" ]; then
 		export v_rule_function=f_rule_${rName}
