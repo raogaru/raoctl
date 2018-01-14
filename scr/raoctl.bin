@@ -367,7 +367,7 @@ fi
 # ------------------------------------------------------------
 INCLIB_m () {
 mName=$1
-if [ ! -z $cName ]; then
+if [ ! -z $mName ]; then
 	SearchAndInclude ${v_class}.${mName}.lib.sh
 else
 	SearchAndInclude ${v_class}.${v_module}.lib.sh
