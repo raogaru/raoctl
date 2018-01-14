@@ -1,8 +1,8 @@
 # ############################################################
-# AWS RDS PG FUNCTIONS - AWS RDS Parameter Group Management
+# AWS RDS ROLE FUNCTIONS - AWS IAM Roles Management
 # ############################################################
 # ------------------------------------------------------------
-# AWS RDS PG actions
+# AWS IAM ROLE actions
 action_L1="list create delete copy reset modify modify_later desc_defaults show "
 action_L2=" "
 action_L3=" "
@@ -32,13 +32,13 @@ show,pg_name,Show_all_parameter_details \
 [[ -z "${AWS_ACCESS_KEY_ID}" ]] && ERROR "AWS_ACCESS_KEY_ID env variable not defined !"
 [[ -z "${AWS_SECRET_ACCESS_KEY}" ]] && ERROR "AWS_SECRET_ACCESS_KEY env variable not defined !"
 # ------------------------------------------------------------
-f_pg_list () {
-aws rds describe-db-parameter-groups
+f_role_list () {
+aws iam list-roles
 }
 # ------------------------------------------------------------
-f_pg_show () {
+f_role_create () {
 INPUT
-aws rds describe-db-parameters --db-parameter-group-name "${input1}"
+aws iam create-role --role-name "${input1}" --assume-role-policy-document "${input2}"
 }
 # ------------------------------------------------------------
 f_pg_create () {
