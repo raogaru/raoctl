@@ -1,53 +1,29 @@
-# ############################################################
-# DBD SPLITSQL FUNCTIONS - Database Deployment SQL Rule Engine
-# ############################################################
-# ------------------------------------------------------------
-# DBD SPLITSQL actions
-action_L1="split testcase "
-action_L="$action_L1 $action_L2 $action_L3 $action_L4"
-# ------------------------------------------------------------
-# USAGE DATA
-usage_L=" \
-split,sql_file_name,Split_SQL_File \
-testcase,SQL_Type_in_upper_case_with_under_scores,Process_TestCase_SQL_File \
-"
-# ------------------------------------------------------------
-# Global variable overwrites
-rc_SPLITSQL_REMOVE_CSTYLE_COMMENTS=YES
-rc_SPLITSQL_REMOVE_DOCUMENT_COMMENTS=YES
-rc_SPLITSQL_REMOVE_EMPTY_LINES=YES
-rc_SPLITSQL_REMOVE_PROMPT_LINES=YES
-rc_SPLITSQL_REMOVE_DOUBLE_HIPHEN_LINES=YES
-rc_SPLITSQL_REMOVE_MULTIPLE_WHITESPACES=YES
-# ------------------------------------------------------------
-# Module specific environment variables
-sStr=""				# sql string
-
-# ------------------------------------------------------------
-# Module specific common functions
-
-# ------------------------------------------------------------
-# Split input sqlfile into multiple files
-f_split_sql_to_files () {
-l_FileName=$1 #input file
+fSplitFileToSQL () {
+v_debug=0
+sFile=$1
 sNum=0 #SQL Count
 typeset sStr=""
 l_FileLineNum=0
-l_SqlLineNum=0
+l_SqlLineNum=1
 sLineCnt=0
+l_SqlTypeID=""
+l_SqlType=""
+l_SqlTypeUnderscore=""
+l_SqlSubType=""
+l_SqlObjectName=""
 lStr=""
 cCnt=0
 
-DEBUG Processing ${l_FileName}
+DEBUG Processing $sFile
 
-CHKFILE ${l_FileName}
+# NOTE: User TMPFILE3/4 as TMPFILE1/2 already used in DBD.sqlrule.sh
 
 # remove multi-line comments starting with /* and ending with */  
 if [ "${rc_SPLITSQL_REMOVE_CSTYLE_COMMENTS}" != "NO" ]; then
 	DEBUG "Removing C-Style multi-line comments"
-	cat ${l_FileName} | perl -p0e 's!/\*.*?\*/!!sg' > ${TMPFILE3}
+	cat ${sFile} | perl -p0e 's!/\*.*?\*/!!sg' > ${TMPFILE3}
 else
-	cp ${l_FileName} ${TMPFILE3}
+	cp ${sFile} ${TMPFILE3}
 fi
 
 # remove multi-line comments starting with DOC and ending with #
@@ -94,8 +70,6 @@ fi
 #final copy in ${TMPFILE3} before processing line by line
 cp ${TMPFILE4} ${TMPSCR}
 rm -f ${TMPFILE3} ${TMPFILE4}
-DEBUG "SQL File is ${TMPSCR} before processing line by line"
-ECHO "${cLINE2}"
 
 # processing begins - read full line into lStr
 while read -r lStr
@@ -119,7 +93,7 @@ do
 	[[ "${sChar1}" = "/" && ${l_SqlLineNum} -eq 1 ]] && l_SqlLineNum=0 && continue
 	
 	# enable this debug line if problem parsing sql file due to bad characters
-	DEBUG "FileLine#${l_FileLineNum} : SqlLine#${l_SqlLineNum} : Chars=${cCnt} : ${lStr} "
+	DEBUG "FileLine#${l_FileLineNum} SqlLine#${l_SqlLineNum} : Chars=${cCnt} : ${lStr} "
 
 	# replace first char is slash then end SQL
 	if [ "${sChar1}" = "/" ]; then
@@ -135,38 +109,77 @@ do
 		# trim leading whitespaces
 		sStr="${sStr#"${sStr%%[![:space:]]*}"}"
 
-		ECHO "${cLINE4}"
+		ECHO "${cLINE2}"
 		(( sNum=sNum+1 ))
 		DEBUG "SQL#${sNum} : ${sStr}"
-		# create sql file per statement - use this split sql file for execution 
+		# create sql file per statement - use this for execution
 		ECHO "${sStr}" > ${TMPSQL}.${sNum}
 		DEBUG "SQL#${sNum} file is ${TMPSQL}.${sNum}"
 
-		ECHO "${cLINE1}"
+		# NOTES: SQL file already created above. Use that for execution in DB. Do not use converted SQL for execution.
+
+		# convert to upper case. 
+		sStr=${sStr^^}
+		#DEBUG "Parse SQL to find SQL Type SQL Sub Type"
+		ECHO "#SQL ${sNum}"
+		ECHO "#SQL ${sStr}"
+
+		if [ "${rc_SPLITSQL_FIND_SQLTYPE}" != "NO" ]; then
+			DEBUG "Find SQL Type for ${sStr}"
+			f_find_sql_type "${sStr}"
+			ECHO "#SQL Type ID # ${l_SqlTypeID}"
+			ECHO "#SQL Type Name ${l_SqlType}"
+
+			if [ "${rc_SPLITSQL_PROCESS_SQLTYPE_RULES}" != "NO" ]; then
+				DEBUG "Show rules for SQL Type (Rules-Category-2) ${l_SqlTypeUnderscore}"
+				vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:"
+				ShowRulesForPattern
+				#ExecRulesForPattern
+			fi
+
+			if [ "${rc_SPLITSQL_FIND_SQLOBJECT}" != "NO" ]; then
+				DEBUG "Find SQL Object"
+				f_find_sql_object
+				ECHO "#SQL Obj Name  ${l_SqlObjectName}"
+			fi
+
+			if [ "${rc_SPLITSQL_FIND_SQLSUBTYPE}" != "NO" ]; then
+				DEBUG "Find SQL Sub Type for ${l_SqlType}"
+				f_find_sql_sub_type 
+				ECHO "#SQL Sub Type ID ${l_SqlSubTypeID}"
+				ECHO "#SQL Sub Type ${l_SqlSubType}"
+				ECHO "#SQL Sub Name ${l_SqlSubTypeSearchName}"
+
+				if [ "${rc_SPLITSQL_PROCESS_SQLSUBTYPE_RULES}" != "NO" ]; then
+					DEBUG "Show rules for Rule-Name (Based on SQL Sub type)"
+					#vGrepPattern="^[0-9]*:${l_SqlSubTypeSearchName}:[Y]:.*:${l_SqlTypeUnderscore}:"
+					#ShowRulesForPattern
+
+					DEBUG "Show rules for Rules-Category-3 (SQL Sub Type)"
+					#vGrepPattern="^[0-9]*:[A-Za-z0-9]*:[Y]:.*:${l_SqlTypeUnderscore}:${"
+					#ShowRulesForPattern
+				fi
+			fi
+		fi
+
+		ECHO "${cLINE2}"
 		# start new sql string
 		sStr=""
 		l_SqlLineNum=0
-		cCnt=0
+		l_SqlTypeID=0
+		l_SqlType=""
+		l_SqlTypeUnderscore=""
+		l_SqlSubType=""
+		l_SqlSubTypeID=0
+		l_SqlObjectName=""
+		l_SqlSubTypeSearchName=""
 	fi
 done < ${TMPSCR} 
 
 ECHO "${cLINE2}"
 ECHO "Summary:"
-ECHO "Input Script ${l_FileName}"
-ECHO "Trimmed Script ${TMPSCR}"
+ECHO "Input Script ${sFile}"
 ECHO "Number of lines : ${l_FileLineNum}"
+ECHO "Number of chars : ${cCnt}"
 ECHO "Number of SQLs : ${sNum}"
 }
-# ------------------------------------------------------------
-f_sqlsplit_split () {
-INPUT
-v_debug=0
-f_split_sql_to_files ${input1}
-}
-# ------------------------------------------------------------
-f_sqlsplit_testcase () {
-INPUT
-v_debug=1
-f_split_sql_to_files ${SCR_DIR}/${v_product}/${v_class}/testcase/${input}.sql
-}
-# ------------------------------------------------------------
