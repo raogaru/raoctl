@@ -6,6 +6,8 @@ rc_SQLRULE_SQLTYPE_CFG_DIR=${rc_SQLRULE_SQLTYPE_CFG_DIR:=${SCR_DIR}/${v_product}
 rc_SQLRULE_SQLTYPE_CFG_FILE=${rc_SQLRULE_SQLTYPE_CFG_DIR}/${rc_SQLRULE_SQLTYPE_FOR}.cfg
 rc_SQLRULE_SQLSUBTYPE_CFG_DIR=${rc_SQLRULE_SQLSUBTYPE_CFG_DIR:=${RC_DIR}/scr/${v_class}/${v_module}/sqlsubtype}
 rc_SQLRULE_NOTALLOWED_ACTION=${rc_SQLRULE_NOTALLOWED_ACTION:=WARN}
+rc_PROCESS_SQLTYPE_RULES=${rc_PROCESS_SQLTYPE_RULES:=YES}
+rc_PROCESS_SQLTSUBYPE_RULES=${rc_PROCESS_SQLTSUBYPE_RULES:=YES}
 # ------------------------------------------------------------
 # Module specific environment variables
 vRulesGrepPattern=""
