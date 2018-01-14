@@ -1,0 +1,3 @@
+Add ORACLE/DBD/sqltype/findObject - give message for type2 Sqltypes
+Add ORACLE/DBD/sqltype - for each PLSQL SqlType command, create Custom rules to display message - example CREATE_JAVA
+
