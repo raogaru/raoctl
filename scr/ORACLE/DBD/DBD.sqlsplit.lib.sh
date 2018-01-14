@@ -8,7 +8,7 @@ rc_SPLITSQL_REMOVE_DOUBLE_HIPHEN_LINES=YES
 rc_SPLITSQL_REMOVE_MULTIPLE_WHITESPACES=YES
 # ------------------------------------------------------------
 # Module specific environment variables
-sStr=""				# sql string
+ssSqlStr=""				# sqlsplit sql string
 
 # ------------------------------------------------------------
 # Module specific common functions
@@ -19,7 +19,7 @@ f_split_sql_to_files () {
 v_debug=0
 l_FileName=$1 #input file
 sNum=0 #SQL Count
-typeset sStr=""
+typeset ssSqlStr=""
 l_FileLineNum=0
 l_SqlLineNum=0
 sLineCnt=0
@@ -112,27 +112,27 @@ do
 	# replace first char is slash then end SQL
 	if [ "${sChar1}" = "/" ]; then
 		 sChar1=";"
-		sStr="${sStr} ;"
+		ssSqlStr="${ssSqlStr} ;"
 	else
-		sStr="${sStr} ${lStr}"
+		ssSqlStr="${ssSqlStr} ${lStr}"
 	fi
 
 	# start new SQL if first char is semi-color or slash OR last char is semi-colon
 	if [[ "${sChar1}" == ";" || "${sChar1}" == "/" || "${sChar2}" == ";" ]]; then
 
 		# trim leading whitespaces
-		sStr="${sStr#"${sStr%%[![:space:]]*}"}"
+		ssSqlStr="${ssSqlStr#"${ssSqlStr%%[![:space:]]*}"}"
 
 		DEBUG "${cLINE4}"
 		(( sNum=sNum+1 ))
-		DEBUG "SQL#${sNum} : ${sStr}"
+		DEBUG "SQL#${sNum} : ${ssSqlStr}"
 		# create sql file per statement - use this split sql file for execution 
-		ECHO "${sStr}" > ${TMPSQL}.${sNum}
+		ECHO "${ssSqlStr}" > ${TMPSQL}.${sNum}
 		DEBUG "SQL#${sNum} file is ${TMPSQL}.${sNum}"
 
 		DEBUG "${cLINE1}"
 		# start new sql string
-		sStr=""
+		ssSqlStr=""
 		l_SqlLineNum=0
 		cCnt=0
 	fi
