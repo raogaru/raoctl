@@ -16,6 +16,7 @@ sStr=""				# sql string
 # ------------------------------------------------------------
 # Split input sqlfile into multiple files
 f_split_sql_to_files () {
+v_debug=0
 l_FileName=$1 #input file
 sNum=0 #SQL Count
 typeset sStr=""
@@ -122,14 +123,14 @@ do
 		# trim leading whitespaces
 		sStr="${sStr#"${sStr%%[![:space:]]*}"}"
 
-		ECHO "${cLINE4}"
+		DEBUG "${cLINE4}"
 		(( sNum=sNum+1 ))
 		DEBUG "SQL#${sNum} : ${sStr}"
 		# create sql file per statement - use this split sql file for execution 
 		ECHO "${sStr}" > ${TMPSQL}.${sNum}
 		DEBUG "SQL#${sNum} file is ${TMPSQL}.${sNum}"
 
-		ECHO "${cLINE1}"
+		DEBUG "${cLINE1}"
 		# start new sql string
 		sStr=""
 		l_SqlLineNum=0
@@ -143,5 +144,6 @@ ECHO "Input Script ${l_FileName}"
 ECHO "Trimmed Script ${TMPSCR}"
 ECHO "Number of lines : ${l_FileLineNum}"
 ECHO "Number of SQLs : ${sNum}"
+v_debug=0
 }
 # ------------------------------------------------------------
