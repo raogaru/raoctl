@@ -1,0 +1,16 @@
+-- ----------------------------------------------------------------------
+-- flow.tbs
+-- ----------------------------------------------------------------------
+
+PROMPT Creating Tablespace ...
+
+CREATE TABLESPACE rc_wf
+DATAFILE '/oracle/data/RAO/rc_wf.dbf' SIZE 50M
+AUTOEXTEND ON NEXT 1M MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL
+SEGMENT SPACE MANAGEMENT AUTO
+FLASHBACK OFF;
+
+-- ----------------------------------------------------------------------
+-- flow.tbs
+-- ----------------------------------------------------------------------

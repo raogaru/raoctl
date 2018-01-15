@@ -1,0 +1,34 @@
+--
+-- delete all transaction data
+--
+
+delete from WF_DEBUG_LOG ;
+delete from WF_ACTI_ATTRIB_INSTANCES_ARCH ;
+delete from WF_ATTRIBUTE_INSTANCES_ARCH ;
+delete from WF_TRANSITION_INSTANCES_ARCH ;
+delete from WF_ACTIVITY_INSTANCES_ARCH ;
+delete from WF_PROCESS_INSTANCES_ARCH ;
+delete from WF_PERFORMERS_ARCH ;
+
+delete from WF_ACTI_ATTRIBUTE_INSTANCES ;
+delete from WF_ACTIVITY_ATTRIBUTES ;
+delete from WF_TRANSITION_INSTANCES ;
+delete from WF_ATTRIBUTE_INSTANCES ;
+delete from WF_PERFORMERS ;
+delete from WF_ACTIVITY_INSTANCES ;
+delete from WF_PROCESS_INSTANCES ;
+delete from WF_DEADLINES ;
+delete from WF_ACTUAL_PARAMETERS ;
+delete from WF_EXTERNAL_REFERENCES ;
+delete from WF_FORMAL_PARAMETERS ;
+
+-- do not delete Process Definition static data
+--delete from WF_PARTICIPANT_RELATIONS ;
+--delete from WF_ACTIVITIES ;
+--delete from WF_PROCESSES ;
+--delete from WF_PARTICIPANTS ;
+--delete from WF_TRANSITIONS ;
+--delete from WF_APPLICATIONS ;
+--delete from WF_ATTRIBUTES ;
+
+commit;

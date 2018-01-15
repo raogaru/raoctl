@@ -1,0 +1,2 @@
+whenever sqlerror exit 1;
+alter session set current_schema = rc_wf ;

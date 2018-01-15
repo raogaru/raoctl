@@ -1,0 +1,9 @@
+-- rc_hr
+--@@../scott
+create synonym emp for rc_hr.emp;
+create synonym job_typ for rc_hr.job_typ;
+
+-- rc_iam
+create synonym ast for rc_iam.ast;
+create synonym acs for rc_iam.acs;
+

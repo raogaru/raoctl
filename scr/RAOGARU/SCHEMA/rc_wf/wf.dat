@@ -1,0 +1,145 @@
+--
+-- wf.dat
+--
+-- ----------------------------------------------------------------------
+
+PROMPT wf_participants ROLEs : from 11 to 100
+
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 11, 'EMPLOYEE', 'Employee Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 12, 'TEAMLEAD', 'Team Lead Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 13, 'TECHLEAD', 'Tech Lead Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 14, 'PROGLEAD', 'Program Lead Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 15, 'ENGINEER', 'Engineer Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 16, 'SECURITY', 'Security Officer Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 17, 'SUPERVISOR', 'Supervisor Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 18, 'MANAGER', 'Manager Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 19, 'DIRECTOR', 'The Asset Administrator Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 20, 'VP', 'The Asset Administrator Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 21, 'EXECUTIVE', 'The Asset Administrator Role', 'ROLE' ) ;
+INSERT INTO wf_participants ( id, name, description, participant_type ) VALUES ( 22, 'GRANT_TRANSITIVITY', 'Transitivity of grants', 'ROLE' ) ;
+
+-- ----------------------------------------------------------------------
+
+PROMPT wf_participants TEAMs : 101 to 200
+
+--INSERT INTO wf_participants (id,name,description,participant_type) VALUES (101, 'EMPLOYEE_TEAM', 'Employee Team', 'TEAM' );
+INSERT INTO wf_participants (id,name,description,participant_type) VALUES (102, 'TEAMLEAD_TEAM', 'Team Lead Team', 'TEAM' );
+INSERT INTO wf_participants (id,name,description,participant_type) VALUES (103, 'TECHLEAD_TEAM', 'Tech Lead Team', 'TEAM' );
+INSERT INTO wf_participants (id,name,description,participant_type) VALUES (104, 'PROGLEAD_TEAM', 'Program Lead Team', 'TEAM' );
+INSERT INTO wf_participants (id,name,description,participant_type) VALUES (105, 'MANAGER_TEAM', 'Asset Manager Team', 'TEAM' );
+INSERT INTO wf_participants (id,name,description,participant_type) VALUES (106, 'SECURITY_TEAM', 'Security Manager Team', 'TEAM' );
+INSERT INTO wf_participants (id,name,description,participant_type) VALUES (107, 'ENGINEER_TEAM', 'Asset Administration Team', 'TEAM' );
+
+-- ----------------------------------------------------------------------
+
+PROMPT wf_participants GRANTs
+
+--PROMPT Grant EMPLOYEE role to EMPLOYEE_TEAM team
+--exec pl_flow.grant_role(101, 'EMPLOYEE');
+
+PROMPT Grant TEAMLEAD role to TEAMLEAD_TEAM team
+exec pl_flow.grant_role(102, 'TEAMLEAD');
+
+PROMPT Grant TECHLEAD role to TECHLEAD_TEAM team
+exec pl_flow.grant_role(103, 'TECHLEAD');
+
+PROMPT Grant PROGLEAD role to PROGLEAD_TEAM team
+exec pl_flow.grant_role(104, 'PROGLEAD');
+
+PROMPT Grant MANAGER role to MANAGER_TEAM team
+exec pl_flow.grant_role(105, 'MANAGER');
+
+PROMPT Grant SECURITY role to SECURITY_TEAM team
+exec pl_flow.grant_role(106, 'SECURITY');
+
+PROMPT Grant ENGINEER role to ENGINEER_TEAM team
+exec pl_flow.grant_role(107, 'ENGINEER');
+
+-- ----------------------------------------------------------------------
+
+PROMPT wf_participants  - everyone from EMP table
+INSERT INTO wf_participants ( id, name, description, participant_type ) 
+SELECT emp.id, emp.name, job_typ.cd, 'HUMAN' FROM emp,job_typ WHERE emp.job_id=job_typ.id;
+
+-- ----------------------------------------------------------------------
+
+PROMPT grant EMPLOYEE role to all HUMANS
+declare
+begin
+for c in (select id from emp)
+loop
+	pl_flow.grant_role(c.id,'EMPLOYEE');
+end loop;
+end;
+/
+
+-- ----------------------------------------------------------------------
+
+PROMPT grant TEAMLEAD role to TEAMLEAD HUMANS
+declare
+begin
+for c in ( select id from emp where job_id in (select id from job_typ where cd='TEAMLEAD') )
+loop
+	pl_flow.grant_role(c.id,'TEAMLEAD');
+end loop;
+end;
+/
+
+-- ----------------------------------------------------------------------
+
+PROMPT grant TECHLEAD role to TECHLEAD HUMANS
+declare
+begin
+for c in ( select id from emp where job_id in (select id from job_typ where cd='TECHLEAD') )
+loop
+	pl_flow.grant_role(c.id,'TECHLEAD');
+end loop;
+end;
+/
+
+-- ----------------------------------------------------------------------
+
+PROMPT grant PROGLEAD role to PROGLEAD HUMANS
+declare
+begin
+for c in ( select id from emp where job_id in (select id from job_typ where cd='PROGLEAD') )
+loop
+	pl_flow.grant_role(c.id,'PROGLEAD');
+end loop;
+end;
+/
+
+-- ----------------------------------------------------------------------
+
+PROMPT grant MANAGER role to Asset Owners
+declare
+begin
+for c in ( select distinct owner from ast )
+loop
+	pl_flow.grant_role(c.owner,'MANAGER');
+end loop;
+end;
+/
+
+-- ----------------------------------------------------------------------
+
+PROMPT grant SECURITY role to SUPERVISOR 
+declare
+begin
+for c in ( select id from emp where job_id in (select id from job_typ where cd='SUPERVISOR') )
+loop
+	pl_flow.grant_role(c.id,'SECURITY');
+end loop;
+end;
+/
+
+-- ----------------------------------------------------------------------
+
+PROMPT Grant Transitivity : 
+
+PROMPT Grant Manager(18) to to able to approve what teamlead(12), techlead(13), proglead(14) can do
+exec pl_flow.grant_role(18,12);
+exec pl_flow.grant_role(18,13);
+exec pl_flow.grant_role(18,14);
+
+

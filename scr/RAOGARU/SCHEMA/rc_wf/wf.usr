@@ -1,0 +1,21 @@
+-- ----------------------------------------------------------------------
+-- flow.usr
+-- ----------------------------------------------------------------------
+
+PROMPT Drop User ...
+drop user rc_wf cascade;
+
+PROMPT Creating User ...
+create user rc_wf identified by rc_wf
+default tablespace rc_wf
+temporary tablespace temp;
+grant unlimited tablespace to rc_wf;
+grant connect to rc_wf;
+grant resource to rc_wf;
+grant select any table to rc_wf;
+grant dba to rc_wf;
+grant create public synonym to rc_wf;
+
+-- ----------------------------------------------------------------------
+-- flow.usr
+-- ----------------------------------------------------------------------
