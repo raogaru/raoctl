@@ -18,10 +18,10 @@ which,none,Show_Liquibase_binary_location \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
-INCENV liquibase
+
 # ------------------------------------------------------------
 # Module specific environment variables
-
+INCENV liquibase
 # ------------------------------------------------------------
 # Module specific common functions
 
