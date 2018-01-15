@@ -335,6 +335,11 @@ ERROR "Invalid module \"${v_module}\""
 v_module_dir=${SCR_DIR}/${v_class}/${v_module}
 }
 # ------------------------------------------------------------
+INCENV () {
+xName=$1
+INCLUDE ${CFG_DIR}/${xName}.env
+}
+# ------------------------------------------------------------
 SearchAndInclude () {
 x=$1
 y=""
