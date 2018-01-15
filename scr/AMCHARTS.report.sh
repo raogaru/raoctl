@@ -10,28 +10,30 @@ action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-sql,sql_file_name,Collect_Data_From_DB_using_SQL_file \
+sql,chart_type:sql_file_name,Collect_Data_From_DB_using_SQL_file \
 csv,csv_data_file_name,Generate_HTML_using_input_CSV_data_file \
 json,json_data_file_name,Generate_HTML_using_input_JSON_data_file \
 cmd,command_string,run_shell_command_and_use_output \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
-DEVOPS_HOME=${RAOHOME}/raogaru/devops
+DEVOPS_HOME=${RAOHOME}/GitHub/devops
 DEVOPS_CFG=${DEVOPS_HOME}/cfg
-. ${DEVOPS_CFG}/devops.env
+. ${DEVOPS_CFG}/amcharts.env
 # ------------------------------------------------------------
 # Module specific environment variables
-rc_CHART_CATEGORY=rc_category
-rc_CHART_VALUE=rc_value
+#rc_CHART_CATEGORY=rc_category
+#rc_CHART_VALUE=rc_value
 rc_CHART_TEMPLATE_DIR=${DEVOPS_HOME}/amcharts/templates
 #rc_CHART_HTML=${RPT_DIR}/AMCHARTS_REPORT_$(date +%Y%m%d_%H%M%S).html
 RPT_DIR=${AMCHARTS_HOME}/reports
 rc_CHART_HTML=${RPT_DIR}/r.html
-
 # ------------------------------------------------------------
 # Module specific common functions
 
+# ------------------------------------------------------------
+DEBUG "AMCHARTS_HOME=${AMCHARTS_HOME}"
+DEBUG "rc_CHART_TEMPLATE_DIR=${rc_CHART_TEMPLATE_DIR}"
 # ------------------------------------------------------------
 CollectDataFromDB () {
 DEBUG "Collect Graph Data from DB - started"
