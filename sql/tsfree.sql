@@ -13,3 +13,4 @@ from
    (select tablespace_name, round(sum(bytes) / 1048576) FreeSpace from dba_free_space group by tablespace_name) fs
 where
    df.tablespace_name = fs.tablespace_name (+);
+
