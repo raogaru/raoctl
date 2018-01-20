@@ -1,0 +1,1 @@
+alter database flashback off;
