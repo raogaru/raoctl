@@ -9,5 +9,4 @@ select table_owner, table_name, partition_position pos, partition_name, subparti
 from dba_tab_partitions
 --, high_value
 where table_name like upper('&1%')
-order by table_owner, table_name, partition_position
-/
+order by table_owner, table_name, partition_position;
