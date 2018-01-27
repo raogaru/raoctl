@@ -4,18 +4,18 @@
 # ######################################################################
 # ======================================================================
 # T03_CC_AMEX
-CC_AMEX_HASH_ALL:T03_CC_AMEX:HA::substr(O,1,1)<='5'
-CC_AMEX_HASH_LAST_5:T03_CC_AMEX:H5::substr(O,1,1)<='5'
-CC_AMEX_HASH_LAST_8:T03_CC_AMEX:H8::substr(O,1,1)<='5'
-CC_AMEX_HASH_LAST_11:T03_CC_AMEX:H11::substr(O,1,1)<='5'
+CC_AMEX_HASH_ALL:T03_CC_AMEX:HASH_ALL::substr(O,1,1)<='5'
+CC_AMEX_HASH_LAST_5:T03_CC_AMEX:HASH_5::substr(O,1,1)<='5'
+CC_AMEX_HASH_LAST_8:T03_CC_AMEX:HASH_8::substr(O,1,1)<='5'
+CC_AMEX_HASH_LAST_11:T03_CC_AMEX:HASH_11::substr(O,1,1)<='5'
 #
-CC_AMEX_STAR_ALL:T03_CC_AMEX:SA::substr(O,1,1)<='5'
-CC_AMEX_STAR_LAST_5:T03_CC_AMEX:S5::substr(O,1,1)<='5'
-CC_AMEX_STAR_LAST_8:T03_CC_AMEX:S8::substr(O,1,1)<='5'
-CC_AMEX_STAR_LAST_11:T03_CC_AMEX:S11::substr(O,1,1)<='5'
+CC_AMEX_STAR_ALL:T03_CC_AMEX:STAR_ALL::substr(O,1,1)<='5'
+CC_AMEX_STAR_LAST_5:T03_CC_AMEX:STAR_5::substr(O,1,1)<='5'
+CC_AMEX_STAR_LAST_8:T03_CC_AMEX:STAR_8::substr(O,1,1)<='5'
+CC_AMEX_STAR_LAST_11:T03_CC_AMEX:STAR_11::substr(O,1,1)<='5'
 #
-CC_AMEX_MASK_ALL:T03_CC_AMEX:MA::substr(O,1,1)<='5'
-CC_AMEX_MASK_LAST_5:T03_CC_AMEX:M5::substr(O,1,1)<='5'
-CC_AMEX_MASK_LAST_8:T03_CC_AMEX:M8::substr(O,1,1)<='5'
-CC_AMEX_MASK_LAST_11:T03_CC_AMEX:M11::substr(O,1,1)<='5'
+CC_AMEX_MASK_ALL:T03_CC_AMEX:MASK_ALL::substr(O,1,1)<='5'
+CC_AMEX_MASK_LAST_5:T03_CC_AMEX:MASK_5::substr(O,1,1)<='5'
+CC_AMEX_MASK_LAST_8:T03_CC_AMEX:MASK_8::substr(O,1,1)<='5'
+CC_AMEX_MASK_LAST_11:T03_CC_AMEX:MASK_11::substr(O,1,1)<='5'
 # ======================================================================
