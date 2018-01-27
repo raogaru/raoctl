@@ -4,15 +4,15 @@
 # ######################################################################
 # ======================================================================
 # T04_PHONE
-PHONE_HASH_ALL:T04_PHONE:HA::substr(O,1,1)<='5'
-PHONE_HASH_LAST_4:T04_PHONE:H4::substr(O,1,1)<='5'
-PHONE_HASH_LAST_7:T04_PHONE:H7::substr(O,1,1)<='5'
+PHONE_HASH_ALL:T04_PHONE:HASH_ALL::substr(O,1,1)<='5'
+PHONE_HASH_LAST_4:T04_PHONE:HASH_4::substr(O,1,1)<='5'
+PHONE_HASH_LAST_7:T04_PHONE:HASH_7::substr(O,1,1)<='5'
 #
-PHONE_STAR_ALL:T04_PHONE:SA::substr(O,1,1)<='5'
-PHONE_STAR_LAST_4:T04_PHONE:S4::substr(O,1,1)<='5'
-PHONE_STAR_LAST_7:T04_PHONE:S7::substr(O,1,1)<='5'
+PHONE_STAR_ALL:T04_PHONE:STAR_ALL::substr(O,1,1)<='5'
+PHONE_STAR_LAST_4:T04_PHONE:STAR_4::substr(O,1,1)<='5'
+PHONE_STAR_LAST_7:T04_PHONE:STAR_7::substr(O,1,1)<='5'
 #
-PHONE_MASK_ALL:T04_PHONE:MA::substr(O,1,1)<='5'
-PHONE_MASK_LAST_4:T04_PHONE:M4::substr(O,1,1)<='5'
-PHONE_MASK_LAST_7:T04_PHONE:M7::substr(O,1,1)<='5'
+PHONE_MASK_ALL:T04_PHONE:MASK_ALL::substr(O,1,1)<='5'
+PHONE_MASK_LAST_4:T04_PHONE:MASK_4::substr(O,1,1)<='5'
+PHONE_MASK_LAST_7:T04_PHONE:MASK_7::substr(O,1,1)<='5'
 # ======================================================================
