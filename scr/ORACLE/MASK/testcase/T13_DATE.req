@@ -1,0 +1,13 @@
+# ######################################################################
+# FORMAT 
+# MaskType : TableName : ColumnName : ValueExpression : WhereCondition
+# ######################################################################
+# ======================================================================
+# T13_DATE
+DATE_FIXED:T13_DATE:FIXED_DT:2018-07-31:
+DATE_PAST:T13_DATE:PAST_DT:200:
+DATE_FUTURE:T13_DATE:FUTURE_DT:100:
+DATE_ADD_DD:T13_DATE:ADD_DD:1:
+DATE_ADD_MM:T13_DATE:ADD_MM:3:
+DATE_ADD_YY:T13_DATE:ADD_YY:5:
+# ======================================================================

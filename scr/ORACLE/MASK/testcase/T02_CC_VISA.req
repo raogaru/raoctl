@@ -1,0 +1,21 @@
+# ######################################################################
+# FORMAT 
+# MaskType : TableName : ColumnName : ValueExpression : WhereCondition
+# ######################################################################
+# ======================================================================
+# T02_CC_VISA
+CC_VISA_HASH_ALL:T02_CC_VISA:HA::substr(O,1,1)<='5'
+CC_VISA_HASH_LAST_4:T02_CC_VISA:H4::substr(O,1,1)<='5'
+CC_VISA_HASH_LAST_6:T02_CC_VISA:H6::substr(O,1,1)<='5'
+CC_VISA_HASH_LAST_8:T02_CC_VISA:H8::substr(O,1,1)<='5'
+##
+CC_VISA_STAR_ALL:T02_CC_VISA:SA::substr(O,1,1)<='5'
+CC_VISA_STAR_LAST_4:T02_CC_VISA:S4::substr(O,1,1)<='5'
+CC_VISA_STAR_LAST_6:T02_CC_VISA:S6::substr(O,1,1)<='5'
+CC_VISA_STAR_LAST_8:T02_CC_VISA:S8::substr(O,1,1)<='5'
+#
+CC_VISA_MASK_ALL:T02_CC_VISA:MA::substr(O,1,1)<='5'
+CC_VISA_MASK_LAST_4:T02_CC_VISA:M4::substr(O,1,1)<='5'
+CC_VISA_MASK_LAST_6:T02_CC_VISA:M6::substr(O,1,1)<='5'
+CC_VISA_MASK_LAST_8:T02_CC_VISA:M8::substr(O,1,1)<='5'
+# ======================================================================

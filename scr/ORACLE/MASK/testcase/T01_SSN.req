@@ -1,0 +1,21 @@
+# ######################################################################
+# FORMAT 
+# MaskType : TableName : ColumnName : ValueExpression : WhereCondition
+# ######################################################################
+# ======================================================================
+# T01_SSN
+SSN_HASH_ALL:T01_SSN:HA::substr(O,1,1)<='5'
+SSN_HASH_LAST_4:T01_SSN:H4::substr(O,1,1)<='5'
+SSN_HASH_LAST_5:T01_SSN:H5::substr(O,1,1)<='5'
+SSN_HASH_LAST_6:T01_SSN:H6::substr(O,1,1)<='5'
+##
+SSN_STAR_ALL:T01_SSN:SA::substr(O,1,1)<='5'
+SSN_STAR_LAST_4:T01_SSN:S4::substr(O,1,1)<='5'
+SSN_STAR_LAST_5:T01_SSN:S5::substr(O,1,1)<='5'
+SSN_STAR_LAST_6:T01_SSN:S6::substr(O,1,1)<='5'
+##
+SSN_MASK_ALL:T01_SSN:MA::substr(O,1,1)<='5'
+SSN_MASK_LAST_4:T01_SSN:M4::substr(O,1,1)<='5'
+SSN_MASK_LAST_5:T01_SSN:M5::substr(O,1,1)<='5'
+SSN_MASK_LAST_6:T01_SSN:M6::substr(O,1,1)<='5'
+# ======================================================================
