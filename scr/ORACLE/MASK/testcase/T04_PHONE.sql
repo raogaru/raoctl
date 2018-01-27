@@ -5,15 +5,15 @@ drop table T04_PHONE ;
 
 create table T04_PHONE (
 o char(12),
-ha char(12),
-h4 char(12),
-h7 char(12),
-sa char(12),
-s4 char(12),
-s7 char(12),
-ma char(12),
-m4 char(12),
-m7 char(12)
+hash_all char(12),
+hash_4 char(12),
+hash_7 char(12),
+star_all char(12),
+star_4 char(12),
+star_7 char(12),
+mask_all char(12),
+mask_4 char(12),
+mask_7 char(12)
 );
 
 create public synonym T04_PHONE for T04_PHONE;
@@ -29,15 +29,15 @@ connect by leveL <= 250;
 commit;
 
 update T04_PHONE set
-ha =o,
-h4 =o,
-h7 =o,
-sa =o,
-s4 =o,
-s7 =o,
-ma =o,
-m4 =o,
-m7 =o ;
+hash_all =o,
+hash_4 =o,
+hash_7 =o,
+star_all =o,
+star_4 =o,
+star_7 =o,
+mask_all =o,
+mask_4 =o,
+mask_7 =o ;
 commit;
 
 --
