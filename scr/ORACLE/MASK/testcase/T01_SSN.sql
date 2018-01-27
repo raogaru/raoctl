@@ -5,21 +5,19 @@ drop table T01_SSN ;
 
 create table T01_SSN (
 o char(11),
-ha char(11),
-h4 char(11),
-h5 char(11),
-h6 char(11),
-sa char(11),
-s4 char(11),
-s5 char(11),
-s6 char(11),
-ma char(11),
-m4 char(11),
-m5 char(11),
-m6 char(11)
+hash_all char(11),
+hash_4 char(11),
+hash_5 char(11),
+hash_6 char(11),
+star_all char(11),
+star_4 char(11),
+star_5 char(11),
+star_6 char(11),
+mask_all char(11),
+mask_4 char(11),
+mask_5 char(11),
+mask_6 char(11)
 );
-
-create public synonym T01_SSN for SYS.T01_SSN;
 
 insert /*+ append no logging */ 
 into T01_SSN  (o)
@@ -32,18 +30,18 @@ connect by leveL <= 350;
 commit;
 
 update T01_SSN set
-ha =o,
-h4 =o,
-h5 =o,
-h6 =o,
-sa =o,
-s4 =o,
-s5 =o,
-s6 =o,
-ma =o,
-m4 =o,
-m5 =o,
-m6 =o ;
+HASH_ALL =o,
+hash_4 =o,
+hash_5 =o,
+hash_6 =o,
+star_all =o,
+star_4 =o,
+star_5 =o,
+star_6 =o,
+mask_all =o,
+mask_4 =o,
+mask_5 =o,
+mask_6 =o ;
 commit;
 
 --
