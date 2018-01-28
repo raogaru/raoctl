@@ -5,9 +5,9 @@ drop table T12_BLOB ;
 
 create table T12_BLOB (
 o blob,
-a blob,
-f blob,
-v blob
+empty blob,
+fixed_size blob,
+variable_size blob
 );
 
 create public synonym T12_BLOB for T12_BLOB;
@@ -50,9 +50,9 @@ end;
 /
 
 update T12_BLOB set
-a =o,
-f =o,
-v =o 
+empty =o,
+fixed_size =o,
+variable_size =o 
 ;
 
 commit;
