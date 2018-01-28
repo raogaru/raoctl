@@ -4,7 +4,7 @@
 # ######################################################################
 # ======================================================================
 # T12_BLOB
-BLOB_NULL:T12_BLOB:A::
-BLOB_FIXED_SIZE:T12_BLOB:F:30:
-BLOB_VARIABLE_SIZE:T12_BLOB:V:5,50:
+BLOB_NULL:T12_BLOB:EMPTY::
+BLOB_FIXED_SIZE:T12_BLOB:FIXED_SIZE:30:
+BLOB_VARIABLE_SIZE:T12_BLOB:VARIABLE_SIZE:5,50:
 # ======================================================================
