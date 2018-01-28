@@ -5,9 +5,9 @@ drop table T11_CLOB ;
 
 create table T11_CLOB (
 o clob,
-a clob,
-f clob,
-v clob
+empty clob,
+fixed_size clob,
+variable_size clob
 );
 
 create public synonym T11_CLOB for T11_CLOB;
@@ -21,9 +21,9 @@ connect by leveL <= 250;
 commit;
 
 update T11_CLOB set
-a =o,
-f =o,
-v =o 
+empty =o,
+fixed_size =o,
+variable_size =o 
 ;
 
 commit;
