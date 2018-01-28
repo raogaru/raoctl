@@ -267,6 +267,7 @@ do
 		[[ "${product_f3}" != "Y" ]] && ERROR "product \"${v_product}\" not licensed !"
 		[[ "${product_f4}" != "Y" ]] && ERROR "product \"${v_product}\" not enabled !"
 		[[ "${product_f5}" != "Y" ]] && ERROR "product \"${v_product}\" not decrypted !"
+		v_product_dir=${SCR_DIR}/${v_product}
 		DEBUG "product description is \"${product_desc}\""
 		return 0
 	fi
@@ -295,6 +296,7 @@ do
 		[[ "${class_f4}" != "Y" ]] && ERROR "class \"${v_class}\" not licensed !"
 		[[ "${class_f5}" != "Y" ]] && ERROR "class \"${v_class}\" not enabled !"
 		[[ "${class_f6}" != "Y" ]] && ERROR "class \"${v_class}\" not decrypted !"
+		v_class_dir=${SCR_DIR}/${v_product}/${v_class}
 		DEBUG "class description is \"${class_desc}\""
 		return 0
 	fi
@@ -302,7 +304,6 @@ done
 [[ "${v_help}" = "Y" ]] && HELP ${v_product}
 ECHO "Valid classes : ${class_L}"
 ERROR "Invalid class \"${v_class}\""
-v_class_dir=${SCR_DIR}/${v_class}
 }
 # ------------------------------------------------------------
 assign_modules () {
