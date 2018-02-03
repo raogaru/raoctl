@@ -44,19 +44,6 @@ do
 	DEBUG "If Condition : ${ifcond}"
 	DEBUG "#-----"
 
-	# ----------------------------------------
-#	case "${maskalg}" in
-#	"1") scrname="generic" ;;
-#	"2") scrname="const" ;;
-#	"3") scrname="text" ;;
-#	"4") scrname="usrid" ;;
-#	"5") scrname="genchr" ;;
-#	"6") scrname="gennum" ;;
-#	"7") scrname="genchrif" ;;
-#	"8") scrname="textif" ;;
-#	  *) scrname="generic" ;;
-#	esac
-
 	case "${maskalg}" in
 	# ----------------------------------------
 	# SSN - SOCIAL SECURITY NUMBER
@@ -127,7 +114,15 @@ do
 	"PHONE_MASK_LAST_7") valexpr="substr(${colname},1,length(${colname})-8)||translate(substr(${colname},-8,8),${v_MASK_TRANSLATE_NUMERIC})" ;;
 
 	# ----------------------------------------
-	# DOB - DATE OF BIRTH
+	# RANDOM POSTAL ADDRESS
+
+
+	# ----------------------------------------
+	# RANDOM NAMES
+
+
+	# ----------------------------------------
+	# 
 
 
 	# ----------------------------------------
@@ -211,6 +206,12 @@ do
 
 	# ----------------------------------------
 	# GENERAL EXPRESSION
+
+
+	# ----------------------------------------
+	# CUSTOM FILEDS
+
+
 
 	# ----------------------------------------
 	esac
