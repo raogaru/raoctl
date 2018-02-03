@@ -21,12 +21,12 @@ v_debug=0
 INCLIB_c
 # ------------------------------------------------------------
 f_window_list () { 
-SQLQRY "select window_name,program_type, enabled,program_action from dba_scheduler_programs;"
+SQLQRY "select window_name dba_scheduler_windows;"
 }
 # ------------------------------------------------------------
 f_window_create () { 
 INPUT 3
-SCHEDULER_p "create_program(window_name=>'${input1}', program_type=>'${input2}',program_action=>'${input3}',enabled=>true)"
+SCHEDULER_p "create_window(window_name=>'${input1}', program_type=>'${input2}',program_action=>'${input3}',enabled=>true)"
 }
 # ------------------------------------------------------------
 f_window_drop () { 
