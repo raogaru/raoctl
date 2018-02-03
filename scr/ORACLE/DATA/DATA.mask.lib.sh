@@ -14,15 +14,11 @@ v_MASK_TRANSLATE_ALPHANUM_MIXED="'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 v_MASK_TRANSLATE_SPECIAL_CHAR="'~!@#$%^&*()_+-={}|[]\:;<>?,./','~$%^*@)+-&={(!|_[]:}#;<?,./\>'"
 
 # ----------------------------------------------------------------------
-TOFILE () {
-ECHO "$*" >> ${v_MAIN_DATAMASK_RUN}
-}
-# ----------------------------------------------------------------------
 f_Prepare_SQL_from_REQ () {
 [[ -z "${v_DATAMASK_REQ}" ]] && ERROR "v_DATAMASK_REQ not defined !"
 [[ ! -f ${v_DATAMASK_REQ}.req ]] && ERROR "File ${v_DATAMASK_REQ}.req not found !"
 i=0
-TOFILE "@${v_class_dir}/datamask/pre_datamask_run.sql"
+SQLLINE "@${v_class_dir}/datamask/datamask.pre"
 cat ${v_DATAMASK_REQ}.req |grep -v "^#" | grep -v "^$" | while read line
 do
 	(( i=i+1 ))
@@ -46,6 +42,7 @@ do
 	ifcond=$(echo ${line} | cut -f5 -d":")
 	[[ -z "${ifcond}" ]] && ifcond="1=1"
 	DEBUG "If Condition : ${ifcond}"
+	DEBUG "#-----"
 
 	# ----------------------------------------
 #	case "${maskalg}" in
@@ -147,10 +144,11 @@ do
 
 	"BLOB_NULL") valexpr="empty_blob()" ;;
 	# blob size of value
-	"BLOB_RANDOM_FIXED_SIZE") valexpr="dbms_random.string('P',${valexpr})" ;;
+	#"BLOB_RANDOM_FIXED_SIZE") valexpr="dbms_random.string('P',${valexpr})" ;;
+	"BLOB_FIXED_SIZE") valexpr="to_blob(utl_raw.cast_to_raw(dbms_random.string('P',${valexpr})))" ;;
 	# expect valexpr to have MMM,NNN format size precision from mmm to nnn
-	"BLOB_RANDOM_VARIABLE_SIZE") valexpr="dbms_random.string('P',round(dbms_random.value(${valexpr}),0))" ;;
-
+	#"BLOB_RANDOM_VARIABLE_SIZE") valexpr="dbms_random.string('P',round(dbms_random.value(${valexpr}),0))" ;;
+	"BLOB_VARIABLE_SIZE") valexpr="to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(${valexpr}),0))))" ;;
 
 	# ----------------------------------------
 	# DATE
@@ -220,7 +218,7 @@ do
 	# ----------------------------------------
 	esac
 
-TOFILE @${v_class_dir}/datamask/datamask.pls \"${tabname}\" \"${colname}\" \"${valexpr}\" \"${ifcond}\"
+SQLLINE @${v_class_dir}/datamask/datamask.pls \"${rc_DATAMASK_SCHEMA}\" \"${tabname}\" \"${colname}\" \"${valexpr}\" \"${ifcond}\"
 done
-TOFILE "@${v_class_dir}/datamask/pst_datamask_run.sql"
+SQLLINE "@${v_class_dir}/datamask/datamask.pst"
 }
