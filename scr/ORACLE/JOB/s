@@ -1,0 +1,834 @@
+SQL> !pwd
+
+SQL> desc dbms_scheduler
+PROCEDURE ADD_EVENT_QUEUE_SUBSCRIBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SUBSCRIBER_NAME                VARCHAR2                IN     DEFAULT
+PROCEDURE ADD_GROUP_MEMBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ MEMBER                         VARCHAR2                IN    
+PROCEDURE ADD_JOB_EMAIL_NOTIFICATION
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ RECIPIENTS                     VARCHAR2                IN    
+ SENDER                         VARCHAR2                IN     DEFAULT
+ SUBJECT                        VARCHAR2                IN     DEFAULT
+ BODY                           VARCHAR2                IN     DEFAULT
+ EVENTS                         VARCHAR2                IN     DEFAULT
+ FILTER_CONDITION               VARCHAR2                IN     DEFAULT
+PROCEDURE ADD_WINDOW_GROUP_MEMBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ WINDOW_LIST                    VARCHAR2                IN    
+PROCEDURE ALTER_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          BOOLEAN                 IN    
+PROCEDURE ALTER_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ CHAR_VALUE                     VARCHAR2                IN    
+PROCEDURE ALTER_RUNNING_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          BOOLEAN                 IN    
+PROCEDURE ALTER_RUNNING_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          VARCHAR2                IN    
+PROCEDURE ANALYZE_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ RULES                          SCHEDULER$_RULE_LIST    IN    
+ STEPS                          SCHEDULER$_STEP_TYPE_LIST IN    
+ STEP_PAIRS                     SCHEDULER$_CHAIN_LINK_LIST OUT   
+PROCEDURE AUTO_PURGE
+FUNCTION CHECK_SYS_PRIVS RETURNS BINARY_INTEGER
+PROCEDURE CLOSE_WINDOW
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ WINDOW_NAME                    VARCHAR2                IN    
+PROCEDURE COPY_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ OLD_JOB                        VARCHAR2                IN    
+ NEW_JOB                        VARCHAR2                IN    
+PROCEDURE CREATE_CALENDAR_STRING
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ FREQUENCY                      BINARY_INTEGER          IN    
+ INTERVAL                       BINARY_INTEGER          IN    
+ BYSECOND                       BYLIST                  IN    
+ BYMINUTE                       BYLIST                  IN    
+ BYHOUR                         BYLIST                  IN    
+ BYDAY_DAYS                     BYLIST                  IN    
+ BYDAY_OCCURRENCE               BYLIST                  IN    
+ BYMONTHDAY                     BYLIST                  IN    
+ BYYEARDAY                      BYLIST                  IN    
+ BYWEEKNO                       BYLIST                  IN    
+ BYMONTH                        BYLIST                  IN    
+ CALENDAR_STRING                VARCHAR2                OUT   
+PROCEDURE CREATE_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ RULE_SET_NAME                  VARCHAR2                IN     DEFAULT
+ EVALUATION_INTERVAL            INTERVAL DAY TO SECOND  IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_CREDENTIAL
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ USERNAME                       VARCHAR2                IN    
+ PASSWORD                       VARCHAR2                IN    
+ DATABASE_ROLE                  VARCHAR2                IN     DEFAULT
+ WINDOWS_DOMAIN                 VARCHAR2                IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_DATABASE_DESTINATION
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ DESTINATION_NAME               VARCHAR2                IN    
+ AGENT                          VARCHAR2                IN    
+ TNS_NAME                       VARCHAR2                IN    
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_EVENT_SCHEDULE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SCHEDULE_NAME                  VARCHAR2                IN    
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ EVENT_CONDITION                VARCHAR2                IN     DEFAULT
+ QUEUE_SPEC                     VARCHAR2                IN    
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_FILE_WATCHER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ FILE_WATCHER_NAME              VARCHAR2                IN    
+ DIRECTORY_PATH                 VARCHAR2                IN    
+ FILE_NAME                      VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ DESTINATION                    VARCHAR2                IN     DEFAULT
+ MIN_FILE_SIZE                  BINARY_INTEGER          IN     DEFAULT
+ STEADY_STATE_DURATION          INTERVAL DAY TO SECOND  IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+PROCEDURE CREATE_GROUP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ GROUP_TYPE                     VARCHAR2                IN    
+ MEMBER                         VARCHAR2                IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ JOB_TYPE                       VARCHAR2                IN    
+ JOB_ACTION                     VARCHAR2                IN    
+ NUMBER_OF_ARGUMENTS            BINARY_INTEGER          IN     DEFAULT
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ REPEAT_INTERVAL                VARCHAR2                IN     DEFAULT
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ JOB_CLASS                      VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ AUTO_DROP                      BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ CREDENTIAL_NAME                VARCHAR2                IN     DEFAULT
+ DESTINATION_NAME               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ JOB_TYPE                       VARCHAR2                IN    
+ JOB_ACTION                     VARCHAR2                IN    
+ NUMBER_OF_ARGUMENTS            BINARY_INTEGER          IN     DEFAULT
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ EVENT_CONDITION                VARCHAR2                IN     DEFAULT
+ QUEUE_SPEC                     VARCHAR2                IN    
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ JOB_CLASS                      VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ AUTO_DROP                      BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ CREDENTIAL_NAME                VARCHAR2                IN     DEFAULT
+ DESTINATION_NAME               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ PROGRAM_NAME                   VARCHAR2                IN    
+ SCHEDULE_NAME                  VARCHAR2                IN    
+ JOB_CLASS                      VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ AUTO_DROP                      BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ JOB_STYLE                      VARCHAR2                IN     DEFAULT
+ CREDENTIAL_NAME                VARCHAR2                IN     DEFAULT
+ DESTINATION_NAME               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ PROGRAM_NAME                   VARCHAR2                IN    
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ REPEAT_INTERVAL                VARCHAR2                IN     DEFAULT
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ JOB_CLASS                      VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ AUTO_DROP                      BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ JOB_STYLE                      VARCHAR2                IN     DEFAULT
+ CREDENTIAL_NAME                VARCHAR2                IN     DEFAULT
+ DESTINATION_NAME               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ PROGRAM_NAME                   VARCHAR2                IN    
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ EVENT_CONDITION                VARCHAR2                IN     DEFAULT
+ QUEUE_SPEC                     VARCHAR2                IN    
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ JOB_CLASS                      VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ AUTO_DROP                      BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ JOB_STYLE                      VARCHAR2                IN     DEFAULT
+ CREDENTIAL_NAME                VARCHAR2                IN     DEFAULT
+ DESTINATION_NAME               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ SCHEDULE_NAME                  VARCHAR2                IN    
+ JOB_TYPE                       VARCHAR2                IN    
+ JOB_ACTION                     VARCHAR2                IN    
+ NUMBER_OF_ARGUMENTS            BINARY_INTEGER          IN     DEFAULT
+ JOB_CLASS                      VARCHAR2                IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ AUTO_DROP                      BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+ CREDENTIAL_NAME                VARCHAR2                IN     DEFAULT
+ DESTINATION_NAME               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOBS
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOBDEF_ARRAY                   JOB_DEFINITION_ARRAY    IN    
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOBS
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_ARRAY                      JOB_ARRAY               IN    
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_JOB_CLASS
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_CLASS_NAME                 VARCHAR2                IN    
+ RESOURCE_CONSUMER_GROUP        VARCHAR2                IN     DEFAULT
+ SERVICE                        VARCHAR2                IN     DEFAULT
+ LOGGING_LEVEL                  BINARY_INTEGER          IN     DEFAULT
+ LOG_HISTORY                    BINARY_INTEGER          IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_PROGRAM
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ PROGRAM_TYPE                   VARCHAR2                IN    
+ PROGRAM_ACTION                 VARCHAR2                IN    
+ NUMBER_OF_ARGUMENTS            BINARY_INTEGER          IN     DEFAULT
+ ENABLED                        BOOLEAN                 IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_SCHEDULE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SCHEDULE_NAME                  VARCHAR2                IN    
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ REPEAT_INTERVAL                VARCHAR2                IN    
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_WINDOW
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ WINDOW_NAME                    VARCHAR2                IN    
+ RESOURCE_PLAN                  VARCHAR2                IN    
+ SCHEDULE_NAME                  VARCHAR2                IN    
+ DURATION                       INTERVAL DAY TO SECOND  IN    
+ WINDOW_PRIORITY                VARCHAR2                IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_WINDOW
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ WINDOW_NAME                    VARCHAR2                IN    
+ RESOURCE_PLAN                  VARCHAR2                IN    
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ REPEAT_INTERVAL                VARCHAR2                IN    
+ END_DATE                       TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ DURATION                       INTERVAL DAY TO SECOND  IN    
+ WINDOW_PRIORITY                VARCHAR2                IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE CREATE_WINDOW_GROUP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ WINDOW_LIST                    VARCHAR2                IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE DEFINE_ANYDATA_ARGUMENT
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+ ARGUMENT_NAME                  VARCHAR2                IN     DEFAULT
+ ARGUMENT_TYPE                  VARCHAR2                IN    
+ DEFAULT_VALUE                  ANYDATA                 IN    
+ OUT_ARGUMENT                   BOOLEAN                 IN     DEFAULT
+PROCEDURE DEFINE_CHAIN_EVENT_STEP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ EVENT_SCHEDULE_NAME            VARCHAR2                IN    
+ TIMEOUT                        INTERVAL DAY TO SECOND  IN     DEFAULT
+PROCEDURE DEFINE_CHAIN_EVENT_STEP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ EVENT_CONDITION                VARCHAR2                IN    
+ QUEUE_SPEC                     VARCHAR2                IN    
+ TIMEOUT                        INTERVAL DAY TO SECOND  IN     DEFAULT
+PROCEDURE DEFINE_CHAIN_RULE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ CONDITION                      VARCHAR2                IN    
+ ACTION                         VARCHAR2                IN    
+ RULE_NAME                      VARCHAR2                IN     DEFAULT
+ COMMENTS                       VARCHAR2                IN     DEFAULT
+PROCEDURE DEFINE_CHAIN_STEP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ PROGRAM_NAME                   VARCHAR2                IN    
+PROCEDURE DEFINE_METADATA_ARGUMENT
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ METADATA_ATTRIBUTE             VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+ ARGUMENT_NAME                  VARCHAR2                IN     DEFAULT
+PROCEDURE DEFINE_PROGRAM_ARGUMENT
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+ ARGUMENT_NAME                  VARCHAR2                IN     DEFAULT
+ ARGUMENT_TYPE                  VARCHAR2                IN    
+ DEFAULT_VALUE                  VARCHAR2                IN    
+ OUT_ARGUMENT                   BOOLEAN                 IN     DEFAULT
+PROCEDURE DEFINE_PROGRAM_ARGUMENT
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+ ARGUMENT_NAME                  VARCHAR2                IN     DEFAULT
+ ARGUMENT_TYPE                  VARCHAR2                IN    
+ OUT_ARGUMENT                   BOOLEAN                 IN     DEFAULT
+PROCEDURE DISABLE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE DISABLE1_CALENDAR_CHECK
+PROCEDURE DROP_AGENT_DESTINATION
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ DESTINATION_NAME               VARCHAR2                IN    
+PROCEDURE DROP_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_CHAIN_RULE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ RULE_NAME                      VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_CHAIN_STEP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_NAME                      VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_CREDENTIAL
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_DATABASE_DESTINATION
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ DESTINATION_NAME               VARCHAR2                IN    
+PROCEDURE DROP_FILE_WATCHER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ FILE_WATCHER_NAME              VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_GROUP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+ DEFER                          BOOLEAN                 IN     DEFAULT
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE DROP_JOB_CLASS
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_CLASS_NAME                 VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_PROGRAM
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_PROGRAM_ARGUMENT
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+PROCEDURE DROP_PROGRAM_ARGUMENT
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PROGRAM_NAME                   VARCHAR2                IN    
+ ARGUMENT_NAME                  VARCHAR2                IN    
+PROCEDURE DROP_SCHEDULE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SCHEDULE_NAME                  VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_WINDOW
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ WINDOW_NAME                    VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE DROP_WINDOW_GROUP
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE ENABLE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE END_DETACHED_JOB_RUN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ERROR_NUMBER                   BINARY_INTEGER          IN     DEFAULT
+ ADDITIONAL_INFO                VARCHAR2                IN     DEFAULT
+PROCEDURE EVALUATE_CALENDAR_STRING
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CALENDAR_STRING                VARCHAR2                IN    
+ START_DATE                     TIMESTAMP WITH TIME ZONE IN    
+ RETURN_DATE_AFTER              TIMESTAMP WITH TIME ZONE IN    
+ NEXT_RUN_DATE                  TIMESTAMP WITH TIME ZONE OUT   
+PROCEDURE EVALUATE_RUNNING_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+FUNCTION FILE_WATCH_FILTER RETURNS NUMBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SCH_NAME                       VARCHAR2                IN    
+ OBJ_NAME                       VARCHAR2                IN    
+ OBJ_SUBNAME                    VARCHAR2                IN    
+ FW_MSGID                       RAW                     IN    
+FUNCTION GENERATE_EVENT_LIST RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ STATUSVEC                      NUMBER                  IN    
+FUNCTION GENERATE_JOB_NAME RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ PREFIX                         VARCHAR2                IN     DEFAULT
+FUNCTION GET_AGENT_VERSION RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ AGENT_HOST                     VARCHAR2                IN    
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          BINARY_INTEGER          OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          BOOLEAN                 OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          DATE                    OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          TIMESTAMP               OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          TIMESTAMP WITH TIME ZONE OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          TIMESTAMP WITH LOCAL TIME ZONE OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          INTERVAL DAY TO SECOND  OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          VARCHAR2                OUT   
+PROCEDURE GET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          VARCHAR2                OUT   
+ VALUE2                         VARCHAR2                OUT   
+FUNCTION GET_CHAIN_RULE_ACTION RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ ACTION_IN                      RE$NV_LIST              IN    
+FUNCTION GET_CHAIN_RULE_CONDITION RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ ACTION_IN                      RE$NV_LIST              IN    
+ CONDITION_IN                   VARCHAR2                IN    
+FUNCTION GET_DEFAULT_VALUE RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ ATTRIBUTE_NAME                 VARCHAR2                IN    
+PROCEDURE GET_FILE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SOURCE_FILE                    VARCHAR2                IN    
+ SOURCE_HOST                    VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ FILE_CONTENTS                  CLOB                    IN/OUT
+PROCEDURE GET_FILE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SOURCE_FILE                    VARCHAR2                IN    
+ SOURCE_HOST                    VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ FILE_CONTENTS                  BLOB                    IN/OUT
+PROCEDURE GET_FILE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SOURCE_FILE                    VARCHAR2                IN    
+ SOURCE_HOST                    VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ DESTINATION_FILE_NAME          VARCHAR2                IN    
+ DESTINATION_DIRECTORY_OBJECT   VARCHAR2                IN    
+ DESTINATION_PERMISSIONS        VARCHAR2                IN     DEFAULT
+PROCEDURE GET_SCHEDULER_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          VARCHAR2                OUT   
+FUNCTION GET_SYS_TIME_ZONE_NAME RETURNS VARCHAR2
+FUNCTION GET_VARCHAR2_VALUE RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ A                              ANYDATA                 IN    
+PROCEDURE OPEN_WINDOW
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ WINDOW_NAME                    VARCHAR2                IN    
+ DURATION                       INTERVAL DAY TO SECOND  IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+PROCEDURE PURGE_LOG
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ LOG_HISTORY                    BINARY_INTEGER          IN     DEFAULT
+ WHICH_LOG                      VARCHAR2                IN     DEFAULT
+ JOB_NAME                       VARCHAR2                IN     DEFAULT
+PROCEDURE PUT_FILE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ DESTINATION_FILE               VARCHAR2                IN    
+ DESTINATION_HOST               VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ FILE_CONTENTS                  CLOB                    IN    
+ DESTINATION_PERMISSIONS        VARCHAR2                IN     DEFAULT
+PROCEDURE PUT_FILE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ DESTINATION_FILE               VARCHAR2                IN    
+ DESTINATION_HOST               VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ FILE_CONTENTS                  BLOB                    IN    
+ DESTINATION_PERMISSIONS        VARCHAR2                IN     DEFAULT
+PROCEDURE PUT_FILE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ DESTINATION_FILE               VARCHAR2                IN    
+ DESTINATION_HOST               VARCHAR2                IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ SOURCE_FILE_NAME               VARCHAR2                IN    
+ SOURCE_DIRECTORY_OBJECT        VARCHAR2                IN    
+ DESTINATION_PERMISSIONS        VARCHAR2                IN     DEFAULT
+PROCEDURE REMOVE_EVENT_QUEUE_SUBSCRIBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ SUBSCRIBER_NAME                VARCHAR2                IN     DEFAULT
+PROCEDURE REMOVE_GROUP_MEMBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ MEMBER                         VARCHAR2                IN    
+PROCEDURE REMOVE_JOB_EMAIL_NOTIFICATION
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ RECIPIENTS                     VARCHAR2                IN     DEFAULT
+ EVENTS                         VARCHAR2                IN     DEFAULT
+PROCEDURE REMOVE_WINDOW_GROUP_MEMBER
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ GROUP_NAME                     VARCHAR2                IN    
+ WINDOW_LIST                    VARCHAR2                IN    
+PROCEDURE RESET_JOB_ARGUMENT_VALUE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+PROCEDURE RESET_JOB_ARGUMENT_VALUE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ARGUMENT_NAME                  VARCHAR2                IN    
+PROCEDURE RESOLVE_CALENDAR_STRING
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CALENDAR_STRING                VARCHAR2                IN    
+ FREQUENCY                      BINARY_INTEGER          OUT   
+ INTERVAL                       BINARY_INTEGER          OUT   
+ CALENDARS_USED                 BOOLEAN                 OUT   
+ BYSECOND                       SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYMINUTE                       SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYHOUR                         SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYDAY_DAYS                     SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYDAY_OCCURRENCE               SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYDATE_Y                       SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYDATE_MD                      SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYMONTHDAY                     SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYYEARDAY                      SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYWEEKNO                       SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYMONTH                        SCHEDULER$_INT_ARRAY_TYPE OUT   
+ BYSETPOS                       SCHEDULER$_INT_ARRAY_TYPE OUT   
+PROCEDURE RESOLVE_CALENDAR_STRING
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CALENDAR_STRING                VARCHAR2                IN    
+ FREQUENCY                      BINARY_INTEGER          OUT   
+ INTERVAL                       BINARY_INTEGER          OUT   
+ BYSECOND                       BYLIST                  OUT   
+ BYMINUTE                       BYLIST                  OUT   
+ BYHOUR                         BYLIST                  OUT   
+ BYDAY_DAYS                     BYLIST                  OUT   
+ BYDAY_OCCURRENCE               BYLIST                  OUT   
+ BYMONTHDAY                     BYLIST                  OUT   
+ BYYEARDAY                      BYLIST                  OUT   
+ BYWEEKNO                       BYLIST                  OUT   
+ BYMONTH                        BYLIST                  OUT   
+FUNCTION RESOLVE_NAME RETURNS VARCHAR2
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ FULL_NAME                      VARCHAR2                IN    
+ DEFAULT_OWNER                  VARCHAR2                IN    
+ RETURN_PART                    NUMBER                  IN    
+PROCEDURE RUN_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ START_STEPS                    VARCHAR2                IN    
+ JOB_NAME                       VARCHAR2                IN     DEFAULT
+PROCEDURE RUN_CHAIN
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ CHAIN_NAME                     VARCHAR2                IN    
+ STEP_STATE_LIST                SCHEDULER$_STEP_TYPE_LIST IN    
+ JOB_NAME                       VARCHAR2                IN     DEFAULT
+PROCEDURE RUN_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ USE_CURRENT_SESSION            BOOLEAN                 IN     DEFAULT
+PROCEDURE SET_AGENT_REGISTRATION_PASS
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ REGISTRATION_PASSWORD          VARCHAR2                IN    
+ EXPIRATION_DATE                TIMESTAMP WITH TIME ZONE IN     DEFAULT
+ MAX_USES                       BINARY_INTEGER          IN     DEFAULT
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          BOOLEAN                 IN    
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          VARCHAR2                IN    
+ VALUE2                         VARCHAR2                IN     DEFAULT
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          DATE                    IN    
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          TIMESTAMP               IN    
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          TIMESTAMP WITH TIME ZONE IN    
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          TIMESTAMP WITH LOCAL TIME ZONE IN    
+PROCEDURE SET_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          INTERVAL DAY TO SECOND  IN    
+PROCEDURE SET_ATTRIBUTE_NULL
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN    
+ ATTRIBUTE                      VARCHAR2                IN    
+PROCEDURE SET_JOB_ANYDATA_VALUE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+ ARGUMENT_VALUE                 ANYDATA                 IN    
+PROCEDURE SET_JOB_ANYDATA_VALUE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ARGUMENT_NAME                  VARCHAR2                IN    
+ ARGUMENT_VALUE                 ANYDATA                 IN    
+PROCEDURE SET_JOB_ARGUMENT_VALUE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ARGUMENT_POSITION              BINARY_INTEGER          IN    
+ ARGUMENT_VALUE                 VARCHAR2                IN    
+PROCEDURE SET_JOB_ARGUMENT_VALUE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ ARGUMENT_NAME                  VARCHAR2                IN    
+ ARGUMENT_VALUE                 VARCHAR2                IN    
+PROCEDURE SET_JOB_ATTRIBUTES
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOBATTR_ARRAY                  JOBATTR_ARRAY           IN    
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE SET_SCHEDULER_ATTRIBUTE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ ATTRIBUTE                      VARCHAR2                IN    
+ VALUE                          VARCHAR2                IN    
+PROCEDURE SHOW_ERRORS
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ ERROR_LIST                     SCHEDULER$_BATCHERR_ARRAY OUT   
+FUNCTION STIME RETURNS TIMESTAMP WITH TIME ZONE
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ FOLLOW_DEFAULT_TIMEZONE        BOOLEAN                 IN     DEFAULT
+PROCEDURE STOP_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ FORCE                          BOOLEAN                 IN     DEFAULT
+ COMMIT_SEMANTICS               VARCHAR2                IN     DEFAULT
+PROCEDURE SUBMIT_REMOTE_EXTERNAL_JOB
+ Argument Name                  Type                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ JOB_NAME                       VARCHAR2                IN    
+ JOB_SUBNAME                    VARCHAR2                IN    
+ JOB_OWNER                      VARCHAR2                IN    
+ COMMAND                        VARCHAR2                IN    
+ ARGUMENTS                      ODCIVARCHAR2LIST        IN    
+ CREDENTIAL_NAME                VARCHAR2                IN    
+ CREDENTIAL_OWNER               VARCHAR2                IN    
+ DESTINATION                    VARCHAR2                IN    
+ DESTINATION_OWNER              VARCHAR2                IN    
+ DESTINATION_NAME               VARCHAR2                IN    
+ JOB_DEST_ID                    VARCHAR2                IN    
+ JOB_ACTION                     VARCHAR2                IN    
+ JOB_SCHEDULED_START            TIMESTAMP WITH TIME ZONE IN    
+ JOB_START                      TIMESTAMP WITH TIME ZONE IN    
+ WINDOW_START                   TIMESTAMP WITH TIME ZONE IN    
+ WINDOW_END                     TIMESTAMP WITH TIME ZONE IN    
+ CHAINID                        VARCHAR2                IN    
+ REQUEST_ID                     NUMBER                  IN    
+
+SQL> spool off
