@@ -1,0 +1,15 @@
+# ######################################################################
+# FORMAT 
+# MaskType : TableName : ColumnName : ValueExpression : WhereCondition
+# ######################################################################
+# ======================================================================
+# T14_TIME
+TIME_RANDOM:T14_TIME:RANDOM_TM:
+TIME_FIXED:T14_TIME:FIXED_TM:2000-11-30 12.47.00.100000:
+TIME_PLUS_HH:T14_TIME:PLUS_HH:5:
+TIME_MINUS_HH:T14_TIME:MINUS_HH:3:
+TIME_PLUS_MI:T14_TIME:PLUS_MI:10:
+TIME_MINUS_MI:T14_TIME:MINUS_MI:20:
+TIME_PLUS_SS:T14_TIME:PLUS_SS:30:
+TIME_MINUS_SS:T14_TIME:MINUS_SS:15:
+# ======================================================================
