@@ -4,6 +4,7 @@
 # ######################################################################
 # ======================================================================
 # T13_DATE
+DATE_RANDOM:T13_DATE:RANDOM_DT:
 DATE_FIXED:T13_DATE:FIXED_DT:2018-06-30:
 DATE_PAST:T13_DATE:PAST_DT:200:
 DATE_FUTURE:T13_DATE:FUTURE_DT:100:
