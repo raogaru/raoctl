@@ -144,16 +144,15 @@ do
 
 	"BLOB_NULL") valexpr="empty_blob()" ;;
 	# blob size of value
-	#"BLOB_RANDOM_FIXED_SIZE") valexpr="dbms_random.string('P',${valexpr})" ;;
 	"BLOB_FIXED_SIZE") valexpr="to_blob(utl_raw.cast_to_raw(dbms_random.string('P',${valexpr})))" ;;
 	# expect valexpr to have MMM,NNN format size precision from mmm to nnn
-	#"BLOB_RANDOM_VARIABLE_SIZE") valexpr="dbms_random.string('P',round(dbms_random.value(${valexpr}),0))" ;;
 	"BLOB_VARIABLE_SIZE") valexpr="to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(${valexpr}),0))))" ;;
 
 	# ----------------------------------------
 	# DATE
 
-	"DATE_RANDOM") valexpr="to_date(trunc(dbms_random.value(to_char(DATE '1900-01-01','J'),to_char(DATE '3000-12-31','J'))),'J')" ;;
+	#"DATE_RANDOM") valexpr="to_date(trunc(dbms_random.value(to_char(DATE '1900-01-01','J'),to_char(DATE '3000-12-31','J'))),'J')" ;;
+	"DATE_RANDOM") valexpr="round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" ;;
 	"DATE_FIXED") valexpr="to_date('${valexpr}','YYYY-MM-DD')" ;;
 	"DATE_PAST") valexpr="trunc(sysdate-round(dbms_random.value(1,${valexpr}),0))" ;;
 	"DATE_FUTURE") valexpr="trunc(sysdate+round(dbms_random.value(1,${valexpr}),0))" ;;
@@ -165,37 +164,42 @@ do
 	# ----------------------------------------
 	# TIMESTAMP
 
-	"TIME_RANDOM") valexpr="to_date(dbms_random.value(to_char(DATE '1900-01-01','J'),to_char(DATE '3000-12-31','J')),'J')" ;;
-	"TIME_SAME_DAY") valexpr="to_char(TIMESTAMP dbms_random.value(trunc(${colname}),trunc(${colname})+1))" ;;
+	"TIME_RANDOM") valexpr="sysdate+dbms_random.value(-100*365,100*365)" ;;
+	"TIME_FIXED") valexpr="to_timestamp('${valexpr}','YYYY-MM-DD HH24.MI.SS.FF')" ;;
+	"TIME_PLUS_HH") valexpr="${colname}+(${valexpr}/24)" ;;
+	"TIME_MINUS_HH") valexpr="${colname}-(${valexpr}/24)" ;;
+
+	"TIME_PLUS_MI") valexpr="${colname}+(${valexpr}/24/60)" ;;
+	"TIME_MINUS_MI") valexpr="${colname}-(${valexpr}/24/60)" ;;
+	
+	"TIME_PLUS_SS") valexpr="${colname}+(${valexpr}/24/60/60)" ;;
+	"TIME_MINUS_SS") valexpr="${colname}-(${valexpr}/24/60/60)" ;;
 
 	# ----------------------------------------
 	# STRING
 
 	"STR_FIXED_STRING") valexpr="'${valexpr}'" ;;
-
-	# generate random values for a given length
-	"STR_RANDOM_ALPHA_UPPER") valexpr="dbms_random.string('U',${valexp})" ;;
-	"STR_RANDOM_ALPHA_LOWER") valexpr="dbms_random.string('L',${valexp})" ;;
-	"STR_RANDOM_ALPHA_MIXED") valexpr="dbms_random.string('A',${valexp})" ;;
-	"STR_RANDOM_ALPHANUM_MIXED") valexpr="dbms_random.string('X',${valexp})" ;;
-	"STR_RANDOM_PRINTABLE_CHAR") valexpr="dbms_random.string('P',${valexp})" ;;
-
-	"STR_FIXED_PREFIX") valexpr="'${valexpr}||${colname}'" ;;
+	"STR_FIXED_PREFIX") valexpr="'${valexpr}'||${colname}" ;;
 	"STR_FIXED_SUFFIX") valexpr="${colname}||'${valexpr}'" ;;
+
+	# expect valexpr in mmm,nnn format. for fixed length use mmm=nnn
+	"STR_RANDOM_ALPHA_UPPER") valexpr="dbms_random.string('U',round(dbms_random.value(${valexpr}),0))" ;;
+	"STR_RANDOM_ALPHA_LOWER") valexpr="dbms_random.string('L',round(dbms_random.value(${valexpr}),0))" ;;
+	"STR_RANDOM_ALPHA_MIXED") valexpr="dbms_random.string('A',round(dbms_random.value(${valexpr}),0))" ;;
+	"STR_RANDOM_ALPHANUM_MIXED") valexpr="dbms_random.string('X',round(dbms_random.value(${valexpr}),0))" ;;
+	"STR_RANDOM_PRINTABLE_CHAR") valexpr="dbms_random.string('P',round(dbms_random.value(${valexpr}),0))" ;;
 
 	# ----------------------------------------
 	# NUMBER
 
 	"NUM_FIXED") valexpr="${valexpr}" ;;
-	"NUM_ADD") valexpr="${colname}+${valexpr}" ;;
-	"NUM_SUBSTRACT") valexpr="${colname}-${valexpr}" ;;
-	"NUM_MULTIPLY") valexpr="${colname}*${valexpr}" ;;
-	"NUM_DIVIDE") valexpr="${colname}/${valexpr}" ;;
+	"NUM_PLUS") valexpr="${colname}+${valexpr}" ;;
+	"NUM_MINUS") valexpr="${colname}-${valexpr}" ;;
 
-	# expect valexpr to be the power of 10
-	"NUM_RANDOM_INTEGER") valexpr="round(dbms_random.value*power(10,${valexpr}),0)" ;;
+	# random integer with valexpr as number of digits
+	"NUM_RANDOM_INTEGER_DIGITS") valexpr="round(dbms_random.value*power(10,${valexpr}),0)" ;;
 	
-	# expect valexpr to be in MMMM,NNNN format
+	# expect valexpr to be in FROM,TO format
 	"NUM_RANDOM_INTEGER_BETWEEN") valexpr="round(dbms_random.value(${valexpr}),0)" ;;
 
 	# expect valexpr with PRECISION,SCALE format
@@ -203,13 +207,6 @@ do
 		v_precision=$(echo ${valexpr}|cut -f1 -d",") 
 		v_scale=$(echo ${valexpr}|cut -f2 -d",")
 		valexpr="round(dbms_random.value*power(10,${v_precision}),${v_scale})" 
-		;;
-
-	# expect valexpr with PRECISION,SCALE format
-	"NUM_RANDOM_DECIMAL_BETWEEN") 
-		v_precision=$(echo ${valexpr}|cut -f1 -d",") 
-		v_scale=$(echo ${valexpr}|cut -f2 -d",")
-		valexpr="-round(dbms_random.value*power(10,${v_precision}),${v_scale})" 
 		;;
 
 	# ----------------------------------------
