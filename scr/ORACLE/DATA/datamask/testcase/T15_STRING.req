@@ -1,0 +1,16 @@
+# ######################################################################
+# FORMAT 
+# MaskType : TableName : ColumnName : ValueExpression : WhereCondition
+# ######################################################################
+# ======================================================================
+# T15_STRING
+STR_FIXED_STRING:T15_STRING:FIXED_STR:HelloWorld:
+STR_RANDOM_ALPHA_UPPER:T15_STRING:UPPER_STR:5,20:
+STR_RANDOM_ALPHA_LOWER:T15_STRING:LOWER_STR:5,20:
+STR_RANDOM_ALPHA_MIXED:T15_STRING:MIXED_STR:10,20:
+STR_RANDOM_ALPHANUM_MIXED:T15_STRING:ALPHANUM_STR:15,30:
+STR_RANDOM_PRINTABLE_CHAR:T15_STRING:PRINTABLE_STR:10,25:
+STR_FIXED_PREFIX:T15_STRING:PREFIX_STR:Mr.:
+STR_FIXED_SUFFIX:T15_STRING:SUFFIX_STR: Jr II:
+##
+# ======================================================================
