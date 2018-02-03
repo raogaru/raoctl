@@ -5,6 +5,7 @@ drop table T13_DATE ;
 
 create table T13_DATE (
 o date,
+RANDOM_DT date,
 FIXED_DT date,
 PAST_DT date,
 FUTURE_DT date,
@@ -25,6 +26,7 @@ where rownum<500;
 commit;
 
 update T13_DATE set
+RANDOM_DT =o,
 FIXED_DT =o,
 PAST_DT =o,
 FUTURE_DT =o,
