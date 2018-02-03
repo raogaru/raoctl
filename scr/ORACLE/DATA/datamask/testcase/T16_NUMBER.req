@@ -1,0 +1,14 @@
+# ######################################################################
+# FORMAT 
+# MaskType : TableName : ColumnName : ValueExpression : WhereCondition
+# ######################################################################
+# ======================================================================
+# T16_NUMBER
+NUM_FIXED:T16_NUMBER:FIXED_NUM:123.45:
+NUM_PLUS:T16_NUMBER:PLUS_NUM:10:
+NUM_MINUS:T16_NUMBER:MINUS_NUM:10:
+NUM_RANDOM_INTEGER_DIGITS:T16_NUMBER:RAND_INT:5:
+NUM_RANDOM_INTEGER_BETWEEN:T16_NUMBER:RAND_INT_BETWEEN:1,99:
+NUM_RANDOM_DECIMAL:T16_NUMBER:RAND_DEC:3,5:
+##
+# ======================================================================
