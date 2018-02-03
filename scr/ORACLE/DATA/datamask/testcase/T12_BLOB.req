@@ -5,6 +5,6 @@
 # ======================================================================
 # T12_BLOB
 BLOB_NULL:T12_BLOB:EMPTY::
-BLOB_FIXED_SIZE:T12_BLOB:FIXED_SIZE:30:
-BLOB_VARIABLE_SIZE:T12_BLOB:VARIABLE_SIZE:5,50:
+BLOB_FIXED_SIZE:T12_BLOB:FIXED_SIZE:200:
+BLOB_VARIABLE_SIZE:T12_BLOB:VARIABLE_SIZE:100,500:
 # ======================================================================
