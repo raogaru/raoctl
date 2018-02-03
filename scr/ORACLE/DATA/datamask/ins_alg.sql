@@ -84,11 +84,10 @@ insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALP
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_PRINTABLE_CHAR','XXX');
 --
 insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_FIXED','XXX');
-insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_ADD','XXX');
-insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_SUBSTRACT','XXX');
-insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_MULTIPLY','XXX');
-insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_DIVIDE','XXX');
-insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_RANDOM_INTEGER','XXX');
+insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_PLUS','XXX');
+insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_MINUS','XXX');
+insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_RANDOM_INTEGER_DIGITS','XXX');
 insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_RANDOM_INTEGER_BETWEEN','XXX');
+insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_RANDOM_DECIMAL','XXX');
 --
 commit;
