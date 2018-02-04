@@ -205,8 +205,22 @@ do
 		;;
 
 	# ----------------------------------------
-	# GENERAL EXPRESSION
+	# ANYDATA
 
+	"ANYDATA_TYPE_MASK") valexpr="(
+CASE SYS.ANYDATA.getTypeName(${colname})
+when 'CHAR'     then SYS.ANYDATA.convertCHAR(dbms_random.string('X',10))
+when 'VARCHAR2' then SYS.ANYDATA.convertVARCHAR2(dbms_random.string('X',round(dbms_random.value(10,50),0)))
+when 'NUMBER'   then SYS.ANYDATA.convertNUMBER(round(dbms_random.value(1000000,2000000),2))
+when 'DATE'     then SYS.ANYDATA.convertDATE(trunc(sysdate+dbms_random.value(0,366)))
+when 'TIMESTAMP'  then SYS.ANYDATA.convertTIMESTAMP(systimestamp+dbms_random.value(0,366))
+when 'CLOB'     then SYS.ANYDATA.convertCLOB(dbms_random.string('X',round(dbms_random.value(10,50),0)))
+when 'BLOB'     then SYS.ANYDATA.convertBLOB(to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,500),0)))))
+when 'RAW'      then SYS.ANYDATA.convertRAW(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,500),0))))
+when 'OBJECT'   then SYS.ANYDATA.convertOBJECT(T21_ANYDATA_emp_TYP('E','FirstName LastName',123, sysdate, systimestamp))
+else null
+end
+)" ;;
 
 	# ----------------------------------------
 	# CUSTOM FILEDS
