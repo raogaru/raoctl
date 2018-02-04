@@ -62,7 +62,7 @@ insert into data_mask_alg values (data_mask_seq.nextval,'LOB','BLOB_RANDOM_VARIA
 insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_RANDOM','Random Date between current date +/- 100 years');
 insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_FIXED','Fixed Date. val=YYYY-MM-DD');
 insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_PAST','Past date. sysdate-1 to sysdate-N. val=N');
-insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_FUTURE',Future Date. sysdate+1 to sysdate+N. val=N');
+insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_FUTURE','Future Date. sysdate+1 to sysdate+N. val=N');
 insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_ADD_DD','Add Days. val=N');
 insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_ADD_MM','Add Months. val=N');
 insert into data_mask_alg values (data_mask_seq.nextval,'DATE','DATE_ADD_YY','Add Years. val=N');
@@ -82,7 +82,7 @@ insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_FIXED_SUFF
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHA_UPPER','Random Uppercase Albhabets of length between M and N. Specify M=N for CHAR data types. val=M,N');
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHA_LOWER','Random Lowercase Albhabets of length between M and N. Specify M=N for CHAR data types. val=M,N');
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHA_MIXED','Random Mixedcase Albhabets of length between M and N. Specify M=N for CHAR data types. val=M,N');
-insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHANUM_MIXED','Random Uppercase Alpha Numeric Letters of length between M and N. Specify M=N for CHAR data types. val=M,N');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHANUM_MIXED','Random Alpha Numeric Letters of length between M and N. Specify M=N for CHAR data types. val=M,N');
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_PRINTABLE_CHAR','Random Printable Characters of length between M and N. Specify M=N for CHAR data types. val=M,N');
 --
 insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_FIXED','Fixed Number. N can be any preceision or scale. val=N');
