@@ -46,6 +46,10 @@ do
 
 	case "${maskalg}" in
 	# ----------------------------------------
+	# NULL
+	"FILL_NULL") valexpr="null" ;;
+
+	# ----------------------------------------
 	# SSN - SOCIAL SECURITY NUMBER
 
 	"SSN_HASH_ALL") valexpr="'###-##-####'" ;;
@@ -207,19 +211,21 @@ do
 	# ----------------------------------------
 	# ANYDATA
 
+	"ANYDATA_TYPE_NULL") valexpr="SYS.ANYDATA.convertCHAR('')" ;;
+
 	"ANYDATA_TYPE_MASK") valexpr="(
-CASE SYS.ANYDATA.getTypeName(${colname})
-when 'CHAR'     then SYS.ANYDATA.convertCHAR(dbms_random.string('X',10))
-when 'VARCHAR2' then SYS.ANYDATA.convertVARCHAR2(dbms_random.string('X',round(dbms_random.value(10,50),0)))
-when 'NUMBER'   then SYS.ANYDATA.convertNUMBER(round(dbms_random.value(1000000,2000000),2))
-when 'DATE'     then SYS.ANYDATA.convertDATE(trunc(sysdate+dbms_random.value(0,366)))
-when 'TIMESTAMP'  then SYS.ANYDATA.convertTIMESTAMP(systimestamp+dbms_random.value(0,366))
-when 'CLOB'     then SYS.ANYDATA.convertCLOB(dbms_random.string('X',round(dbms_random.value(10,50),0)))
-when 'BLOB'     then SYS.ANYDATA.convertBLOB(to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,500),0)))))
-when 'RAW'      then SYS.ANYDATA.convertRAW(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,500),0))))
-when 'OBJECT'   then SYS.ANYDATA.convertOBJECT(T21_ANYDATA_emp_TYP('E','FirstName LastName',123, sysdate, systimestamp))
-else null
-end
+CASE sys.anydata.getTypeName(${colname})
+WHEN 'CHAR'     THEN sys.anydata.convertCHAR(dbms_random.string('X',10))
+WHEN 'VARCHAR2' THEN sys.anydata.convertVARCHAR2(dbms_random.string('X',round(dbms_random.value(10,50),0)))
+WHEN 'NUMBER'   THEN sys.anydata.convertNUMBER(round(dbms_random.value(1000000,2000000),2))
+WHEN 'DATE'     THEN sys.anydata.convertDATE(trunc(sysdate+dbms_random.value(0,366)))
+WHEN 'TIMESTAMP'  THEN sys.anydata.convertTIMESTAMP(systimestamp+dbms_random.value(0,366))
+WHEN 'CLOB'     THEN sys.anydata.convertCLOB(dbms_random.string('X',round(dbms_random.value(10,50),0)))
+WHEN 'BLOB'     THEN sys.anydata.convertBLOB(to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,500),0)))))
+WHEN 'RAW'      THEN sys.anydata.convertRAW(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,500),0))))
+WHEN 'OBJECT'   THEN sys.anydata.convertOBJECT(T21_ANYDATA_emp_TYP('E','FirstName LastName',123, sysdate, systimestamp))
+ELSE null
+END
 )" ;;
 
 	# ----------------------------------------
