@@ -26,7 +26,7 @@ into T21_ANYDATA  (id)
 with a as (select level  from dual connect by level <=1000)
 select rownum
 from a a1, a a2
-where rownum<1000;
+where rownum<500000;
 commit;
 
 -- initiaize data type

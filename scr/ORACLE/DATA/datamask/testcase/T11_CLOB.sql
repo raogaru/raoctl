@@ -18,7 +18,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 dbms_random.string('X',round(dbms_random.value(10,50),0))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T11_CLOB set

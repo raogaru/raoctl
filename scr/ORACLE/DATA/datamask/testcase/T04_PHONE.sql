@@ -26,7 +26,7 @@ to_char(round(dbms_random.value(100,999),0))||'-'||
 to_char(round(dbms_random.value(100,999),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0))
 from a a1, a a2
-where rownum<5000;
+where rownum<5000000;
 commit;
 
 update T04_PHONE set

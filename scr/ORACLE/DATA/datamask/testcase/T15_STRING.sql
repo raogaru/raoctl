@@ -21,7 +21,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 dbms_random.string('X',10)
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 

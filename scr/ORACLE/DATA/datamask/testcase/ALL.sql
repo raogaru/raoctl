@@ -27,7 +27,7 @@ to_char(round(dbms_random.value(100,999),0))||'-'||
 to_char(round(dbms_random.value(10,99),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0)) o
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 
@@ -79,7 +79,7 @@ to_char(round(dbms_random.value(1000,9999),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T02_CC_VISA set
@@ -129,7 +129,7 @@ to_char(round(dbms_random.value(1000,9999),0))||'-'||
 to_char(round(dbms_random.value(100000,999999),0))||'-'||
 to_char(round(dbms_random.value(10000,99999),0))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T03_CC_AMEX set
@@ -178,7 +178,7 @@ to_char(round(dbms_random.value(100,999),0))||'-'||
 to_char(round(dbms_random.value(100,999),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0))
 from a a1, a a2
-where rownum<5000;
+where rownum<500000;
 commit;
 
 update T04_PHONE set
@@ -216,7 +216,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 dbms_random.string('X',round(dbms_random.value(10,50),0))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T11_CLOB set
@@ -286,7 +286,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 trunc(sysdate+dbms_random.value(0,366))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T13_DATE set
@@ -331,7 +331,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 systimestamp+dbms_random.value(0,366)
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T14_TIME set
@@ -372,7 +372,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 dbms_random.string('X',10)
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 
@@ -412,7 +412,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 round(dbms_random.value(1000000,2000000),2)
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 

@@ -22,7 +22,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 trunc(sysdate+dbms_random.value(0,366))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T13_DATE set

@@ -19,7 +19,7 @@ with a as (select 1  from dual connect by level <=1000)
 select 
 round(dbms_random.value(1000000,2000000),2)
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 

@@ -28,7 +28,7 @@ to_char(round(dbms_random.value(1000,9999),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0))||'-'||
 to_char(round(dbms_random.value(1000,9999),0))
 from a a1, a a2
-where rownum<500;
+where rownum<500000;
 commit;
 
 update T02_CC_VISA set

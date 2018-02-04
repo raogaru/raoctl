@@ -5,7 +5,7 @@
 set verify off echo off feedback off time off timing off linesi 1000 trimspool on pagesize 0
 set serveroutput on size 1000000
 define v_hash_line='######################################################################'
-define v_limit=100 	-- bulk collection limit
+define v_limit=10000 	-- bulk collection limit
 define v_px=16		-- parallelism
 alter session enable parallel query;
 alter session enable parallel dml;
