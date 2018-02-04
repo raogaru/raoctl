@@ -17,7 +17,7 @@ drop table T21_ANYDATA ;
 create table T21_ANYDATA (
 id number,
 typ VARCHAR2(30),
-o SYS.ANYDATA
+my_data SYS.ANYDATA
 );
 
 -- insert rows
@@ -57,7 +57,8 @@ end;
 /
 
 -- update anydata column with respective data types
-update T21_ANYDATA set o = (
+-- sys.anydata conversion not working for clob and blob hence added not in clause
+update T21_ANYDATA set my_data = (
 CASE typ
 when 'CHAR' 	then SYS.ANYDATA.convertCHAR(dbms_random.string('X',10)) 
 when 'VARCHAR2' then SYS.ANYDATA.convertVARCHAR2(dbms_random.string('X',round(dbms_random.value(10,50),0))) 
@@ -71,23 +72,24 @@ when 'OBJECT' 	then SYS.ANYDATA.convertOBJECT(T21_ANYDATA_emp_TYP('E','FirstName
 else null
 end
 )
-where typ not in ('CLOB','BLOB'); -- sys.anydata conversion not working for clob and blob
+where typ not in ('CLOB','BLOB'); 
+commit;
 
 create or replace force view T21_ANYDATA_VIEW as
 select id,typ, 
 (case typ
-when 'CHAR' 	then SYS.ANYDATA.accessCHAR(o)
-when 'VARCHAR2' then SYS.ANYDATA.accessVARCHAR2(o)
-when 'NUMBER'  	then SYS.ANYDATA.accessNUMBER(o)
-when 'DATE'  	then SYS.ANYDATA.accessDATE(o)
-when 'TIMESTAMP'  then SYS.ANYDATA.accessTIMESTAMP(o)
-when 'CLOB'  	then SYS.ANYDATA.accessCLOB(o)
-when 'BLOB'  	then SYS.ANYDATA.accessBLOB(o)
-when 'RAW'  	then SYS.ANYDATA.accessRAW(o)
+when 'CHAR' 	then SYS.ANYDATA.accessCHAR(my_data)
+when 'VARCHAR2' then SYS.ANYDATA.accessVARCHAR2(my_data)
+when 'NUMBER'  	then SYS.ANYDATA.accessNUMBER(my_data)
+when 'DATE'  	then SYS.ANYDATA.accessDATE(my_data)
+when 'TIMESTAMP'  then SYS.ANYDATA.accessTIMESTAMP(my_data)
+when 'CLOB'  	then SYS.ANYDATA.accessCLOB(my_data)
+when 'BLOB'  	then SYS.ANYDATA.accessBLOB(my_data)
+when 'RAW'  	then SYS.ANYDATA.accessRAW(my_data)
 else null
 end) data_value
-from T21_ANYDATA;
-
+from T21_ANYDATA
+where typ='CHAR';
 
 --
 --
