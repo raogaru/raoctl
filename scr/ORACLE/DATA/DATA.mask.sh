@@ -82,7 +82,7 @@ ERROR "Not coded yet"
 # ------------------------------------------------------------
 f_mask_gen_scr () {
 INPUT
-v_DATAMASK_REQ=${input1}
+v_DATAMASK_REQ=${v_DATAMASK_REQ:=${input1}}
 ECHO "REQ ${v_DATAMASK_REQ}.req"
 CHKFILE ${v_DATAMASK_REQ}.req
 

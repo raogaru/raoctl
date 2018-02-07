@@ -75,10 +75,10 @@ where rownum<500;
 commit;
 
 -- select using object attributes
-select a.id, a.o.emp_id, a.o.emp_typ, a.o.emp_name, a.o.emp_hired, a.o.emp_login from T22_OBJTYPE a order by id;
+--select a.id, a.o.emp_id, a.o.emp_typ, a.o.emp_name, a.o.emp_hired, a.o.emp_login from T22_OBJTYPE a order by id;
 
 -- select using member functions
-select a.id, a.o.getID(), a.o.GetType(), a.o.getName(), a.o.getHired(), a.o.getLogin() from T22_OBJTYPE a order by id;
+--select a.id, a.o.getID(), a.o.GetType(), a.o.getName(), a.o.getHired(), a.o.getLogin() from T22_OBJTYPE a order by id;
 
 --
 --
