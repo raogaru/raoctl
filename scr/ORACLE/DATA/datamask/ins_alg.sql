@@ -82,8 +82,15 @@ insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_FIXED_SUFF
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHA_UPPER','Random Uppercase Albhabets of length between M and N. Specify M=N for CHAR data types. val=M,N');
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHA_LOWER','Random Lowercase Albhabets of length between M and N. Specify M=N for CHAR data types. val=M,N');
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHA_MIXED','Random Mixedcase Albhabets of length between M and N. Specify M=N for CHAR data types. val=M,N');
-insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHANUM_MIXED','Random Alpha Numeric Letters of length between M and N. Specify M=N for CHAR data types. val=M,N');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_ALPHANUM','Random Alpha Numeric Letters of length between M and N. Specify M=N for CHAR data types. val=M,N');
 insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_RANDOM_PRINTABLE_CHAR','Random Printable Characters of length between M and N. Specify M=N for CHAR data types. val=M,N');
+
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_TRANSLATE_NUMBERIC','Translate Strings with Numeric characters only');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_TRANSLATE_ALPHA_UPPER','Translate Strings with Upper case Alphabets only');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_TRANSLATE_ALPHA_LOWER','Translate Strings with Lower case Alphabets only');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_TRANSLATE_ALPHA_MIXED','Translate Strings with Mixed Alphabets');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_TRANSLATE_ALPHANUM','Translate Strings with Alpha Numeric');
+insert into data_mask_alg values (data_mask_seq.nextval,'STRING','STR_TRANSLATE_PRINTABLE_CHAR','Translate Strings with Printable characters');
 --
 insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_FIXED','Fixed Number. N can be any preceision or scale. val=N');
 insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_PLUS','Column Value PLUS given number N. N can be any precision/scale. val=N');
@@ -94,5 +101,8 @@ insert into data_mask_alg values (data_mask_seq.nextval,'NUMBER','NUM_RANDOM_DEC
 --
 insert into data_mask_alg values (data_mask_seq.nextval,'ANYDATA','ANYDATA_TYPE_NULL','Nullify Payloads in SYS.ANYDATA Data type');
 insert into data_mask_alg values (data_mask_seq.nextval,'ANYDATA','ANYDATA_TYPE_MASK','Mask Payloads in SYS.ANYDATA data type with corresponding datatype');
+--
+insert into data_mask_alg values (data_mask_seq.nextval,'OBJECT','OBJECT_TYPE_NULL','Nullify Payloads in Object Type Data type');
+insert into data_mask_alg values (data_mask_seq.nextval,'OBJECT','OBJECT_TYPE_MASK','Mask Payloads in Object Type data type');
 --
 commit;

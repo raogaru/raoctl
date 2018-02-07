@@ -185,9 +185,15 @@ do
 	"STR_RANDOM_ALPHA_UPPER") valexpr="dbms_random.string('U',round(dbms_random.value(${valexpr}),0))" ;;
 	"STR_RANDOM_ALPHA_LOWER") valexpr="dbms_random.string('L',round(dbms_random.value(${valexpr}),0))" ;;
 	"STR_RANDOM_ALPHA_MIXED") valexpr="dbms_random.string('A',round(dbms_random.value(${valexpr}),0))" ;;
-	"STR_RANDOM_ALPHANUM_MIXED") valexpr="dbms_random.string('X',round(dbms_random.value(${valexpr}),0))" ;;
+	"STR_RANDOM_ALPHANUM") valexpr="dbms_random.string('X',round(dbms_random.value(${valexpr}),0))" ;;
 	"STR_RANDOM_PRINTABLE_CHAR") valexpr="dbms_random.string('P',round(dbms_random.value(${valexpr}),0))" ;;
 
+	"STR_TRANSLATE_NUMBERIC") valexpr="translate(${colname},${v_MASK_TRANSLATE_NUMERIC=})" ;;
+	"STR_TRANSLATE_ALPHA_UPPER") valexpr="translate(${colname},${v_MASK_TRANSLATE_ALPHA_UPPER=})" ;;
+	"STR_TRANSLATE_ALPHA_LOWER") valexpr="translate(${colname},${v_MASK_TRANSLATE_ALPHA_LOWER=})" ;;
+	"STR_TRANSLATE_ALPHA_MIXED") valexpr="translate(${colname},${v_MASK_TRANSLATE_ALPHA_MIXED=})" ;;
+	"STR_TRANSLATE_ALPHANUM") valexpr="translate(${colname},${v_MASK_TRANSLATE_ALPHANUM_MIXED})" ;;
+	"STR_TRANSLATE_PRINT_CHAR") valexpr="translate(${colname},${v_MASK_TRANSLATE_SPECIALCHAR=})" ;;
 	# ----------------------------------------
 	# NUMBER
 
@@ -227,6 +233,14 @@ WHEN 'OBJECT'   THEN sys.anydata.convertOBJECT(T21_ANYDATA_emp_TYP('E','FirstNam
 ELSE null
 END
 )" ;;
+
+	# ----------------------------------------
+	# OBJECT TYPE
+	"OBJECT_TYPE_NULL") valexpr="null" ;;
+
+	#"OBJECT_TYPE_MASK") valexpr="" ;;
+
+
 
 	# ----------------------------------------
 	# CUSTOM FILEDS
