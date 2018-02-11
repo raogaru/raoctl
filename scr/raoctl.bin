@@ -112,7 +112,8 @@ cat ${TMPSQL}
 # ------------------------------------------------------------
 SQLEXEC () {
 #constr="dgadm/dgadm@${1} as sysdba"
-constr=${constr:="/ as sysdba"}
+constr="rao/rao123"
+#constr=${constr:="/ as sysdba"}
 [[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
 [[ "${rc_SHOW_SQL}" != "NO" ]] && cat ${TMPSQL}
 #cat $TMPSQL >> ${rc_EXEC_LOG}
