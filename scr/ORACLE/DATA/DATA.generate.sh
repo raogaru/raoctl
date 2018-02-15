@@ -18,7 +18,7 @@ zz,none,zz_description \
 # Global variable overwrites
 rc_RANDOM_SCHEMA_NAME=${rc_RANDOM_SCHEMA_NAME:=RAO}	# need N tables
 rc_RANDOM_SCHEMA_TABLE_COUNT=${rc_RANDOM_SCHEMA_TABLE_COUNT:=10}	# need N tables
-rc_RANDOM_COLUMN_COUNT_RANGE=${rc_RANDOM_COLUMN_COUNT_RANGE:=4,20}	# table with M to N columns
+rc_RANDOM_COLUMN_COUNT_RANGE=${rc_RANDOM_COLUMN_COUNT_RANGE:=4,30}	# table with M to N columns
 rc_RANDOM_ROWCOUNT=${rc_RANDOM_ROWCOUNT:=1000}
 #rc_RANDOM_ROWCOUNT_RANGE=${rc_RANDOM_ROWCOUNT_RANGE:=10k,1m}
 rc_RANDOM_SCHEMA_TABLE_PREFIX=${rc_RANDOM_SCHEMA_TABLE_PREFIX:=T}
@@ -169,9 +169,11 @@ do
 	#randomize column count within requested column count range
 	x=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f1 -d",")	# mininum columns
 	y=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f2 -d",") # maximum columns
+	[[ $x -lt 2 ]] && ERROR "Column cannot be less than 2"
+	[[ $y -gt 255 ]] && ERROR "Column cannot be more than 255"
 	z=$(( $RANDOM % (($y-$x)) ))
 	(( vColumnCount=$x+$z )) 	# number of columns for this table
-	DEBUG "    ${iTable} will have ${vColumnCount} columns + id column"
+	DEBUG "${iTable} will have ${vColumnCount} columns + id column"
 
 	# add columns
 	fAddColumns $vColumnCount
@@ -182,16 +184,16 @@ do
 	TableScript "CREATE INDEX ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable}_PK"
 	TableScript "ON ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} (ID) REVERSE;"
 	TableScript "-- ${cLINE2}"
-	DEBUG "Create Table Script: ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}"
 
 	# end InsertTable statement
 	InsertScript "from a a1, a a2"
 	InsertScript "where rownum<${rc_RANDOM_ROWCOUNT};"
 	InsertScript "commit;"
 	InsertScript "-- ${cLINE2}"
-	DEBUG "Insert Table Script: ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
 
 done
+DEBUG "Create Table Script: ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}"
+DEBUG "Insert Table Script: ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
 [[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_TABLE_SCRIPT}"
 [[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
 }
