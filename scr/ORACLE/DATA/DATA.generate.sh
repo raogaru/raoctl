@@ -3,41 +3,40 @@
 # ############################################################
 # ------------------------------------------------------------
 # DATA GENERATE actions
-action_L1="show_cfg create_tables drop_tables"
+action_L1="show_cfg create drop"
 action_L2="yy "
 action_L3="zz "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
-xx,none,xx_description \
-yy,none,yy_description \
-zz,none,zz_description \
+show_cfg,none,Show_Confguration \
+create,none,Create_Scripts_for_Random_Schema_Tables_and_Data \
+drop,none,Drop_Random_Schema_Tables \
 "
 # ------------------------------------------------------------
 # Global variable overwrites
 rc_RANDOM_SCHEMA_NAME=${rc_RANDOM_SCHEMA_NAME:=RAO}	# need N tables
 rc_RANDOM_SCHEMA_TABLE_COUNT=${rc_RANDOM_SCHEMA_TABLE_COUNT:=10}	# need N tables
-rc_RANDOM_COLUMN_COUNT_RANGE=${rc_RANDOM_COLUMN_COUNT_RANGE:=4,30}	# table with M to N columns
+rc_RANDOM_COLUMN_COUNT_RANGE=${rc_RANDOM_COLUMN_COUNT_RANGE:=4,20}	# table with M to N columns
 rc_RANDOM_ROWCOUNT=${rc_RANDOM_ROWCOUNT:=1000}
 #rc_RANDOM_ROWCOUNT_RANGE=${rc_RANDOM_ROWCOUNT_RANGE:=10k,1m}
 rc_RANDOM_SCHEMA_TABLE_PREFIX=${rc_RANDOM_SCHEMA_TABLE_PREFIX:=T}
 rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX:=C}
 rc_RANDOM_SCHEMA_SCRIPT_ONLY=${rc_RANDOM_SCHEMA_SCRIPT_ONLY:=NO}
-rc_RANDOM_SCHEMA_TABLE_SCRIPT=${rc_RANDOM_SCHEMA_TABLE_SCRIPT:=${TMP}/c.sql}
-rc_RANDOM_SCHEMA_INSERT_SCRIPT=${rc_RANDOM_SCHEMA_INSERT_SCRIPT:=${TMP}/i.sql}
+rc_RANDOM_SCHEMA_TABLE_SCRIPT=${rc_RANDOM_SCHEMA_TABLE_SCRIPT:=${TMP}/cre.sql}
+rc_RANDOM_SCHEMA_INSERT_SCRIPT=${rc_RANDOM_SCHEMA_INSERT_SCRIPT:=${TMP}/ins.sql}
+rc_RANDOM_SCHEMA_DML_SCRIPT=${rc_RANDOM_SCHEMA_DML_SCRIPT:=${TMP}/dml.sql}
 
 rm -f ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}
 rm -f ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}
 
 # ------------------------------------------------------------
 # Module specific environment variables
-vCreateTable=""
 vColumnCount=0
 
 # ------------------------------------------------------------
 # Module specific common functions
-
 
 # ------------------------------------------------------------
 TableScript () {
@@ -46,6 +45,10 @@ echo "$*" >> ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}
 # ------------------------------------------------------------
 InsertScript () {
 echo "$*" >> ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}
+}
+# ------------------------------------------------------------
+DmlScript () {
+echo "$*" >> ${rc_RANDOM_SCHEMA_DML_SCRIPT}
 }
 # ------------------------------------------------------------
 fAddColumns () {
@@ -59,79 +62,80 @@ do
 	case $x in 
 	0) # Integer
 		vDataType="INTEGER"
-		vColValues=", round(dbms_random.value*power(10,8),0)"
+		vColValues="round(dbms_random.value*power(10,8),0)"
 	;;
 	1) # number without precision or scale
 		vDataType="NUMBER"
-		vColValues=", round(dbms_random.value*power(10,8),0)"
+		vColValues="round(dbms_random.value*power(10,8),0)"
 	;;
 	2) # number with precision
 		p=$(( $RANDOM % 38 + 1 )) 	# randomly find precisio for NUMBER data type
 		vDataType="NUMBER($p)"
-		vColValues=", round(dbms_random.value*power(10,((${p}-1))),0)" 
+		vColValues="round(dbms_random.value*power(10,((${p}-1))),0)" 
 	;;
 	3) # number with precision,scale
 		p=$(( $RANDOM % 20 + 1 )) 	# randomly find precisio for NUMBER data type
 		s=$(( $RANDOM % 10 + 1 ))  	# randomly find scale for NUMBER data type
 		vDataType="NUMBER($p,$s)"
-		vColValues=", round(dbms_random.value*power(10,((${p}-${s}-1))),${s})"
+		vColValues="round(dbms_random.value*power(10,((${p}-${s}-1))),${s})"
 	;;
 	4) # CHAR data type - defaults to size 1 - always not null
 		vDataType="CHAR not null"
-		vColValues=", dbms_random.string('U',1)"
+		vColValues="dbms_random.string('U',1)"
 	;;
 	5) # CHAR data type with length
 		y=$(( $RANDOM % 10 + 1 )) 	# randomly find length for CHAR data type
 		vDataType="CHAR($y)"
-		vColValues=", dbms_random.string('U',$y)"
+		vColValues="dbms_random.string('U',$y)"
 	;;
 	6) # VARCHAR2 data type with length between 1 and 95 with 5 increment
 		y=$(( $RANDOM % 20 + 1 )) 	# randomly find length for VARCHAR2 data type
 		z=$(( $y * 5 )) 	
 		vDataType="VARCHAR2($z)"
-		vColValues=", dbms_random.string('X',$z)"
+		vColValues="dbms_random.string('X',$z)"
 	;;
 	7) # VARCHAR2 data type with length 100, 200, 300 .... 2000
 		y=$(( $RANDOM % 20 + 1)) 	# randomly find length for VARCHAR2 data type
 		z=$(( $y * 100 )) 	
 		vDataType="VARCHAR2($z)"
-		vColValues=", dbms_random.string('X',$z)"
+		vColValues="dbms_random.string('X',$z)"
 	;;
 	8) # DATE data type
 		vDataType="DATE"
-		vColValues=", round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" 
+		vColValues="round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" 
 	;;
 	9) # DATE data type with SYSDATE default 
 		vDataType="DATE default sysdate not null"
-		vColValues=", round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" 
+		vColValues="round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" 
 	;;
 	10) # DATE data type with not null
 		vDataType="DATE not null"
-		vColValues=", round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" 
+		vColValues="round(sysdate)+round(dbms_random.value(-100*365,100*365),0)" 
 	;;
 	11) # TIMESTAMP data type 
 		vDataType="TIMESTAMP"
-		vColValues=", sysdate+dbms_random.value(-100*365,100*365)"
+		vColValues="sysdate+dbms_random.value(-100*365,100*365)"
 	;;
 	12) # TIMESTAMP data type with SYSTIMTSTAMP default 
 		vDataType="TIMESTAMP default systimestamp not null"
-		vColValues=", sysdate+dbms_random.value(-100*365,100*365)"
+		vColValues="sysdate+dbms_random.value(-100*365,100*365)"
 	;;
 	13) # TIMESTAMP data type with not null
 		vDataType="TIMESTAMP not null"
-		vColValues=", sysdate+dbms_random.value(-100*365,100*365)"
+		vColValues="sysdate+dbms_random.value(-100*365,100*365)"
 	;;
 	14) # CLOB
 		vDataType="CLOB"
-		vColValues=", dbms_random.string('X',round(dbms_random.value(100,1000),0))"
+		vColValues="dbms_random.string('X',round(dbms_random.value(100,1000),0))"
 	;;
 	15) # BLOB
 		vDataType="BLOB"
-		vColValues=", to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,1000),0))))"
+		vColValues="to_blob(utl_raw.cast_to_raw(dbms_random.string('P',round(dbms_random.value(100,1000),0))))"
 	;;
 	esac
 	TableScript ",${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} ${vDataType}"
-	InsertScript "${vColValues}"
+	InsertScript ",/*${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn}*/ ${vColValues}"
+	DmlScript "update ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} set ${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} = ${vColValues} where id = round(dbms_random.value(1,${rc_RANDOM_ROWCOUNT}),0);"
 done
 }
 # ------------------------------------------------------------
@@ -144,7 +148,7 @@ ECHO "rc_RANDOM_SCHEMA_TABLE_PREFIX=${rc_RANDOM_SCHEMA_TABLE_PREFIX}"
 ECHO "rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX}"
 }
 # ------------------------------------------------------------
-f_generate_create_tables () {
+f_generate_create () {
 vColValues=""
 iTable=0
 while [ $iTable -lt ${rc_RANDOM_SCHEMA_TABLE_COUNT} ]
@@ -156,7 +160,7 @@ do
 	TableScript "-- ${cLINE2}"
 	TableScript "PROMPT Create Table ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} ..."
 	TableScript "CREATE TABLE ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} ("
-	TableScript "  ID number"
+	TableScript " ID number(12)"
 
 	#begin InsertTable statement
 	InsertScript "-- ${cLINE2}"
@@ -198,7 +202,7 @@ DEBUG "Insert Table Script: ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
 [[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
 }
 # ------------------------------------------------------------
-f_generate_drop_tables () {
+f_generate_drop () {
 iTable=0
 while [ $iTable -lt ${rc_RANDOM_SCHEMA_TABLE_COUNT} ]
 do
