@@ -20,15 +20,17 @@ rc_RANDOM_SCHEMA_NAME=${rc_RANDOM_SCHEMA_NAME:=RAO}	# need N tables
 rc_RANDOM_SCHEMA_TABLE_COUNT=${rc_RANDOM_SCHEMA_TABLE_COUNT:=10}	# need N tables
 rc_RANDOM_COLUMN_COUNT_RANGE=${rc_RANDOM_COLUMN_COUNT_RANGE:=4,20}	# table with M to N columns
 rc_RANDOM_ROWCOUNT=${rc_RANDOM_ROWCOUNT:=1000}
-#rc_RANDOM_ROWCOUNT_RANGE=${rc_RANDOM_ROWCOUNT_RANGE:=10k,1m}
 rc_RANDOM_SCHEMA_TABLE_PREFIX=${rc_RANDOM_SCHEMA_TABLE_PREFIX:=T}
 rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX:=C}
-rc_RANDOM_SCHEMA_SCRIPT_ONLY=${rc_RANDOM_SCHEMA_SCRIPT_ONLY:=NO}
-rc_RANDOM_SCHEMA_TABLE_SCRIPT=${rc_RANDOM_SCHEMA_TABLE_SCRIPT:=${TMP}/cre.sql}
+rc_RANDOM_SCHEMA_SCRIPT_ONLY=${rc_RANDOM_SCHEMA_SCRIPT_ONLY:=YES}
+rc_RANDOM_SCHEMA_CREATE_SCRIPT=${rc_RANDOM_SCHEMA_CREATE_SCRIPT:=${TMP}/cre.sql}
 rc_RANDOM_SCHEMA_INSERT_SCRIPT=${rc_RANDOM_SCHEMA_INSERT_SCRIPT:=${TMP}/ins.sql}
+rc_RANDOM_SCHEMA_DROP_SCRIPT=${rc_RANDOM_SCHEMA_DROP_SCRIPT:=${TMP}/drp.sql}
 rc_RANDOM_SCHEMA_DML_SCRIPT=${rc_RANDOM_SCHEMA_DML_SCRIPT:=${TMP}/dml.sql}
 
-rm -f ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}
+mkdir -p ${TMP}/dml
+rm -f ${TMP}/dml/*.sql
+rm -f ${rc_RANDOM_SCHEMA_CREATE_SCRIPT}
 rm -f ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}
 
 # ------------------------------------------------------------
@@ -40,16 +42,37 @@ vColumnCount=0
 
 # ------------------------------------------------------------
 TableScript () {
-echo "$*" >> ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}
+echo "$*" >> ${rc_RANDOM_SCHEMA_CREATE_SCRIPT}
 }
 # ------------------------------------------------------------
 InsertScript () {
 echo "$*" >> ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}
 }
 # ------------------------------------------------------------
+DropScript () {
+echo "$*" >> ${rc_RANDOM_SCHEMA_DROP_SCRIPT}
+}
+# ------------------------------------------------------------
 DmlScript () {
 echo "$*" >> ${rc_RANDOM_SCHEMA_DML_SCRIPT}
 }
+# ------------------------------------------------------------
+# validate configuration
+
+[[ ${rc_RANDOM_SCHEMA_TABLE_COUNT} -lt 1 || ${rc_RANDOM_SCHEMA_TABLE_COUNT} -gt 1000 ]] && ERROR "rc_RANDOM_SCHEMA_TABLE_COUNT must be set between 1 to 1000"
+
+rc_RANDOM_COLUMN_COUNT_MIN=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f1 -d",")	# mininum number of columns
+[[ ${rc_RANDOM_COLUMN_COUNT_MIN} -lt 1 ]] && ERROR "set rc_RANDOM_COLUMN_COUNT_RANGE low value cannot be less than 1"
+
+rc_RANDOM_COLUMN_COUNT_MAX=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f2 -d",") 	# maximum number of columns
+[[ ${rc_RANDOM_COLUMN_COUNT_MAX} -gt 255 ]] && ERROR "rc_RANDOM_COLUMN_COUNT_RANGE high value cannot be more than 255"
+
+[[ ${rc_RANDOM_ROWCOUNT} -lt 1 || ${rc_RANDOM_ROWCOUNT} -gt 10000000000 ]] && ERROR "rc_RANDOM_ROWCOUNT  must be between 1 and 1000,000,000"
+
+rc_RANDOM_SCHEMA_CREATE_SCRIPT=${rc_RANDOM_SCHEMA_CREATE_SCRIPT:=${TMP}/cre.sql}
+rc_RANDOM_SCHEMA_INSERT_SCRIPT=${rc_RANDOM_SCHEMA_INSERT_SCRIPT:=${TMP}/ins.sql}
+rc_RANDOM_SCHEMA_DROP_SCRIPT=${rc_RANDOM_SCHEMA_DROP_SCRIPT:=${TMP}/drp.sql}
+
 # ------------------------------------------------------------
 fAddColumns () {
 iColumn=0
@@ -136,6 +159,7 @@ do
 	TableScript ",${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} ${vDataType}"
 	InsertScript ",/*${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn}*/ ${vColValues}"
 	DmlScript "update ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} set ${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} = ${vColValues} where id = round(dbms_random.value(1,${rc_RANDOM_ROWCOUNT}),0);"
+	mv ${rc_RANDOM_SCHEMA_DML_SCRIPT} ${TMP}/dml/${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable}_${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn}.sql
 done
 }
 # ------------------------------------------------------------
@@ -143,7 +167,7 @@ f_generate_show_cfg () {
 ECHO "rc_RANDOM_SCHEMA_NAME=$rc_RANDOM_SCHEMA_NAME"
 ECHO "rc_RANDOM_SCHEMA_TABLE_COUNT=$rc_RANDOM_SCHEMA_TABLE_COUNT"
 ECHO "rc_RANDOM_COLUMN_RANGE=$rc_RANDOM_COLUMN_RANGE"
-ECHO "rc_RANDOM_ROWCOUNT_RANGE=$rc_RANDOM_ROWCOUNT_RANGE"
+ECHO "rc_RANDOM_ROWCOUNT=$rc_RANDOM_ROWCOUNT"
 ECHO "rc_RANDOM_SCHEMA_TABLE_PREFIX=${rc_RANDOM_SCHEMA_TABLE_PREFIX}"
 ECHO "rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX}"
 }
@@ -171,12 +195,7 @@ do
 	InsertScript "select rownum"
 
 	#randomize column count within requested column count range
-	x=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f1 -d",")	# mininum columns
-	y=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f2 -d",") # maximum columns
-	[[ $x -lt 2 ]] && ERROR "Column cannot be less than 2"
-	[[ $y -gt 255 ]] && ERROR "Column cannot be more than 255"
-	z=$(( $RANDOM % (($y-$x)) ))
-	(( vColumnCount=$x+$z )) 	# number of columns for this table
+	vColumnCount=$(( ${rc_RANDOM_COLUMN_COUNT_MIN}+ (($RANDOM % ((${rc_RANDOM_COLUMN_COUNT_MIN}-${rc_RANDOM_COLUMN_COUNT_MAX})) )) ))
 	DEBUG "${iTable} will have ${vColumnCount} columns + id column"
 
 	# add columns
@@ -196,9 +215,9 @@ do
 	InsertScript "-- ${cLINE2}"
 
 done
-DEBUG "Create Table Script: ${rc_RANDOM_SCHEMA_TABLE_SCRIPT}"
-DEBUG "Insert Table Script: ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
-[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_TABLE_SCRIPT}"
+ECHO "Create Table Script: ${rc_RANDOM_SCHEMA_CREATE_SCRIPT}"
+ECHO "Insert Table Script: ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
+[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_CREATE_SCRIPT}"
 [[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
 }
 # ------------------------------------------------------------
@@ -208,7 +227,9 @@ while [ $iTable -lt ${rc_RANDOM_SCHEMA_TABLE_COUNT} ]
 do
 	(( iTable=iTable+1 ))
 	ECHO "drop Random Table# $iTable"
-	SQLRUN "drop table ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} purge;"
+	DropScript "drop table ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} purge;"
+	[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_DROP_SCRIPT}"
 done
+ECHO "Drop Table Script: ${rc_RANDOM_SCHEMA_DROP_SCRIPT}"
 }
 # ------------------------------------------------------------
