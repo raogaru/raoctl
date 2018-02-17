@@ -4,8 +4,8 @@
 # ------------------------------------------------------------
 # DATA GENERATE actions
 action_L1="show_cfg create drop"
-action_L2="yy "
-action_L3="zz "
+action_L2=" "
+action_L3=" "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -25,19 +25,6 @@ rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX:=C}
 rc_RANDOM_SCHEMA_SCRIPT_ONLY=${rc_RANDOM_SCHEMA_SCRIPT_ONLY:=YES}
 rc_RANDOM_SCHEMA_SINGLE_SCRIPT=${rc_RANDOM_SCHEMA_SINGLE_SCRIPT:=YES}
 rc_RANDOM_SCHEMA_SCRIPT_DIR=${rc_RANDOM_SCHEMA_SCRIPT_DIR:=${TMP}}
-
-if [ "${rc_RANDOM_SCHEMA_SINGLE_SCRIPT}" = "YES" ]]; then
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre.sql
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp.sql
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml.sql
-else
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre/*.sql
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins/*.sql
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp/*.sql
-	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml/*.sql
-fi
-
 
 # ------------------------------------------------------------
 # Module specific environment variables
@@ -64,7 +51,6 @@ echo "$*" >> ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml.sql
 }
 # ------------------------------------------------------------
 # validate configuration
-
 [[ ${rc_RANDOM_SCHEMA_TABLE_COUNT} -lt 1 || ${rc_RANDOM_SCHEMA_TABLE_COUNT} -gt 1000 ]] && ERROR "rc_RANDOM_SCHEMA_TABLE_COUNT must be set between 1 to 1000"
 
 rc_RANDOM_COLUMN_COUNT_MIN=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f1 -d",")	# mininum number of columns
@@ -73,9 +59,7 @@ rc_RANDOM_COLUMN_COUNT_MIN=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f1 -d",")
 rc_RANDOM_COLUMN_COUNT_MAX=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f2 -d",") 	# maximum number of columns
 [[ ${rc_RANDOM_COLUMN_COUNT_MAX} -gt 255 ]] && ERROR "rc_RANDOM_COLUMN_COUNT_RANGE high value cannot be more than 255"
 
-[[ ${rc_RANDOM_ROWCOUNT} -lt 1 || ${rc_RANDOM_ROWCOUNT} -gt 10000000000 ]] && ERROR "rc_RANDOM_ROWCOUNT  must be between 1 and 1000,000,000"
-
-
+[[ ${rc_RANDOM_ROWCOUNT} -lt 1 || ${rc_RANDOM_ROWCOUNT} -gt 1000000000 ]] && ERROR "rc_RANDOM_ROWCOUNT  must be between 1 and 1000,000,000"
 # ------------------------------------------------------------
 fAddColumns () {
 iColumn=0
@@ -175,6 +159,16 @@ ECHO "rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX}"
 }
 # ------------------------------------------------------------
 f_generate_create () {
+# cleanup old files
+if [ "${rc_RANDOM_SCHEMA_SINGLE_SCRIPT}" = "YES" ]; then
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml.sql
+else
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre/*.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins/*.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml/*.sql
+fi
 vColValues=""
 iTable=0
 while [ $iTable -lt ${rc_RANDOM_SCHEMA_TABLE_COUNT} ]
@@ -211,7 +205,11 @@ do
 	TableScript "-- ${cLINE2}"
 
 	# end InsertTable statement
-	InsertScript "from a a1, a a2"
+	f_clause=""
+	[[ ${rc_RANDOM_ROWCOUNT} -le 1000000000 ]] && f_clause="from a a1,a a2,a a3"
+	[[ ${rc_RANDOM_ROWCOUNT} -le 1000000 ]] && f_clause="from a a1,a a2"
+	[[ ${rc_RANDOM_ROWCOUNT} -le 1000 ]] && f_clause="from a a1"
+	InsertScript "${f_clause}"
 	InsertScript "where rownum<${rc_RANDOM_ROWCOUNT};"
 	InsertScript "commit;"
 	InsertScript "-- ${cLINE2}"
@@ -224,6 +222,11 @@ ECHO "Insert Table Script: ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql"
 }
 # ------------------------------------------------------------
 f_generate_drop () {
+if [ "${rc_RANDOM_SCHEMA_SINGLE_SCRIPT}" = "YES" ]; then
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp.sql
+else
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp/*.sql
+fi
 iTable=0
 while [ $iTable -lt ${rc_RANDOM_SCHEMA_TABLE_COUNT} ]
 do
