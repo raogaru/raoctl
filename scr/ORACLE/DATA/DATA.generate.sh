@@ -23,15 +23,21 @@ rc_RANDOM_ROWCOUNT=${rc_RANDOM_ROWCOUNT:=1000}
 rc_RANDOM_SCHEMA_TABLE_PREFIX=${rc_RANDOM_SCHEMA_TABLE_PREFIX:=T}
 rc_RANDOM_SCHEMA_COLUMN_PREFIX=${rc_RANDOM_SCHEMA_COLUMN_PREFIX:=C}
 rc_RANDOM_SCHEMA_SCRIPT_ONLY=${rc_RANDOM_SCHEMA_SCRIPT_ONLY:=YES}
-rc_RANDOM_SCHEMA_CREATE_SCRIPT=${rc_RANDOM_SCHEMA_CREATE_SCRIPT:=${TMP}/cre.sql}
-rc_RANDOM_SCHEMA_INSERT_SCRIPT=${rc_RANDOM_SCHEMA_INSERT_SCRIPT:=${TMP}/ins.sql}
-rc_RANDOM_SCHEMA_DROP_SCRIPT=${rc_RANDOM_SCHEMA_DROP_SCRIPT:=${TMP}/drp.sql}
-rc_RANDOM_SCHEMA_DML_SCRIPT=${rc_RANDOM_SCHEMA_DML_SCRIPT:=${TMP}/dml.sql}
+rc_RANDOM_SCHEMA_SINGLE_SCRIPT=${rc_RANDOM_SCHEMA_SINGLE_SCRIPT:=YES}
+rc_RANDOM_SCHEMA_SCRIPT_DIR=${rc_RANDOM_SCHEMA_SCRIPT_DIR:=${TMP}}
 
-mkdir -p ${TMP}/dml
-rm -f ${TMP}/dml/*.sql
-rm -f ${rc_RANDOM_SCHEMA_CREATE_SCRIPT}
-rm -f ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}
+if [ "${rc_RANDOM_SCHEMA_SINGLE_SCRIPT}" = "YES" ]]; then
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml.sql
+else
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre/*.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins/*.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp/*.sql
+	rm -f ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml/*.sql
+fi
+
 
 # ------------------------------------------------------------
 # Module specific environment variables
@@ -42,19 +48,19 @@ vColumnCount=0
 
 # ------------------------------------------------------------
 TableScript () {
-echo "$*" >> ${rc_RANDOM_SCHEMA_CREATE_SCRIPT}
+echo "$*" >> ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre.sql
 }
 # ------------------------------------------------------------
 InsertScript () {
-echo "$*" >> ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}
+echo "$*" >> ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql
 }
 # ------------------------------------------------------------
 DropScript () {
-echo "$*" >> ${rc_RANDOM_SCHEMA_DROP_SCRIPT}
+echo "$*" >> ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp.sql
 }
 # ------------------------------------------------------------
 DmlScript () {
-echo "$*" >> ${rc_RANDOM_SCHEMA_DML_SCRIPT}
+echo "$*" >> ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/dml.sql
 }
 # ------------------------------------------------------------
 # validate configuration
@@ -69,9 +75,6 @@ rc_RANDOM_COLUMN_COUNT_MAX=$(echo $rc_RANDOM_COLUMN_COUNT_RANGE | cut -f2 -d",")
 
 [[ ${rc_RANDOM_ROWCOUNT} -lt 1 || ${rc_RANDOM_ROWCOUNT} -gt 10000000000 ]] && ERROR "rc_RANDOM_ROWCOUNT  must be between 1 and 1000,000,000"
 
-rc_RANDOM_SCHEMA_CREATE_SCRIPT=${rc_RANDOM_SCHEMA_CREATE_SCRIPT:=${TMP}/cre.sql}
-rc_RANDOM_SCHEMA_INSERT_SCRIPT=${rc_RANDOM_SCHEMA_INSERT_SCRIPT:=${TMP}/ins.sql}
-rc_RANDOM_SCHEMA_DROP_SCRIPT=${rc_RANDOM_SCHEMA_DROP_SCRIPT:=${TMP}/drp.sql}
 
 # ------------------------------------------------------------
 fAddColumns () {
@@ -159,7 +162,6 @@ do
 	TableScript ",${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} ${vDataType}"
 	InsertScript ",/*${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn}*/ ${vColValues}"
 	DmlScript "update ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} set ${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} = ${vColValues} where id = round(dbms_random.value(1,${rc_RANDOM_ROWCOUNT}),0);"
-	mv ${rc_RANDOM_SCHEMA_DML_SCRIPT} ${TMP}/dml/${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable}_${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn}.sql
 done
 }
 # ------------------------------------------------------------
@@ -215,10 +217,10 @@ do
 	InsertScript "-- ${cLINE2}"
 
 done
-ECHO "Create Table Script: ${rc_RANDOM_SCHEMA_CREATE_SCRIPT}"
-ECHO "Insert Table Script: ${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
-[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_CREATE_SCRIPT}"
-[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_INSERT_SCRIPT}"
+ECHO "Create Table Script: ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre.sql"
+ECHO "Insert Table Script: ${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql"
+[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_SCRIPT_DIR}/cre.sql"
+[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_SCRIPT_DIR}/ins.sql"
 }
 # ------------------------------------------------------------
 f_generate_drop () {
@@ -228,8 +230,8 @@ do
 	(( iTable=iTable+1 ))
 	ECHO "drop Random Table# $iTable"
 	DropScript "drop table ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} purge;"
-	[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_DROP_SCRIPT}"
 done
+[[ "${rc_RANDOM_SCHEMA_SCRIPT_ONLY}" != "YES" ]] && SQLRUN "@${rc_RANDOM_SCHEMA_SCRIPT_DIR}/drp.sql"
 ECHO "Drop Table Script: ${rc_RANDOM_SCHEMA_DROP_SCRIPT}"
 }
 # ------------------------------------------------------------
