@@ -1,0 +1,18 @@
+-- ----------------------------------------------------------------------
+-- pcm.tbs
+-- ----------------------------------------------------------------------
+
+PROMPT Create Tablespace 
+
+--drop tablespace rc_pcm including contents and datafiles;
+
+create tablespace rc_pcm 
+datafile '/oracle/data/RAO/pcm.dbf' size 10m 
+autoextend on next 1m maxsize unlimited
+extent management local
+segment space management auto
+flashback off;
+
+-- ----------------------------------------------------------------------
+-- pcm.tbs
+-- ----------------------------------------------------------------------

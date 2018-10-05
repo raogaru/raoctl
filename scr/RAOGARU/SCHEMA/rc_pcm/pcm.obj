@@ -1,0 +1,124 @@
+-- ----------------------------------------------------------------------
+-- pcm.obj
+-- ----------------------------------------------------------------------
+--whenever sqlerror exit 1;
+
+@@pcm.set
+
+set echo off feedback off
+
+--
+-- ----------------------------------------------------------------------
+prompt Sequence
+-- ----------------------------------------------------------------------
+--
+create sequence seq start with 100001 nocache;
+
+--
+-- ----------------------------------------------------------------------
+prompt Chain
+-- ----------------------------------------------------------------------
+--
+create table chn
+ (
+	id number(8) not null,
+	code varchar2(10) not null,
+	name  varchar2(50) not null
+);
+
+comment on table chn is 'Chain';
+comment on column chn.id is 'Chain ID';
+comment on column chn.code is 'Chain Code';
+comment on column chn.name is 'Chain Name';
+
+create unique index chn_pk on chn (id);
+alter table chn add constraint chn_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Process
+-- ----------------------------------------------------------------------
+--
+create table prc (
+	id number(8) not null,
+	name varchar2(30) not null
+);
+
+comment on table prc is 'Process';
+comment on column prc.id is 'Process ID';
+comment on column prc.name is 'Process Name';
+
+create unique index prc_pk on prc (id);
+alter table prc add constraint prc_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Process Group
+-- ----------------------------------------------------------------------
+--
+create table prc_grp (
+	chn_id number(8) not null,
+	prc_id number(8) not null,
+	seq number(8) not null
+);
+
+comment on table prc_grp is 'Chain Process Group';
+comment on column prc_grp.chn_id is 'Chain ID';
+comment on column prc_grp.prc_id is 'Process ID';
+comment on column prc_grp.seq is 'Order of execution of processes';
+
+create unique index prc_grp_pk on prc_grp (chn_id, prc_id);
+alter table prc_grp add constraint prc_grp_pk primary key (chn_id, prc_id);
+
+create index prc_grp_fk1 on prc_grp (chn_id);
+alter table prc_grp add constraint prc_grp_fk1 foreign key (chn_id) references chn(id);
+
+create index prc_grp_fk2 on prc_grp (prc_id);
+alter table prc_grp add constraint prc_grp_fk2 foreign key (prc_id) references prc(id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Step
+-- ----------------------------------------------------------------------
+--
+create table stp (
+	id number(8) not null,
+	name  varchar2(30) not null,
+	prg varchar2(1000) not null
+);
+
+comment on table stp is 'Step';
+comment on column stp.id is 'Step ID';
+comment on column stp.name is 'Step Name';
+comment on column stp.prg is 'Program to be called';
+
+create unique index stp on stp (id);
+alter table stp add constraint stp_pk primary key (id);
+
+--
+-- ----------------------------------------------------------------------
+prompt Step Group
+-- ----------------------------------------------------------------------
+--
+create table stp_grp (
+	prc_id number(8) not null,
+	stp_id number(8) not null,
+	seq number(8) not null
+);
+
+comment on table stp_grp is 'Chain Process Group';
+comment on column stp_grp.prc_id is 'Process ID';
+comment on column stp_grp.stp_id is 'Step ID';
+comment on column stp_grp.seq is 'Order of execution of steps';
+
+create unique index stp_grp_pk on stp_grp (prc_id, stp_id);
+alter table stp_grp add constraint stp_grp_pk primary key (prc_id, stp_id);
+
+create index stp_grp_fk1 on stp_grp (prc_id);
+alter table stp_grp add constraint stp_grp_fk1 foreign key (prc_id) references prc(id);
+
+create index stp_grp_fk2 on stp_grp (stp_id);
+alter table stp_grp add constraint stp_grp_fk2 foreign key (stp_id) references stp(id);
+-- ----------------------------------------------------------------------
+-- pcm.obj
+-- ----------------------------------------------------------------------

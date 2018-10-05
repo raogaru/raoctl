@@ -1,0 +1,87 @@
+-- ----------------------------------------------------------------------
+-- pcm.insert
+-- ----------------------------------------------------------------------
+
+PROMPT Insert Data
+
+--whenever sqlerror exit 1;
+
+set echo off feedback on verify off
+
+@@pcm.set
+
+--
+-- ----------------------------------------------------------------------
+prompt chn
+-- ----------------------------------------------------------------------
+--
+insert into chn values (1,'Chain 1','Processes 110,120,130');
+insert into chn values (2,'Chain 2','Processes 110,120');
+insert into chn values (3,'Chain 3','Processes 110,130');
+insert into chn values (4,'Chain 4','Processes 120,130');
+
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt prc
+-- ----------------------------------------------------------------------
+--
+insert into prc values (110,'Process 110');
+insert into prc values (120,'Process 120');
+insert into prc values (130,'Process 130');
+commit;
+
+--
+-- ----------------------------------------------------------------------
+prompt stp
+-- ----------------------------------------------------------------------
+--
+insert into stp values (111,'Step 111','stp111');
+insert into stp values (112,'Step 111','stp112');
+
+insert into stp values (121,'Step 121','stp121');
+insert into stp values (122,'Step 122','stp122');
+insert into stp values (123,'Step 123','stp123');
+
+insert into stp values (131,'Step 131','stp131');
+insert into stp values (132,'Step 132','stp132');
+insert into stp values (133,'Step 133','stp133');
+insert into stp values (134,'Step 134','stp134');
+
+commit;
+
+-- ----------------------------------------------------------------------
+prompt prc_grp
+-- ----------------------------------------------------------------------
+insert into prc_grp values (1,110,1);
+insert into prc_grp values (1,120,2);
+insert into prc_grp values (1,130,3);
+
+insert into prc_grp values (2,110,1);
+insert into prc_grp values (2,120,2);
+
+insert into prc_grp values (3,110,1);
+insert into prc_grp values (3,130,2);
+
+insert into prc_grp values (4,120,2);
+insert into prc_grp values (4,130,3);
+
+-- ----------------------------------------------------------------------
+prompt stp_grp
+-- ----------------------------------------------------------------------
+insert into stp_grp values (110,111,1);
+insert into stp_grp values (110,112,2);
+
+insert into stp_grp values (120,121,1);
+insert into stp_grp values (120,122,2);
+insert into stp_grp values (120,123,3);
+
+insert into stp_grp values (130,131,1);
+insert into stp_grp values (130,132,2);
+insert into stp_grp values (130,133,3);
+insert into stp_grp values (130,134,4);
+
+-- ----------------------------------------------------------------------
+-- pcm.insert
+-- ----------------------------------------------------------------------

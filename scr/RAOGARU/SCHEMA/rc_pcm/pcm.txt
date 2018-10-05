@@ -1,0 +1,17 @@
+README.txt for RC_PCM Schema
+
+RC_PCM = raoctl for Process Chain Management
+
+Chains
+Processes
+Steps
+Process Groups
+Step Groups
+
+Steps gets grouped in orderly form to make a process
+
+Processes gets grouped in orderly form to make a chain
+
+When a Process gets executed, all steps in that Step Group gets executed
+When a Chain gets executed, all processes in that Process Group gets executed
+

@@ -1,0 +1,26 @@
+-- ----------------------------------------------------------------------
+-- pcm.usr
+-- ----------------------------------------------------------------------
+
+PROMPT Dropping User ...
+
+drop user rc_pcm cascade;
+
+PROMPT Creating User ...
+
+create user rc_pcm 
+identified by rc_pcm
+default tablespace rc_pcm
+temporary tablespace temp;
+
+grant unlimited tablespace to rc_pcm;
+grant connect to rc_pcm;
+grant resource to rc_pcm;
+grant select any table to rc_pcm;
+grant dba to rc_pcm;
+grant create public synonym to rc_pcm;
+
+-- ----------------------------------------------------------------------
+-- pcm.usr
+-- ----------------------------------------------------------------------
+

@@ -1,0 +1,18 @@
+-- ----------------------------------------------------------------------
+-- pcm.delete
+-- ----------------------------------------------------------------------
+whenever sqlerror exit 1;
+
+@@pcm.set
+
+delete from stp_grp where stp_id!=0 ;
+delete from prc_grp where prc_id!=0 ;
+delete from stp where id!=0 ;
+delete from prc where id!=0;
+delete from chn where id!=0;
+
+commit;
+
+-- ----------------------------------------------------------------------
+-- pcm.delete
+-- ----------------------------------------------------------------------
