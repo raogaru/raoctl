@@ -1,0 +1,18 @@
+-- ----------------------------------------------------------------------
+-- dm.tbs
+-- ----------------------------------------------------------------------
+
+PROMPT Create Tablespace 
+
+--drop tablespace rc_dm including contents and datafiles;
+
+create tablespace rc_dm 
+datafile '/oracle/data/RAO/dm.dbf' size 10m 
+autoextend on next 1m maxsize unlimited
+extent management local
+segment space management auto
+flashback off;
+
+-- ----------------------------------------------------------------------
+-- dm.tbs
+-- ----------------------------------------------------------------------

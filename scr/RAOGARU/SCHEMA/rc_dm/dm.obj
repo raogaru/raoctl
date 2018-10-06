@@ -1,0 +1,28 @@
+-- ----------------------------------------------------------------------
+-- dm.obj
+-- ----------------------------------------------------------------------
+--whenever sqlerror exit 1;
+
+@@dm.set
+
+set echo off feedback off
+
+--
+-- ----------------------------------------------------------------------
+prompt Sequence
+-- ----------------------------------------------------------------------
+--
+create sequence seq start with 100001 nocache;
+
+create table tokens(
+	abbr varchar2(30) not null, 
+	text varchar2(30) not null,
+	enabled char(1) default 'N',
+	dt date default sysdate);
+
+create unique index tokens_pk on tokens(abbr);
+alter table tokens add constraint tokens_pk primary key (abbr);
+
+-- ----------------------------------------------------------------------
+-- dm.obj
+-- ----------------------------------------------------------------------

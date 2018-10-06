@@ -1,0 +1,6 @@
+README.txt for RC_DM Schema
+
+RC_DM = raoctl for Data Model Analysis
+
+Tokens - contains Data element token abbreviations
+

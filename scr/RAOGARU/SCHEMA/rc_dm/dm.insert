@@ -1,0 +1,22 @@
+-- ----------------------------------------------------------------------
+-- dm.insert
+-- ----------------------------------------------------------------------
+
+PROMPT Insert Data
+
+--whenever sqlerror exit 1;
+
+set echo off feedback on verify off
+
+@@dm.set
+
+insert into tokens values ('DBA','DBA','Y',sysdate);
+insert into tokens values ('ALL','All','Y',sysdate);
+insert into tokens values ('USER','User','Y',sysdate);
+insert into tokens values ('V_$','V$','Y',sysdate);
+insert into tokens values ('HIST','History','Y',sysdate);
+
+commit;
+-- ----------------------------------------------------------------------
+-- dm.insert
+-- ----------------------------------------------------------------------

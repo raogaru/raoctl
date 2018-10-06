@@ -1,0 +1,26 @@
+-- ----------------------------------------------------------------------
+-- dm.usr
+-- ----------------------------------------------------------------------
+
+PROMPT Dropping User ...
+
+drop user rc_dm cascade;
+
+PROMPT Creating User ...
+
+create user rc_dm 
+identified by rc_dm
+default tablespace rc_dm
+temporary tablespace temp;
+
+grant unlimited tablespace to rc_dm;
+grant connect to rc_dm;
+grant resource to rc_dm;
+grant select any table to rc_dm;
+grant dba to rc_dm;
+grant create public synonym to rc_dm;
+
+-- ----------------------------------------------------------------------
+-- dm.usr
+-- ----------------------------------------------------------------------
+
