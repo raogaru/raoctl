@@ -1,0 +1,5 @@
+select sql_id, sql_plan_hash_value, sal_plan_line_id, event, count(1), sum(time_waited)
+from ash
+where event like '&1%' 
+group by sql_id, sql_plan_hash_value, sql_plan_line_id, event
+order by sum(time_waited);
