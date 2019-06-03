@@ -1,0 +1,14 @@
+	for c in (
+		select table_name 
+		from all_tables 
+		where owner=g_schema
+		minus
+		select table_name 
+		from all_constraints 
+		where owner=g_schema 
+		and constraint_type='P' 
+		and status='ENABLED'
+		)
+	loop
+		violation(c.table_name);
+	end loop;

@@ -4,6 +4,8 @@
 @@dm.obj
 @@rc_tokens_pkg.pks
 @@rc_tokens_pkg.pkb
+@@rc_rules_pkg.pks
+@@rc_rules_pkg.pkb
 @@dm.ini
 @@dm.insert
 @@dm.stats

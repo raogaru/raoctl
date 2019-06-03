@@ -1,0 +1,16 @@
+drop table tkn;
+create table tkn(
+	tkn varchar2(30) not null, 
+	text varchar2(30) not null,
+	enabled char(1) default 'N',
+	dt date default sysdate);
+create unique index tkn_pk on tkn(abbr);
+alter table tkn add constraint tkn_pk primary key (abbr);
+
+insert into tkn values ('DBA','DBA','Y', sysdate);
+insert into tkn values ('DATA','Data','Y', sysdate);
+insert into tkn values ('FILE','File','Y', sysdate);
+insert into tkn values ('FILES','Files','Y', sysdate);
+
+commit;
+
