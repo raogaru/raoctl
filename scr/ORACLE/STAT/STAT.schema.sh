@@ -4,7 +4,7 @@
 # ------------------------------------------------------------
 # STAT schema actions
 action_L1="list list_stattab "
-action_L2="gather_2_dict gather_2_stattab gather_2_stattab_as_statid "
+action_L2="gather_100 gather_2_dict gather_2_stattab gather_2_stattab_as_statid "
 action_L3="export export_as_statid import import_statid "
 action_L4="delete delete_from_stattab delete_from_stattab_with_statid "
 action_L5="restore lock unlock"
@@ -14,6 +14,7 @@ action_L="$action_L1 $action_L2 $action_L3 $action_L4 $action_L5"
 usage_L=" \
 list,none,List_Stats \
 list_stattab,none,List_Stats_from_StatTab  \
+gather_100,schema_name,Gather_100_percent_stats_into_Dictionary \
 gather_2_dict,schema_name,Gather_into_Dictionary \
 gather_2_stattab,schema_name,Gather_to_StatTab \
 gather_2_stattab_as_statid,schema_name:statid,Gather_to_StatTab_with_StatID \
@@ -41,6 +42,11 @@ INCLIB_c
 # ------------------------------------------------------------
 f_schema_list_stattab () {
 SQLQRY "select statid, type, count(1) from ${rc_STATTAB_OWNER}.${rc_STATTAB_NAME} group by statid, type order by 1,2;"
+}
+# ------------------------------------------------------------
+f_schema_gather_100 () {
+INPUT
+STATS_p "gather_schema_stats(ownname=>'${input1}',cascade=>true,degree=>8,estimate_percent=>100)"
 }
 # ------------------------------------------------------------
 f_schema_gather_2_dict () {
