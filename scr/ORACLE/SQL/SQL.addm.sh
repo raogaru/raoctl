@@ -17,7 +17,7 @@ delete,NONE,Delete_ADDM_Task_name  \
 "
 # ------------------------------------------------------------
 # local variables
-REPORTS_DIR=REPORTS_DIR
+typeset -u REPORTS_DIR="DATA_PUMP_DIR"
 # ------------------------------------------------------------
 ADDM_p () {
 vLine="$*"
@@ -53,10 +53,11 @@ SQLEXEC
 }
 # ------------------------------------------------------------
 f_addm_list () { 
+INPUT
 SQLQRY "
 set linesi 120 trims on
 col task_name format a30
-select task_id, task_name, created,begin_snap_id, end_snap_id from dba_addm_tasks order by task_id;
+select task_id, task_name, created,begin_snap_id, end_snap_id from dba_addm_tasks where trunc(created)>=trunc(sysdate-${input1}) order by task_id;
 "
 }
 # ------------------------------------------------------------
@@ -65,8 +66,9 @@ SQLQRY "select instance_id, instance_name, directive_name, description from dba_
 }
 # ------------------------------------------------------------
 f_addm_list_task_dir () { 
+INPUT
 SQLQRY "select task_name, seq_id, instance_name, directive_name, description 
-from dba_addm_task_directives order by seq_id;"
+from dba_addm_task_directives where task_name='${input1}' order by seq_id;"
 }
 # ------------------------------------------------------------
 f_addm_list_findings () { 

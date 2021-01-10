@@ -3,15 +3,17 @@
 # ############################################################
 # ------------------------------------------------------------
 # BASELINE actions
-action_L1="create load_from_sqlset drop drop_all list count "
+action_L1="create create_from_task load_from_sqlset sqlid_from_sqlset drop drop_all list count "
 action_L2="alter alter_all " #enable enable_all disable disable_all accept accept_all 
-action_L3="stgcre stgdrp stgtru stgcnt pack unpack stgexp stgimp "
+action_L3="stgcre stgdrp stgtru stgcnt pack unpack unpack_sql stgexp stgimp "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
 usage_L=" \
 create,sql_id:plan_hash_value,Create_BASELINE  \
+create_from_task,sql_id:plan_hash_value,Create_BASELINE  \
 load_from_sqlset,sqlset_name,Create_BASELINE_from_SQLSET  \
+sqlid_from_sqlset,sqlset_name:sql_id,Create_BASELINE_for_sqlid_from_SQLSET  \
 drop,sql_handle,Drop_BASELINE  \
 drop_all,NONE,Drop_all_BASELINEs  \
 alter,sql_handle:attribute_name:attribute_value,Alter_BASELINE_attribute  \
@@ -22,7 +24,8 @@ stgdrp,NONE,Drop_staging_table \
 stgtru,NONE,Truncate_staging_table \
 stgcnt,NONE,Select_staging_table \
 pack,sqlset_name,Pack_BASELINE \
-unpack,sqlset_name,Unpack_BASELINE \
+unpack,none,Unpack_BASELINE \
+unpack_sql,sql_handle,Unpack_1_sql_BASELINE \
 stgexp,NONE,export_staging_table \
 stgimp,export_dump_file_absolute_path,export_staging_table \
 "
@@ -91,7 +94,7 @@ done
 }
 # ------------------------------------------------------------
 f_baseline_list () { 
-SQLQRY "select sql_handle, plan_name, enabled, accepted, fixed, autopurge purge from dba_sql_plan_baselines;"
+SQLQRY "select sql_handle||' '||plan_name||' '||to_char(created,'yyyy-mm-dd hh24:mi:ss')||' enabled='||enabled||'accepted='||accepted||' fixed='||fixed||' autopurge='||autopurge from dba_sql_plan_baselines order by created;"
 }
 # ------------------------------------------------------------
 f_baseline_count () { 
@@ -100,12 +103,24 @@ SQLQRY "select enabled, accepted, fixed, autopurge purge, count(1) baseline_coun
 # ------------------------------------------------------------
 f_baseline_create () {
 INPUT 2
-BASELINE_f "LOAD_PLANS_FROM_CURSOR_CACHE(SQL_ID=>'${input1}',PLAN_HASH_VALUE=>${input2})"
+BASELINE_f "LOAD_PLANS_FROM_CURSOR_CACHE(sql_id=>'${input1}',plan_hash_value=>${input2},fixed=>'YES',enabled=>'YES')"
+}
+# ------------------------------------------------------------
+f_baseline_create_from_task () {
+INPUT 2
+SQLNEWF
+SQLLINE "exec dbms_sqltune.create_sql_plan_baseline(task_name=>'${input1}', owner_name=>'${STGTAB_OWNER}', plan_hash_value=>'${input2}');"
+SQLEXEC
 }
 # ------------------------------------------------------------
 f_baseline_load_from_sqlset () {
 INPUT
-BASELINE_f "LOAD_PLANS_FROM_SQLSET(SQLSET_NAME=>'${input}')"
+BASELINE_f "LOAD_PLANS_FROM_SQLSET(sqlset_name=>'${input}')"
+}
+# ------------------------------------------------------------
+f_baseline_sqlid_from_sqlset () {
+INPUT 2
+BASELINE_f "LOAD_PLANS_FROM_SQLSET(sqlset_name=>'${input1}',basic_filter=>'sql_id=''${input2}''')"
 }
 # ------------------------------------------------------------
 f_baseline_stgcre () {
@@ -130,6 +145,11 @@ BASELINE_f "PACK_STGTAB_BASELINE(TABLE_NAME=>'${STGTAB_BASELINE}',TABLE_OWNER=>'
 # ------------------------------------------------------------
 f_baseline_unpack () {
 BASELINE_f "UNPACK_STGTAB_BASELINE(TABLE_NAME=>'${STGTAB_BASELINE}',TABLE_OWNER=>'${STGTAB_OWNER}')"
+}
+# ------------------------------------------------------------
+f_baseline_unpack_sql () {
+INPUT
+BASELINE_f "UNPACK_STGTAB_BASELINE(TABLE_NAME=>'${STGTAB_BASELINE}',TABLE_OWNER=>'${STGTAB_OWNER}',sql_handle=>'${input1}')"
 }
 # ------------------------------------------------------------
 f_baseline_stgexp () {

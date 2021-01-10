@@ -26,7 +26,7 @@ script,task_name,Script_DIAGTASK_result  \
 "
 # ------------------------------------------------------------
 # local variables
-typeset -u REPORTS_DIR="REPORTS_DIR"
+typeset -u REPORTS_DIR="DATA_PUMP_DIR"
 # ------------------------------------------------------------
 DIAGTASK_p () {
 vLine="$*"

@@ -64,6 +64,6 @@ STATS_p "delete_schema_prefs(ownname=>'${input1}',pname=>'${input2}')"
 # ------------------------------------------------------------
 f_schpref_set () {
 INPUT 3
-STATS_p "set_schema_prefs(ownname=>'{input1}',pname==>'${input2}',pvalue=>'${input3}')"
+STATS_p "set_schema_prefs(ownname=>'${input1}',pname==>'${input2}',pvalue=>'${input3}')"
 }
 # ------------------------------------------------------------

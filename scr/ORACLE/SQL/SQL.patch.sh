@@ -4,8 +4,8 @@
 # ------------------------------------------------------------
 # PATCH actions
 action_L1="list accept drop alter "
-action_L1="crestg drpstg expstg impst gpack unpack  "
-action_L1="stgcre stgdrp stgtru stgcnt pack unpack stgexp stgimp "
+action_L2="crestg drpstg expstg impst gpack unpack  "
+action_L3="stgcre stgdrp stgtru stgcnt pack unpack stgexp stgimp "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
 # USAGE DATA
@@ -25,7 +25,7 @@ stgimp,export_dump_file_absolute_path,Export_staging_table \
 "
 # ------------------------------------------------------------
 #Local Variables & Overwrite global variables
-typeset -u REPORTS_DIR="REPORTS_DIR"
+typeset -u REPORTS_DIR="DATA_PUMP_DIR"
 rc_SHOW_SQL=YES
 STGTAB_OWNER="SYSTEM"
 STGTAB_SQLPATCH="STGTAB_SQLPATCH"

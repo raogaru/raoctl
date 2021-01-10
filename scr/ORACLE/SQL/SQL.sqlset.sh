@@ -4,7 +4,7 @@
 # ------------------------------------------------------------
 # SQLSET actions
 action_L1="create create_for_1day_awr drop delsql delall list listsql refadd refdel reflist "
-action_L2="load_from_cache load_from_sqlset load_from_awr_snap load_from_awr_baseline "
+action_L2="load_from_cache load_from_sqlset load_sql_from_awr_snap load_from_awr_snap load_from_awr_baseline "
 action_L3="stgcre stgdrp stgtru stgcnt pack unpack stgexp stgimp remap "
 action_L="$action_L1 $action_L2 $action_L3"
 # ------------------------------------------------------------
@@ -21,6 +21,7 @@ refdel,sqlset_name:reference_id,Delete_referenced_from_SQLSET \
 reflist,NONE,List_references \
 load_from_cache,sqlset_name,parsing_schema_name,Load_SQLs_from_cache \
 load_from_sqlset,to_sqlset_name:from_sqlset_name,Load_SQLs_from_another_SQLSET \
+load_sql_from_awr_snap,sqlset_name:begin_snap_id:end_snap_id,sql_id,Load_1_SQL_from_AWR \
 load_from_awr_snap,sqlset_name:begin_snap_id:end_snap_id,Load_SQLs_from_AWR \
 load_from_awr_baseline,sqlset_name:awr_baseline_name,Load_SQLs_from_AWR_baseline \
 stgcre,NONE,Create_staging_table \
@@ -157,6 +158,12 @@ f_sqlset_load_from_sqlset () {
 INPUT 2
 sqlset_name=${input1}
 SQLSET_load "SELECT_SQLSET(SQLSET_NAME=>'${input2}')"
+}
+# ------------------------------------------------------------
+f_sqlset_load_sql_from_awr_snap () {
+INPUT 4
+sqlset_name=${input1}
+SQLSET_load "select_workload_repository(begin_snap=>${input2},end_snap=>${input3},basic_filter=>'sql_id=''${input4}''')"
 }
 # ------------------------------------------------------------
 f_sqlset_load_from_awr_snap () {

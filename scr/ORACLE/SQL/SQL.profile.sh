@@ -73,7 +73,7 @@ SQLPROF_p "alter_sql_sqlprof(name=>'${input1}',attribute_name=>'${input2}',value
 # ------------------------------------------------------------
 f_profile_drop () { 
 INPUT
-SQLPROF_p "drop_sql_sqlprof(name=>'${input1}')"
+SQLPROF_p "drop_sql_profile(name=>'${input1}')"
 }
 # ------------------------------------------------------------
 f_profile_import () { 

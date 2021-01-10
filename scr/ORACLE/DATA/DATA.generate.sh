@@ -144,7 +144,7 @@ do
 	;;
 	esac
 	TableScript ",${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} ${vDataType}"
-	InsertScript ",/*${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn}*/ ${vColValues}"
+	InsertScript ",/* ${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} */ ${vColValues}"
 	DmlScript "update ${rc_RANDOM_SCHEMA_TABLE_PREFIX}${iTable} set ${rc_RANDOM_SCHEMA_COLUMN_PREFIX}${iColumn} = ${vColValues} where id = round(dbms_random.value(1,${rc_RANDOM_ROWCOUNT}),0);"
 done
 }

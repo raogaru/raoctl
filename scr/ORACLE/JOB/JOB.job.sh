@@ -21,7 +21,7 @@ SQLQRY "select job_name, substr(schedule_name,1,30) schedule_name, enabled from 
 }
 # ------------------------------------------------------------
 f_job_log_count_1hr () {
-SQLQRY "select substr(job_name,1,30) job_name, status,count(1) from dba_scheduler_job_log where job_name like 'JOB_SMS_SIM%' and log_date>=sysdate-1/(24) group by substr(job_name,1,30), status order by substr(job_name,1,30), status ;"
+SQLQRY "select substr(job_name,1,30) job_name, status,count(1) from dba_scheduler_job_log where log_date>=sysdate-1/(24) group by substr(job_name,1,30), status order by substr(job_name,1,30), status ;"
 }
 # ------------------------------------------------------------
 # ------------------------------------------------------------

@@ -47,7 +47,11 @@ SQLQRY "exec dbms_scheduler.purge_log(job_name=>'${input};"
 }
 # ------------------------------------------------------------
 JOBLOG_LIST () {
-SQLQRY "select substr(job_name,1,30) job_name, status,log_date from dba_scheduler_job_log where log_date>=sysdate-${1} order by log_date;"
+SQLNEWF
+SQLLINE "set echo off feedback on pause off pagesi 1000 heading on "
+SQLLINE "set verify off linesi 500 term on trimspool on"
+SQLLINE "col job_name format a30"
+SQLLINE "select substr(job_name,1,30) job_name, status,log_date from dba_scheduler_job_log where log_date>=sysdate-${1} order by log_date;"
 }
 # ------------------------------------------------------------
 f_log_1min () {

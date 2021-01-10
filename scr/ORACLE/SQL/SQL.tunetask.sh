@@ -27,7 +27,7 @@ script,task_name,Script_TUNETASK_result \
 "
 # ------------------------------------------------------------
 # local variables
-typeset -u REPORTS_DIR="REPORTS_DIR"
+typeset -u REPORTS_DIR="DATA_DUMP_DIR"
 # ------------------------------------------------------------
 TUNETASK_p () {
 vLine="$*"

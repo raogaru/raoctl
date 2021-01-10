@@ -116,7 +116,7 @@ AWRREP_p "MODIFY_SNAPSHOT_SETTINGS(${input1}=>${input2})"
 }
 # ------------------------------------------------------------
 f_awr_show_snap_settings () { 
-SQLQRY "select topnsql,retention, snap_interval from WRM\$_WR_CONTROL;"
+SQLQRY "select topnsql,retention, snap_interval from sys.WRM\$_WR_CONTROL;"
 }
 # ------------------------------------------------------------
 f_awr_drop_snap_range () { 
@@ -136,6 +136,7 @@ SQLNEWF
 SQLLINE "define begin_snap   = ${input1};"
 SQLLINE "define end_snap     = ${input2};"
 SQLLINE "define report_name  = '${RPT_DIR}/AWR_REPORT_${ORACLE_SID}_${input1}_${input2}_$(date +%Y%m%d-%H%M%S).html';"
+SQLLINE "exec dbms_workload_repository.awr_set_report_thresholds(top_n_sql=>50);"
 AWRREP_common "awrrpti"
 }
 # ------------------------------------------------------------
