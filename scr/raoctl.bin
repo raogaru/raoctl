@@ -92,7 +92,8 @@ l) typeset -l x=$2 ;;
 m) typeset x=$2 ;;
 esac
 ECHO x=$x
-[[ ! "${x}" = @($3) ]] && ERROR "Invalid value $x"
+# following not working on some shells. so commented out
+#[[ ! "${x}" = @($3) ]] && ERROR "Invalid value $x"
 }
 # ------------------------------------------------------------
 HELP () {
@@ -112,8 +113,8 @@ cat ${TMPSQL}
 # ------------------------------------------------------------
 SQLEXEC () {
 #constr="dgadm/dgadm@${1} as sysdba"
-constr="rao/rao123"
-#constr=${constr:="/ as sysdba"}
+#constr="rao/rao123"
+constr=${constr:="/ as sysdba"}
 [[ "${rc_SHOW_LINE}" != "NO" ]] && ECHO ${cLINE3}
 [[ "${rc_SHOW_SQL}" != "NO" ]] && cat ${TMPSQL}
 #cat $TMPSQL >> ${rc_EXEC_LOG}
@@ -334,7 +335,7 @@ done
 ECHO "product=${v_product}" "class=${v_class}" 
 ECHO "Valid modules : ${module_L}"
 ERROR "Invalid module \"${v_module}\""
-v_module_dir=${SCR_DIR}/${v_class}/${v_module}
+v_module_dir=${SCR_DIR}/${v_product}/${v_class}/${v_module}
 }
 # ------------------------------------------------------------
 INCENV () {
